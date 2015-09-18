@@ -1,0 +1,25 @@
+{% extends "expenses/base.html" %}
+{% block content %}
+    <h2> Details </h2>
+    {# create table #}
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            {% for category in categories %}
+                <th>{{category}}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        {% for key, value in expenses.items %}
+        <tr>
+            <td>{{key}}</td>
+            {% for val in value %}
+            <td>{{val}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    return to <a href="{% url 'index'%}">main page</a>
+{% endblock %}

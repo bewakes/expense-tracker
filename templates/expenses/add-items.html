@@ -1,0 +1,24 @@
+{% extends "expenses/base.html" %}
+
+{% block content %}
+<h2> Add new Item </h2>
+
+    <form action="/expenses/add-items/" method="post">
+    {% csrf_token %}
+    Category:
+    <select name="category">
+        <option value="">&lt;- Select Category -&gt;</option>
+        {% for category in categories %}
+            <option value="{{category}}">{{category}}</option>
+        {% endfor %}
+    </select><br><br>
+    New Items:
+    <textarea name="items" placeholder="Enter items separated by comma" ></textarea>
+    <br><br>
+    <input type="submit" value="Add Items"/>
+
+    </form>
+    <br>Return to <a href="/">main page</a>
+
+
+{% endblock %}
