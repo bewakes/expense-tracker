@@ -86,6 +86,8 @@ class ViewExpenses(View):
             temp = [0]*len(categories)
             for x in exps:
                 temp[categories.index(x.category.name)] = x.cost
+                s = sum(temp)
+                temp.append(s)
             date_expenses[str(date)] = temp
 
         return render(request, 'expenses/view.html', {'expenses':date_expenses, 'categories':categories})
