@@ -5,12 +5,15 @@ from django.template import RequestContext
 from django.utils import timezone
 from django.views.generic import View
 from django.db.models import Sum
+from date_data.date_data import *
 import datetime
 
 from expenses.models import *
 from expenses.forms import ExpenseForm
 
 import json
+
+months = ['BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ', 'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA']
 
 # Create your views here.
 
@@ -71,6 +74,8 @@ class ViewExpenses(View):
     context = {}
 
     def get(self, request):
+        d = datetime.date(2015, 9,17)
+        return HttpResponse(str(convert_to_nepali(d)))
         expenses = Expense.objects.all()
         categories = [x.name for x in Category.objects.all()]
 
@@ -79,6 +84,7 @@ class ViewExpenses(View):
             if exp.date not in dates:
                 dates.append(exp.date)
 
+        return HttpResponse(dates)
         date_expenses={}
         for date in dates:
             exps = expenses.filter(date=date)
@@ -88,7 +94,9 @@ class ViewExpenses(View):
                 temp[categories.index(x.category.name)] = x.cost
                 s = sum(temp)
                 temp.append(s)
-            date_expenses[str(date)] = temp
+            nep = convert_to_nepali(date)
+            date_expenses[nep] = temp
+
 
         return render(request, 'expenses/view.html', {'expenses':date_expenses, 'categories':categories})
 
@@ -133,3 +141,39 @@ class AddItems(View):
     def set_message(self, message):
         self.context['message'] = message
 
+
+def convert_to_nepali(engdate, delta=-1):
+
+    # date min 2000, push 17
+    # date max 2090, Chaitra 30
+    start_eng = datetime.date(1944, 1, 1)
+
+    if delta==-1:
+        delta_days = (engdate-start_eng).days
+
+    else:delta_days=delta
+
+    # nepali_date has array of months
+    nep_yr = 2000
+    nep_mt = 9
+    nep_dy = 17
+
+    ind = nep_yr - 2000
+    mt = nep_mt-1
+    rem_days = nepali_date[0][8] - nep_dy
+
+    while True:
+        delta_days -= rem_days
+        #print('delta_days:', delta_days)
+        mt+=1
+        if delta_days == 0:
+            print('del 0 here')
+            return (nep_yr, mt+1, 1)
+        if delta_days < 0:
+            print('here')
+            return(nep_yr, mt-1, nepali_date[ind][mt-1]+delta_days-1)
+        if mt>11:
+            nep_yr+=1
+            mt=0
+            ind+=1
+        rem_days = nepali_date[ind][mt]
