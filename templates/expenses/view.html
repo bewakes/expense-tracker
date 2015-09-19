@@ -30,9 +30,18 @@
 
 {% block scripts %}
 <script>
+    var g_x=0;
+    var g_y=0;
+
+    create_comment_box();
+    document.onmousemove =  function(event){ g_x = event.clientX;
+    g_y = event.clientY;
+    };
+
     // on mouseover function
     $(".date").on("mouseover", function(e) { 
 
+                var id = this.id;
                 // send post request
                 $.ajax({
                     "type":"POST",
@@ -40,21 +49,32 @@
                     "data":{"date":this.id, csrfmiddlewaretoken:'{{csrf_token}}'}
                 })
                 .done(function(msg){
-                    if(msg=='***')
-                        set_comment('No comment for the day');
+                    if(msg=='***' || msg.trim()=='')
+                        set_comment('No comment for the day', id);
                     else
-                        set_comment(msg);
+                        set_comment(msg, id);
                 });
     });
 
     // onmouse out function
     $(".date").on("mouseout", function(e) {
-        set_comment('');
+        $("#comment_box").hide();
     });
 
-    function set_comment(comment)
+    function set_comment(comment, id)
     {
-        $("#comment").text(comment);
+        var element = document.getElementById(id);
+        var rect = element.getBoundingClientRect();
+        var width = rect.right - rect.left;
+        var height = rect.bottom- rect.top;
+        g_x = rect.left+ width;
+        g_y = rect.top+height;
+        $("#comment_box").text('');
+        $("#comment_box").append('<b><u>Comment:</u> </b><br>');
+        $("#comment_box").append(comment);
+        $("#comment_box").css("left", g_x.toString());
+        $("#comment_box").css("top", g_y.toString());
+        $("#comment_box").show();
     }
 
 </script>

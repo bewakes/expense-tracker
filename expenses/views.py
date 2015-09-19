@@ -44,15 +44,23 @@ class IndexPage(View):
             return HttpResponse('invalid form')
 
         expense_dict = json.loads(jsonstr)
+        self.context['expense_form'] = ExpenseForm()
         try:
             category = Category.objects.filter(name=expense_dict['category'])[0]
             for item in expense_dict['items']:
                 itm_name = str(list(item.keys())[0])
                 itm = Item.objects.all().filter(name=itm_name)[0]
+
+                qty = float(item[itm_name]['quantity'])
+                cst = int(item[itm_name]['cost'])
+                if qty==0 or cost==0:
+                    self.context['message'] = 'Zero value for some items'
+                    return render(request, 'expenses/index.html', self.context)
+
                 itm_exp = ItemExpense(date=exp_date, item=itm, 
-                            quantity=float(item[itm_name]['quantity']), cost=int(item[itm_name]['cost'])
-                )
-                itm.save()
+                            quantity=qty, cost=cst)
+                
+                itm_exp.save()
             expenses = Expense.objects.filter(date=exp_date, category=category)
             if len(expenses) == 0: # means no expense yet for the day on the same category
                 expense = Expense(date=exp_date, category=category, comment=comment, cost=total_cost)
@@ -62,7 +70,6 @@ class IndexPage(View):
                 expense.cost+=total_cost
                 expense.save()
 
-            self.context['expense_form'] = ExpenseForm()
             self.context['message'] = 'Expense added'
             return render(request, 'expenses/index.html', self.context)
         except Exception as e:
