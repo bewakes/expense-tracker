@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.utils import timezone
 from django.views.generic import View
-from django.db.models import Sum
 from date_data.date_data import *
 import datetime
 
@@ -74,8 +73,8 @@ class ViewExpenses(View):
     context = {}
 
     def get(self, request):
-        d = datetime.date(2015, 9,17)
-        return HttpResponse(str(convert_to_nepali(d)))
+        d = datetime.date(2015, 2, 19)
+        #return HttpResponse(str(convert_to_nepali(d)))
         expenses = Expense.objects.all()
         categories = [x.name for x in Category.objects.all()]
 
@@ -83,9 +82,11 @@ class ViewExpenses(View):
         for exp in expenses:
             if exp.date not in dates:
                 dates.append(exp.date)
+        dates.sort()
 
-        return HttpResponse(dates)
-        date_expenses={}
+        #return HttpResponse(dates)
+        date_expenses=[]
+        nep_dates = []
         for date in dates:
             exps = expenses.filter(date=date)
             #temp = {x:0 for x in categories}
@@ -94,11 +95,18 @@ class ViewExpenses(View):
                 temp[categories.index(x.category.name)] = x.cost
                 s = sum(temp)
                 temp.append(s)
+
             nep = convert_to_nepali(date)
-            date_expenses[nep] = temp
+            nep = str(nep[0])+ ' '+ months[nep[1]-1] + ' '+ str(nep[2])
+            nep_dates.append([nep, str(date)])
 
+            date_expenses.append(temp)
 
-        return render(request, 'expenses/view.html', {'expenses':date_expenses, 'categories':categories})
+        self.context['categories']= categories
+        self.context['dates_expenses'] = list(zip(nep_dates, date_expenses))
+
+        return render(request, 'expenses/view.html', self.context)
+
 
 class AddItems(View):
     context = {}
@@ -141,6 +149,24 @@ class AddItems(View):
     def set_message(self, message):
         self.context['message'] = message
 
+# parse date
+def parse(date_str):
+    temp = [int(x) for x in date_str.split('-')]
+    return datetime.date(temp[0],temp[1],temp[2])
+
+def comment_request(request):
+    try:
+        post_date = request.POST.get('date', '')
+        if post_date=='':
+            return HttpResponse('***')
+        exps = Expense.objects.filter(date=parse(post_date))
+
+        if exps[0].comment=='':
+            return HttpResponse('***')
+        return HttpResponse(exps[0].comment)
+    except Exception as e:
+        return HttpResponse(str(e))
+
 
 def convert_to_nepali(engdate, delta=-1):
 
@@ -167,11 +193,11 @@ def convert_to_nepali(engdate, delta=-1):
         #print('delta_days:', delta_days)
         mt+=1
         if delta_days == 0:
-            print('del 0 here')
-            return (nep_yr, mt+1, 1)
+            #print('del 0 here')
+            return (nep_yr, mt, nepali_date[ind][mt])
         if delta_days < 0:
-            print('here')
-            return(nep_yr, mt-1, nepali_date[ind][mt-1]+delta_days-1)
+            #print('neg here')
+            return(nep_yr, mt, nepali_date[ind][mt-1]+delta_days)
         if mt>11:
             nep_yr+=1
             mt=0

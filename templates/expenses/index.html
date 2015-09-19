@@ -1,24 +1,32 @@
 {% extends "expenses/base.html" %}
 
 {% block content %}
-    <h1>HELLO THERE</h1>
+    <h1>ADD EXPENSE</h1>
     <div class="error">
         {{expense_form.non_field_errors}}
     </div>
     <form method="post" action="{% url 'index'%}" onsubmit="return process_form();">
+    <table class="table">
         {% csrf_token %}
-        {{expense_form.date.label_tag}}{{expense_form.date}}
-        <br><br>
-        <div id='categories'>
-        {{expense_form.category.label_tag}}{{expense_form.category}}
-        </div>
-        <br>
-        {{expense_form.total.label_tag}}{{expense_form.total}}
-        <br><br>
-        {{expense_form.comment.label_tag}}{{expense_form.comment}}
-        <br><br>
+        <tr>
+        <td>{{expense_form.date.label_tag}}</td><td>{{expense_form.date}}</td>
+        </tr>
+        <tr>
+        <td><div id='categories'>{{expense_form.category.label_tag}}</div></td><td>{{expense_form.category}}</td>
+        </tr>
+        <tr>
+        <td>{{expense_form.total.label_tag}}</td><td>{{expense_form.total}}</td>
+        </tr>
+        <tr>
+        <td>{{expense_form.comment.label_tag}}</td><td>{{expense_form.comment}}</td>
+        </tr>
+        <tr>
+        <td>
         <input type="hidden" name="json_string" value="">
-        <input type="submit" vlaue="Add Expense" />
+        <input type="submit" value="Add Expense" />
+        </td>
+        </tr>
+    </table>
     </form>
     <br>
     Or <a href="/expenses/view/"> view details</a><br>
@@ -30,5 +38,9 @@
 <script>
     var g_cats_items = JSON.parse('{{cats_items|safe}}');
     load();
+    
+    $('.cost').on('input', function(){
+        get_total_value();
+    });
 </script>
 {% endblock %}

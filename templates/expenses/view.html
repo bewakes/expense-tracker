@@ -12,15 +12,50 @@
                 <th> Total |- </th>
         </tr>
         </thead>
-        {% for key, value in expenses.items %}
+        {% for x in dates_expenses %}
         <tr>
-            <td>{{key}}</td>
-            {% for val in value %}
+            <td class="date" id="{{x.0.1}}">{{x.0.0}}</td>
+            {% for val in x.1 %}
             <td>{{val}}</td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
 
+    <div id="comment">
+    </div>
+
     return to <a href="{% url 'index'%}">main page</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // on mouseover function
+    $(".date").on("mouseover", function(e) { 
+
+                // send post request
+                $.ajax({
+                    "type":"POST",
+                    "url":"{% url 'comment' %}",
+                    "data":{"date":this.id, csrfmiddlewaretoken:'{{csrf_token}}'}
+                })
+                .done(function(msg){
+                    if(msg=='***')
+                        set_comment('No comment for the day');
+                    else
+                        set_comment(msg);
+                });
+    });
+
+    // onmouse out function
+    $(".date").on("mouseout", function(e) {
+        set_comment('');
+    });
+
+    function set_comment(comment)
+    {
+        $("#comment").text(comment);
+    }
+
+</script>
 {% endblock %}
