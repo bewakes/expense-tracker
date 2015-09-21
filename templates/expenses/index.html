@@ -35,6 +35,8 @@
 {% endblock %}
 
 {% block scripts %}
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+
 <script>
     var g_cats_items = JSON.parse('{{cats_items|safe}}');
     load();
@@ -42,5 +44,6 @@
     $('.cost').on('input', function(){
         get_total_value();
     });
+    
 </script>
 {% endblock %}

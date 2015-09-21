@@ -32,4 +32,4 @@ class ItemExpense(models.Model):
     cost = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.date) +" "+ self.item+" "+self.cost
+        return str(self.date) +" "+ self.item.name+" "+str(self.cost)

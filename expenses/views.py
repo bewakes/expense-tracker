@@ -29,7 +29,7 @@ class IndexPage(View):
         for x in cats:
             items = Item.objects.filter(category=x)
             cats_items[x.name]=[x.name for x in items]
-        self.context['cats_items'] = json.dumps(cats_items)
+        self.context['cats_items'] = json.dumps(cats_items).replace('"', '\\"').replace('\'', '\\\'')
         
         return render(request, 'expenses/index.html', self.context)
 
@@ -53,7 +53,7 @@ class IndexPage(View):
 
                 qty = float(item[itm_name]['quantity'])
                 cst = int(item[itm_name]['cost'])
-                if qty==0 or cost==0:
+                if qty==0 or cst==0:
                     self.context['message'] = 'Zero value for some items'
                     return render(request, 'expenses/index.html', self.context)
 
@@ -84,6 +84,7 @@ class ViewExpenses(View):
         #return HttpResponse(str(convert_to_nepali(d)))
         expenses = Expense.objects.all()
         categories = [x.name for x in Category.objects.all()]
+        print(categories)
 
         dates = []
         for exp in expenses:
@@ -98,10 +99,12 @@ class ViewExpenses(View):
             exps = expenses.filter(date=date)
             #temp = {x:0 for x in categories}
             temp = [0]*len(categories)
+            print('len exps', len(exps))
             for x in exps:
-                temp[categories.index(x.category.name)] = x.cost
-                s = sum(temp)
-                temp.append(s)
+                ind = categories.index(x.category.name)
+                temp[ind] = x.cost
+            s = sum(temp)
+            temp.append(s)
 
             nep = convert_to_nepali(date)
             nep = str(nep[0])+ ' '+ months[nep[1]-1] + ' '+ str(nep[2])

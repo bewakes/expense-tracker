@@ -6,4 +6,5 @@ admin.autodiscover()
 admin.site.register(Category)
 admin.site.register(Item)
 admin.site.register(Expense)
+admin.site.register(ItemExpense)
 

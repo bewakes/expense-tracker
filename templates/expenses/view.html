@@ -50,7 +50,7 @@
                 })
                 .done(function(msg){
                     if(msg=='***' || msg.trim()=='')
-                        set_comment('No comment for the day', id);
+                        set_comment('-----------------------', id);
                     else
                         set_comment(msg, id);
                 });
