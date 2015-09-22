@@ -56,12 +56,9 @@ class IndexPage(View):
                 if qty==0 or cst==0:
                     self.context['message'] = 'Zero value for some items'
                     return render(request, 'expenses/index.html', self.context)
-
-                itm_exp = ItemExpense(date=exp_date, item=itm, 
-                            quantity=qty, cost=cst)
-                
-                itm_exp.save()
+                                
             expenses = Expense.objects.filter(date=exp_date, category=category)
+            expense=None
             if len(expenses) == 0: # means no expense yet for the day on the same category
                 expense = Expense(date=exp_date, category=category, comment=comment, cost=total_cost)
                 expense.save()
@@ -69,6 +66,10 @@ class IndexPage(View):
                 expense = expenses[0]
                 expense.cost+=total_cost
                 expense.save()
+            # save the item expense ( as it depends on expense)
+            itm_exp = ItemExpense(expense=expense, item=itm, 
+                            quantity=qty, cost=cst)
+            itm_exp.save()
 
             self.context['message'] = 'Expense added'
             return render(request, 'expenses/index.html', self.context)

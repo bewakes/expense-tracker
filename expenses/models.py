@@ -26,10 +26,10 @@ class Expense(models.Model):
         return str(self.date) + " "+ str(self.cost)
 
 class ItemExpense(models.Model):
-    date = models.DateField('date')
     item = models.ForeignKey(Item, null=True)
+    expense = models.ForeignKey(Expense, null=True)
     quantity = models.FloatField(default=1)
     cost = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.date) +" "+ self.item.name+" "+str(self.cost)
+        return str(self.expense.date) +" "+ self.item.name+" "+str(self.cost)
