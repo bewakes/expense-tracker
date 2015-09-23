@@ -47,6 +47,9 @@ class IndexPage(View):
         self.context['expense_form'] = ExpenseForm()
         try:
             category = Category.objects.filter(name=expense_dict['category'])[0]
+            itm = None
+            qty= None
+            cst=None
             for item in expense_dict['items']:
                 itm_name = str(list(item.keys())[0])
                 itm = Item.objects.all().filter(name=itm_name)[0]
@@ -65,11 +68,13 @@ class IndexPage(View):
             else: # already exists, add total
                 expense = expenses[0]
                 expense.cost+=total_cost
+                expense.comment+='\n'+comment
                 expense.save()
             # save the item expense ( as it depends on expense)
-            itm_exp = ItemExpense(expense=expense, item=itm, 
+            if len(expense_dict['items']) > 0:
+                itm_exp = ItemExpense(expense=expense, item=itm, 
                             quantity=qty, cost=cst)
-            itm_exp.save()
+                itm_exp.save()
 
             self.context['message'] = 'Expense added'
             return render(request, 'expenses/index.html', self.context)
