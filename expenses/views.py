@@ -68,7 +68,7 @@ class IndexPage(View):
             else: # already exists, add total
                 expense = expenses[0]
                 expense.cost+=total_cost
-                expense.comment+='\n'+comment
+                expense.comment+='<br>'+comment
                 expense.save()
             # save the item expense ( as it depends on expense)
             if len(expense_dict['items']) > 0:
@@ -90,7 +90,7 @@ class ViewExpenses(View):
         #return HttpResponse(str(convert_to_nepali(d)))
         expenses = Expense.objects.all()
         categories = [x.name for x in Category.objects.all()]
-        print(categories)
+        #print(categories)
 
         dates = []
         for exp in expenses:
@@ -105,7 +105,6 @@ class ViewExpenses(View):
             exps = expenses.filter(date=date)
             #temp = {x:0 for x in categories}
             temp = [0]*len(categories)
-            print('len exps', len(exps))
             for x in exps:
                 ind = categories.index(x.category.name)
                 temp[ind] = x.cost
@@ -177,9 +176,14 @@ def comment_request(request):
             return HttpResponse('***')
         exps = Expense.objects.filter(date=parse(post_date))
 
-        if exps[0].comment=='':
+        comments = ""
+        for x in exps:
+            comments+=x.comment+'\n'
+        c = comments.strip()
+        c = c.replace('\n','')
+        if c=='':
             return HttpResponse('***')
-        return HttpResponse(exps[0].comment)
+        return HttpResponse(comments)
     except Exception as e:
         return HttpResponse(str(e))
 
