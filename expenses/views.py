@@ -10,7 +10,7 @@ import datetime
 from expenses.models import *
 from expenses.forms import ExpenseForm
 
-import json
+import json, re
 
 months = ['BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ', 'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA']
 
@@ -85,30 +85,28 @@ class IndexPage(View):
 class ViewExpenses(View):
     context = {}
 
-    def get(self, request):
-        d = datetime.date(2015, 2, 19)
-        #return HttpResponse(str(convert_to_nepali(d)))
+    def get_records(self, start_date=datetime.datetime.now().date(), end_date=datetime.datetime.now().date()):
+        context = {}
         expenses = Expense.objects.all()
         categories = [x.name for x in Category.objects.all()]
-        #print(categories)
 
         dates = []
         for exp in expenses:
-            if exp.date not in dates:
+            if exp.date not in dates and exp.date<=end_date and exp.date>=start_date:
                 dates.append(exp.date)
         dates.sort()
 
-        #return HttpResponse(dates)
         date_expenses=[]
         nep_dates = []
+        sum_total = 0
         for date in dates:
             exps = expenses.filter(date=date)
-            #temp = {x:0 for x in categories}
             temp = [0]*len(categories)
-            for x in exps:
+            for x in exps: 
                 ind = categories.index(x.category.name)
                 temp[ind] = x.cost
             s = sum(temp)
+            sum_total+=s
             temp.append(s)
 
             nep = convert_to_nepali(date)
@@ -117,11 +115,34 @@ class ViewExpenses(View):
 
             date_expenses.append(temp)
 
-        self.context['categories']= categories
-        self.context['dates_expenses'] = list(zip(nep_dates, date_expenses))
+        context['categories']= categories
+        context['dates_expenses'] = list(zip(nep_dates, date_expenses))
+        context['grand_total'] = sum_total
+        return context
 
+    def get(self, request):
+        end = datetime.datetime.now().date()
+        start = end -  datetime.timedelta(days=7)
+        self.context = self.get_records(start, end)
+        self.context['detail_title'] = 'Last week\'s expense'
+        self.context['months'] = months
+        self.context['years'] = [2072 + x for x in range(0,2015 - datetime.datetime.now().year+1)]
         return render(request, 'expenses/view.html', self.context)
 
+    def post(self, request):
+        year = self.request.POST.get('year', '')
+        month = self.request.POST.get('month', '')
+        
+        if not re.match(r'[0-9]{4}', year) or month not in months:
+            raise Http404('requested date not found')
+
+        date_range = get_eng_date_range(year, month)   
+        self.context = self.get_records(date_range[0], date_range[1])
+        self.context['detail_title'] = 'Details for '+year+' '+month
+        self.context['months'] = months
+        self.context['years'] = [2072 + x for x in range(0,2015 - datetime.datetime.now().year+1)]
+
+        return render(request, 'expenses/view.html', self.context)
 
 class AddItems(View):
     context = {}
@@ -192,6 +213,10 @@ def convert_to_nepali(engdate, delta=-1):
 
     # date min 2000, push 17
     # date max 2090, Chaitra 30
+    try:
+        engdate = engdate.date()
+    except:
+        pass
     start_eng = datetime.date(1944, 1, 1)
 
     if delta==-1:
@@ -223,3 +248,50 @@ def convert_to_nepali(engdate, delta=-1):
             mt=0
             ind+=1
         rem_days = nepali_date[ind][mt]
+
+
+def get_eng_date_range(nep_year, nep_month):
+        start_eng_year = int(nep_year) - 57   # generally, engyr = nepyr-57
+        month_ind = months.index(nep_month)+1
+        if month_ind > 9: # but if month is > MAGH then nepyr-57+1
+            start_eng_year+=1
+
+        end_eng_year = start_eng_year
+        start_eng_month = (month_ind+3)%13
+        end_eng_month = start_eng_month+1
+        if end_eng_month>12:
+            end_eng_month=1
+            end_eng_year += 1
+        start_date = 15
+        end_date = 20
+        # we check from 15th of start month to 20th of next month so that we wont miss anything 
+
+        # check first 6 days for our desired month
+        nep = convert_to_nepali(datetime.datetime(start_eng_year, start_eng_month, start_date))
+        # the month should not be equal to the month we seek( generally new month starts from 17/18)
+        if nep[1]-1==month_ind:
+            raise Http404('Something error with month calculation')
+        for x in range(6):
+            nep = convert_to_nepali(datetime.datetime(start_eng_year, start_eng_month, start_date+x))
+            if nep[1]-1==month_ind:
+                start_date = start_date+x
+                break
+
+        # now check last 6 days for our desired month
+        nep = convert_to_nepali(datetime.datetime(end_eng_year, end_eng_month, end_date))
+        # the month should not be equal to the month we seek( generally new month starts from 17/18)
+        if nep[1]==month_ind:
+            raise Http404('Something error with month calculation')
+        for x in range(6):
+            nep = convert_to_nepali(datetime.datetime(end_eng_year, end_eng_month, end_date-x))
+            if nep[1]==month_ind:
+                end_date = end_date-x
+                break
+        return [datetime.datetime(start_eng_year, start_eng_month, start_date).date(),
+                    datetime.datetime(end_eng_year, end_eng_month, end_date).date()]
+
+
+
+def show_graph(request):
+    return HttpResponse(get_eng_date_range(2072, 'POUSH'))
+    return render(request, "expenses/graph.html",{})

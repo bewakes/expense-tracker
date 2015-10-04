@@ -1,6 +1,6 @@
 {% extends "expenses/base.html" %}
 {% block content %}
-    <h2> Details </h2>
+    <h2> {{detail_title}}</h2>
     {# create table #}
     <table class="table table-hover">
         <thead>
@@ -21,9 +21,25 @@
         </tr>
         {% endfor %}
     </table>
-
-    <div id="comment">
-    </div>
+    <h3 class="text-right">Grand total: {{grand_total}}</h3>
+    <br>
+    <br>
+    <h2>Or view details of any month</h2>
+    <form method="post" action="{% url 'view' %}">
+        {% csrf_token %}
+        <label>Year:</label>
+        <select name="year">
+            {% for x in years %}
+                <option value="{{x}}">{{x}}</option>
+            {% endfor %}
+        </select>
+        <select name="month">
+            {% for x in months %}
+                <option value="{{x}}">{{x}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="View"/>
+    </form>
 
     return to <a href="{% url 'index'%}">main page</a>
 {% endblock %}
