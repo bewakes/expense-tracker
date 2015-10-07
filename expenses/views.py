@@ -85,7 +85,7 @@ class IndexPage(View):
 class ViewExpenses(View):
     context = {}
 
-    def get_records(self, start_date=datetime.datetime.now().date(), end_date=datetime.datetime.now().date()):
+    def get_records(start_date=datetime.datetime.now().date(), end_date=datetime.datetime.now().date()):
         context = {}
         expenses = Expense.objects.all()
         categories = [x.name for x in Category.objects.all()]
@@ -123,7 +123,7 @@ class ViewExpenses(View):
     def get(self, request):
         end = datetime.datetime.now().date()
         start = end -  datetime.timedelta(days=7)
-        self.context = self.get_records(start, end)
+        self.context = ViewExpenses.get_records(start, end)
         self.context['detail_title'] = 'Last week\'s expense'
         self.context['months'] = months
         self.context['years'] = [2072 + x for x in range(0,2015 - datetime.datetime.now().year+1)]
@@ -137,7 +137,7 @@ class ViewExpenses(View):
             raise Http404('requested date not found')
 
         date_range = get_eng_date_range(year, month)   
-        self.context = self.get_records(date_range[0], date_range[1])
+        self.context = ViewExpenses.get_records(date_range[0], date_range[1])
         self.context['detail_title'] = 'Details for '+year+' '+month
         self.context['months'] = months
         self.context['years'] = [2072 + x for x in range(0,2015 - datetime.datetime.now().year+1)]
@@ -293,5 +293,14 @@ def get_eng_date_range(nep_year, nep_month):
 
 
 def show_graph(request):
-    return HttpResponse(get_eng_date_range(2072, 'POUSH'))
-    return render(request, "expenses/graph.html",{})
+    data = ViewExpenses.get_records(datetime.datetime.now().date() -  datetime.timedelta(days=15), datetime.datetime.now().date())
+    data = {'data':data['dates_expenses']}
+    context = {}
+    # nothing much, just extracting year and month
+    context['heading'] = ' '.join(data['data'][0][0][0].split()[:2])
+    new = []
+    for x in data['data']:
+        t = [x[0][0].split()[-1], x[1]]
+        new.append(t)
+    context['data'] =  json.dumps(new)
+    return render(request, "expenses/graph.html", context)
