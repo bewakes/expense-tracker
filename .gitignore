@@ -4,3 +4,4 @@ __pycache
 db.sqlite3
 .env/
 *.pyc
+.brotasks
