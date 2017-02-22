@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.utils import timezone
 from django.views.generic import View
-from date_data.date_data import *
+#from date_data.date_data import *
 import datetime
 
 from expenses.models import *
@@ -43,7 +43,7 @@ class IndexPage(View):
         else:
             return HttpResponse('invalid form')
 
-        expense_dict = json.loads(jsonstr)
+        expense_dict = dict(request.POST)#json.loads(jsonstr)
         self.context['expense_form'] = ExpenseForm()
         try:
             category = Category.objects.filter(name=expense_dict['category'])[0]
