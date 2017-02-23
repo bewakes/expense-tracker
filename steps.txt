@@ -6,5 +6,6 @@ add authentication_backends to settings.py
 add template context_processers: 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
 
+python-openid throws import error for HTMLParserError, so install python3-openid
 add appid and secrets
 add LOGIN_REDIRECT_URL
