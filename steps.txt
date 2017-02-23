@@ -1,0 +1,10 @@
+install python social auth  : pip install python-social-auth
+add 'social_django' to installed apps
+migrate
+
+add authentication_backends to settings.py
+add template context_processers: 'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+
+add appid and secrets
+add LOGIN_REDIRECT_URL
