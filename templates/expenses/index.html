@@ -1,50 +1,15 @@
 {% extends "expenses/base.html" %}
 
 {% block content %}
-    <h1>ADD EXPENSE - {{user}}</h1>
-    <div class="error">
-        {{expense_form.non_field_errors}}
+<div ng-app="expenses"> 
+    <div ng-controller="myController">
+    {{name}}a
     </div>
-    <form method="post" action="{% url 'index'%}" onsubmit="return process_form();">
-    <table class="table">
-        {% csrf_token %}
-        <tr>
-        <td>{{expense_form.date.label_tag}}</td><td>{{expense_form.date}}</td>
-        </tr>
-        <tr>
-        <td><div id='categories'>{{expense_form.category.label_tag}}</div></td><td>{{expense_form.category}}</td>
-        </tr>
-        <tr>
-        <td>{{expense_form.total.label_tag}}</td><td>{{expense_form.total}}</td>
-        </tr>
-        <tr>
-        <td>{{expense_form.comment.label_tag}}</td><td>{{expense_form.comment}}</td>
-        </tr>
-        <tr>
-        <td>
-        <input type="hidden" name="json_string" value="">
-        <input type="submit" value="Add Expense" />
-        </td>
-        </tr>
-    </table>
-    </form>
-    <br>
-    Or <a href="/expenses/view/"> view details</a><br>
-    Or <a href="/expenses/add-items/"> add new items</a><br>
-    <a href="/expenses/graph/">graph</a>
-
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
 
 <script>
-    var g_cats_items = JSON.parse('{{cats_items|safe}}');
-    load();
-    
-    $('.cost').on('input', function(){
-        get_total_value();
-    });
-    
 </script>
 {% endblock %}

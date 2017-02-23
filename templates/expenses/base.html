@@ -1,8 +1,9 @@
 {% load staticfiles%}
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="{%static 'css/bootstrap.min.css'%}"/>
-<title>Daily expenses</title>
+    <link rel="stylesheet" type="text/css" href="{%static 'css/bootstrap.min.css'%}"/>
+    <title>Daily expenses</title>
+    <script data-main="{% static 'main.js' %}" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
 </head>
 
 <body >
@@ -22,13 +23,6 @@
     </div> {# end row #}
 </div>
 </body>
-<script type="text/javascript" src="{%static 'js/flot/jquery.js'%}"></script>
-<script type="text/javascript" src="{%static 'js/index.js'%}"></script>
-
-<script type="text/javascript" src="{%static 'js/flot/excanvas.js' %}"></script>
-<script type="text/javascript" src="{%static 'js/flot/jquery.flot.min.js'%}"></script>
-<script type="text/javascript" src="{%static 'js/flot/jquery.flot.time.js'%}"></script>
-<script type="text/javascript" src="{%static 'js/flot/jquery.flot.symbol.js'%}"></script>
 {% block scripts %}
 {% endblock %}
 </html>
