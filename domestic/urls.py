@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', include('expenses.urls')),
     url(r'^expenses/', include('expenses.urls')),
+    url('', include('social_django.urls', namespace='social')),
 ]
