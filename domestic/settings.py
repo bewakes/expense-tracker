@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SOCIAL_AUTH_FACEBOOK_KEY = "792424380907534"
+SOCIAL_AUTH_FACEBOOK_SECRET = "dcf12e1e439b0f9e7c8029a4f4532190"
+
+LOGIN_REDIRECT_URL = "/"
+
 
 # Application definition
 
@@ -54,6 +59,7 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.open_id.OpenIdAuth',
     'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.google.GoogleOAuth',
     'social_core.backends.twitter.TwitterOAuth',
     'django.contrib.auth.backends.ModelBackend',

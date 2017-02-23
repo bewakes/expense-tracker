@@ -1,7 +1,7 @@
 {% extends "expenses/base.html" %}
 
 {% block content %}
-    <h1>ADD EXPENSE</h1>
+    <h1>ADD EXPENSE - {{user}}</h1>
     <div class="error">
         {{expense_form.non_field_errors}}
     </div>

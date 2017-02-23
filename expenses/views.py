@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.views.generic import View
 #from date_data.date_data import *
 import datetime
+from django.contrib.auth import logout
 
 from expenses.models import *
 from expenses.forms import ExpenseForm
@@ -20,6 +21,8 @@ class IndexPage(View):
     context = {}
     
     def get(self, request):   
+        if not request.user.is_authenticated():
+            return redirect('login')
         form  = ExpenseForm()
         self.context={'expense_form':form}
 
@@ -304,3 +307,13 @@ def show_graph(request):
         new.append(t)
     context['data'] =  json.dumps(new)
     return render(request, "expenses/graph.html", context)
+
+def login(request):
+    if not request.user.is_authenticated():
+        return render(request, "expenses/login.html", {})
+    else:
+        return redirect('index')
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
