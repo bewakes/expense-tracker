@@ -1,2 +1,3 @@
-define(['app'], function(app) {
+define(['./controllers/myController'], function() {
+    require(['myController'] );
 });
