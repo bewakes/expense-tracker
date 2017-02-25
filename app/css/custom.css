@@ -5,6 +5,7 @@
 body {
     background-color: #eeeeee;
     font-family:Avro;
+    overflow:hidden;
 }
 
 #topbar {
@@ -74,13 +75,20 @@ ul.horizontal-menu {
     border: solid 1px #999;
 }
 
-.view-header {
+.dark-header {
     background-color: #222226;
     font-size:1.3em;
     color:#eee;
     padding:10px;
+}
+
+.view-header {
     margin: 40px 0 0px;
-    border-radius:3px 3px 0px 0px
+}
+
+.full-width {
+    padding-left:0px !important;
+    padding-right:0px !important;
 }
 
 .undecorated {

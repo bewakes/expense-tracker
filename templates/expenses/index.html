@@ -1,34 +1,16 @@
 {% extends "expenses/base.html" %}
 
 {% block content %}
-
-
-<div id="topbar" class="row">
-    <div class="col-md-2">
-      <span id="site-title">Expenses</span>
-    </div>
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-      <span id="site-subtitle">Clean and easy expenses tracking..</span>
-    </div>
-</div>
-<div id="menubar" class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-6">
-    <ul class="horizontal-menu">
-      <li><a href="">Bibek</a></li>
-      <li><a href="">Bidhan</a></li>
-      <li><a href="">Hari</a></li>
-      <li><a href="">Pandey</a></li>
-    </ul>
-  </div>
-  <div class="col-md-2 text-right">Hi <b>BIBEK</b>(<a class="undecorated" href="">Sign out</a>)</div>
-</div>
-
-
 <div ng-view ng-cloak >
 </div>
 {% endblock %}
+
+{# footer block #}
+<div class="row view-header">
+  <div class="col-md-12">
+    <span style="color:black">copyright</span>
+  </div>
+</div>
 
 {% block scripts %}
 

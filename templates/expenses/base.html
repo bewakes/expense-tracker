@@ -10,8 +10,46 @@
 
 <body>
     <div class="container-fluid">
+        <div id="topbar" class="row">
+            <div class="col-md-2">
+            <span id="site-title">Expenses</span>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+            <span id="site-subtitle">Clean and easy expenses tracking..</span>
+            </div>
+        </div>
+        <div id="menubar" class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-5">
+                {% if request.user.is_authenticated %}
+                <ul class="horizontal-menu">
+                <li><a href="#/">Home</a></li>
+                <li><a href="#/items">Items</a></li>
+                <li><a href="">Hari</a></li>
+                <li><a href="">Pandey</a></li>
+                </ul>
+                {% endif %}
+            </div>
+            <div class="col-md-3 text-right">
+                {% if request.user.is_authenticated %}
+                Hi <b>{{request.user}}</b>(<a class="undecorated" href="expenses/logout/">Sign out</a>)
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
         {% block content %}
         {% endblock %}
+
+        <div class="row full-width">
+            <div class="col-md-12 full-width">
+                <div class="dark-header">
+                    CopyRight<br/><br/>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 {% block scripts %}

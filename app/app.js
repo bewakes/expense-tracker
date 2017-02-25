@@ -1,10 +1,18 @@
-define(['angular', 'ngRoute'], function(angular) {
-    var app = angular.module('expenses', ['ngRoute']);
+define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
+    var app = angular.module('expenses', ['ngRoute', 'ngCookies']);
 
-    config.$inject = ['$routeProvider', '$controllerProvider', '$provide', '$compileProvider', '$httpProvider'];
+    var appState = {
+        error: '',
+        identity: null,
+        username: 'bibek',
+    };
+
+    app.value('appState', appState);
+
+    config.$inject = ['$routeProvider', '$controllerProvider', '$provide', '$compileProvider', '$httpProvider', '$locationProvider'];
     app.config(config);
 
-    function config($routeProvider, $controllerProvider, $provide, $compileProvider) {
+    function config($routeProvider, $controllerProvider, $provide, $compileProvider, $locationProvider) {
 
         app.register = {
             controller: $controllerProvider.register,
@@ -14,7 +22,9 @@ define(['angular', 'ngRoute'], function(angular) {
 
         $routeProvider
             .when('/', resolve('home', 'home'))
-            .when('/login/', resolve('login', 'login'))
+            .when('/_=_', resolve('home', 'home')) // for social login redirect
+            .when('/items', resolve('items', 'items')) // for social login redirect
+//            .when('/login/', resolve('login', 'login'))
     }
 
     function resolve(controllername, templatename) {

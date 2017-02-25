@@ -1,7 +1,7 @@
 define(['app'], function(app) {
 
-    homeController.$inject = ['$scope'];
-    function homeController($scope) {
+    homeController.$inject = ['$scope', '$location', 'appState'];
+    function homeController($scope, $location, appState) {
         $scope.name = "bibek";
     }
     app.register.controller('homeController', homeController);
