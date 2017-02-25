@@ -1,27 +1,18 @@
 {% load staticfiles%}
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine+Lato+Vollkorn">
     <link rel="stylesheet" type="text/css" href="{%static 'css/bootstrap.min.css'%}"/>
+    <link rel="stylesheet" type="text/css" href="{%static 'css/custom.css'%}"/>
     <title>Daily expenses</title>
-    <script data-main="{% static 'main.js' %}" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
+    <script data-main="{% static 'config.js' %}" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
 </head>
 
-<body ng-controller="myController">
-
-{# the navigation bar part #}
-<div class="container">
-    <div class="row">
-    <div class="col-md-12">
-    <div id="message" style="color:red">
-        {{message}}
+<body>
+    <div class="container-fluid">
+        {% block content %}
+        {% endblock %}
     </div>
-
-    {# the body part #}
-    {% block content %}
-    {% endblock %}
-    </div> {# end col #}
-    </div> {# end row #}
-</div>
 </body>
 {% block scripts %}
 {% endblock %}

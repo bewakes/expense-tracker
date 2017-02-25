@@ -1,0 +1,105 @@
+/*
+ * HOME PAGE AND INDEX
+ */
+
+body {
+    background-color: #eeeeee;
+    font-family:Avro;
+}
+
+#topbar {
+    height:90px;
+    background-color: #222226;
+    color:white;
+    padding-left:1%;
+}
+#menubar {
+    min-height: 35px;
+    max-height: 35px;
+    background-color: #2980b9;
+}
+
+#site-title {
+    font-family: Lato;
+    font-weight: bold;
+    font-size: 3.3em;
+    line-height:90px;
+}
+
+.block-item {
+}
+
+ul.horizontal-menu {
+    margin-top:-10px !important;
+    list-style-type:none;
+    margin:0;
+    overflow:hidden;
+    vertical-align:middle;
+    line-height:35px;
+}
+.horizontal-menu li {
+    padding:0px;
+    float:left;
+    width:100px;
+}
+
+.horizontal-menu li a {
+    /*display: inline-block;*/
+    color: #eee;
+    text-align: center;
+    padding:10px 10px;
+    margin-bottom:10px;
+    text-decoration: none;
+    font-size:1.2em;
+    font-family: Lato;
+    transition: 0.3s;
+}
+.horizontal-menu li a:hover {
+    background-color:#173650;
+}
+
+#site-subtitle {
+    font-family:Lato;
+    color: #ccc;
+    line-height:100px;
+    font-size: 1.8em;
+}
+
+.bottom-padding-0{
+    padding-bottom: 0px !important;
+}
+
+.view-content {
+    min-height:400px;
+    border: solid 1px #999;
+}
+
+.view-header {
+    background-color: #222226;
+    font-size:1.3em;
+    color:#eee;
+    padding:10px;
+    margin: 40px 0 0px;
+    border-radius:3px 3px 0px 0px
+}
+
+.undecorated {
+    text-decoration: none;
+    font-size:0.9em;
+    color:#eee;
+}
+.undecorated:hover {
+    color:#ccc;
+    text-decoration:none;
+}
+
+
+/*
+ * LOGIN PAGE
+ */
+
+.long-button {
+    width:300px;
+    height:40px;
+    margin-bottom: 40px;
+}
