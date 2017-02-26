@@ -23,16 +23,15 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
         $routeProvider
             .when('/', resolve('home', 'home'))
             .when('/_=_', resolve('home', 'home')) // for social login redirect
-            .when('/items', resolve('items/listItems', 'items/listItems'))
-            .when('/items/new', resolve('items/newItem', 'items/newItem'))
+            .when('/items', resolve('items', 'items'))
+            .when('/categories', resolve('categories', 'categories'))
+            //.when('/expenses', resolve('expenses', 'expenses'))
     }
 
     function resolve(controllername, templatename) {
-        var arr = controllername.split('/');
-        var controller = arr[arr.length-1];
         return {
             templateUrl: 'static/app/templates/'+templatename+'.html',
-            controller: controller+'Controller',
+            controller: controllername+'Controller',
             resolve: {
                 load: function($q, $rootScope) {
                     var deferred = $q.defer();

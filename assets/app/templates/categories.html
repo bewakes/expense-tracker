@@ -1,0 +1,40 @@
+<div class="row full-width marginless-row">
+    <div class="col-md-12 full-width">
+        <div class="text-center view-header dark-header">
+            My Categories
+        </div>
+        <div class="view-content">
+            <div class="row marginless-row">
+                <div class="col-md-6 items-container">
+                    <div class="blue-header">
+                        All Categories
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item" ng-repeat="x in categories">
+                            <span>{{x}}</span>
+                            <span style="float:right">
+                                <a class="helper-link" ng-click="" href="javascript:void(0)">Remove</a>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6 items-container">
+                    <div class="blue-header">
+                        Add Category
+                    </div>
+                    <div class="form-element">
+                        <label>Category</label>
+                        <input type="text" placeholder="New Category name"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Description</label>
+                        <textarea></textarea>
+                    </div>
+                    <div class="form-element text-center">
+                        <button class="btn btn-danger long-button">Add Category</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
