@@ -5,3 +5,5 @@ db.sqlite3
 .env/
 *.pyc
 .brotasks
+manage.py
+wsgi.py
