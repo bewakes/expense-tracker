@@ -1,4 +1,4 @@
-define(['app'], function(app) {
+define(['app/app'], function(app) {
     itemsController.$inject = ['$scope', '$location', 'appState'];
     function itemsController($scope, $location, appState) {
         $scope.type = "Items";

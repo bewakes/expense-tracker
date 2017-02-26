@@ -3,6 +3,7 @@ from expenses.models import *
 
 admin.autodiscover()
 
+admin.site.register(AppUser)
 admin.site.register(Category)
 admin.site.register(Item)
 admin.site.register(Expense)

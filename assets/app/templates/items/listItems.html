@@ -1,0 +1,59 @@
+<div class="row full-width marginless-row">
+    <div class="col-md-12 full-width">
+        <div class="text-center view-header dark-header">
+            My Items
+        </div>
+        <div class="view-content">
+            <div class="row marginless-row">
+                <div class="col-md-4 items-container">
+                    <div class="blue-header">
+                        Top Items
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item" ng-repeat="x in top_items">
+                            <span>{{x}}</span>
+                            <span style="float:right">
+                                <a class="helper-link" ng-click="" href="javascript:void(0)">Remove</a>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 items-container">
+                    <div class="blue-header">
+                        Latest Items
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item" ng-repeat="x in latest_items">
+                            <span>{{x}}</span>
+                            <span style="float:right">
+                                <a class="helper-link" ng-click=""  href="javascript:void(0)">Remove</a>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 items-container">
+                    <div class="blue-header">
+                        Add Items
+                    </div>
+                    <div class="form-element">
+                        <label>Item Name</label>
+                        <input type="text" placeholder="New item name"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Category</label>
+                        <select class="" ng-model="selected_category">
+                            <option value="" selected="true" disabled>Pick a category</option>
+                            <option ng-repeat="category in categories">{{category.name}}</option>
+                        </select>
+                        <a class="undecorated" href="javascript:void(0)" title="add a category">
+                            <span style="font-size:1.5em;color:skyblue" class="glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                    </div>
+                    <div class="form-element text-center">
+                        <button class="btn btn-danger long-button">Add Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

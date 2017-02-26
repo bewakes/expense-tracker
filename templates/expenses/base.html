@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine+Lato+Vollkorn">
-    <link rel="stylesheet" type="text/css" href="{%static 'css/bootstrap.min.css'%}"/>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{%static 'css/custom.css'%}"/>
     <title>Daily expenses</title>
     <script data-main="{% static 'config.js' %}" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
@@ -24,8 +24,8 @@
             <div class="col-md-5">
                 {% if request.user.is_authenticated %}
                 <ul class="horizontal-menu">
-                <li><a href="#/">Home</a></li>
-                <li><a href="#/items">Items</a></li>
+                <li><a href="#/" id="home-menu">Home</a></li>
+                <li><a href="#/items" id="items-menu">Items</a></li>
                 <li><a href="">Hari</a></li>
                 <li><a href="">Pandey</a></li>
                 </ul>
@@ -37,16 +37,13 @@
                 {% endif %}
             </div>
         </div>
-    </div>
 
         {% block content %}
         {% endblock %}
 
-        <div class="row full-width">
-            <div class="col-md-12 full-width">
-                <div class="dark-header">
-                    CopyRight<br/><br/>
-                </div>
+        <div class="row dark-header">
+            <div class="col-md-12 text-center">
+                <span style="color:white">Copyright 2017</span>
             </div>
         </div>
 

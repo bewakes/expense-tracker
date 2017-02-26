@@ -30,8 +30,9 @@ ALLOWED_HOSTS = []
 SOCIAL_AUTH_FACEBOOK_KEY = "792424380907534"
 SOCIAL_AUTH_FACEBOOK_SECRET = "dcf12e1e439b0f9e7c8029a4f4532190"
 
-LOGIN_REDIRECT_URL = "/"
+SOCIAL_AUTH_USER_MODEL = 'expenses.AppUser'
 
+LOGIN_REDIRECT_URL = "/"
 
 # Application definition
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'expenses',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -135,7 +137,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "app"),
+    os.path.join(BASE_DIR, "assets"),
 )
 
 STATIC_URL = '/static/'

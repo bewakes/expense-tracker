@@ -16,9 +16,18 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from expenses.views import *
+
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'categories', CategoryViewSet)
+#router.register(r'accounts', AccountViewSet)
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', include('expenses.urls')),
     url(r'^expenses/', include('expenses.urls')),
     url('', include('social_django.urls', namespace='social')),
 ]
+urlpatterns += router.urls

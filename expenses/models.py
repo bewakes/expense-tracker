@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Organization(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.OneToOneField('AppUser')
+
 class AppUser(User):
     address = models.CharField(max_length=100, blank=True, null=True)
     occupation = models.CharField(max_length=100, blank=True, null=True)
@@ -10,6 +14,7 @@ class AppUser(User):
 class Category(models.Model):
     user = models.ForeignKey(AppUser)
     name = models.CharField(max_length=50)
+    uses = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -19,6 +24,7 @@ class Item(models.Model):
     name = models.CharField(max_length=50)
     category = models.ForeignKey(Category, null=True)
     user = models.ForeignKey(AppUser)
+    uses = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -26,9 +32,8 @@ class Item(models.Model):
 
 class Expense(models.Model):
     date = models.DateTimeField('date')
-    comment = models.CharField(max_length=1000)
-    #category = models.ForeignKey(Category, null=True)
     item = models.ForeignKey(Item)
+    comment = models.CharField(max_length=1000)
     cost = models.IntegerField(default=0)
     user = models.ForeignKey(AppUser)
 

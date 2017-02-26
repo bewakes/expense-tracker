@@ -13,12 +13,20 @@ require.config({
     // Modules and their dependent modules
     'angular': {
         'exports': 'angular'
+    },
+    'ngRoute': {
+        'deps': ['angular'],
+        'exports': 'ngRoute'
+    },
+    'ngCookies': {
+        'deps': ['angular'],
+        'exports': 'ngCookies'
     }
   },
   //deps:['main']
 });
 
 // this was in main.js, which is now removed
-define(['angular', 'app'], function(angular) {
+define(['angular', 'app/app'], function(angular) {
     angular.bootstrap(document.body, ['expenses']);
 });

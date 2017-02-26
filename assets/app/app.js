@@ -23,18 +23,20 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
         $routeProvider
             .when('/', resolve('home', 'home'))
             .when('/_=_', resolve('home', 'home')) // for social login redirect
-            .when('/items', resolve('items', 'items')) // for social login redirect
-//            .when('/login/', resolve('login', 'login'))
+            .when('/items', resolve('items/listItems', 'items/listItems'))
+            .when('/items/new', resolve('items/newItem', 'items/newItem'))
     }
 
     function resolve(controllername, templatename) {
+        var arr = controllername.split('/');
+        var controller = arr[arr.length-1];
         return {
-            templateUrl: 'static/templates/'+templatename+'.html',
-            controller: controllername+'Controller',
+            templateUrl: 'static/app/templates/'+templatename+'.html',
+            controller: controller+'Controller',
             resolve: {
                 load: function($q, $rootScope) {
                     var deferred = $q.defer();
-                    require(['controllers/'+controllername+'.controller'], function() {
+                    require(['app/controllers/'+controllername+'.controller'], function() {
                         $rootScope.$apply(deferred.resolve);
                     });
                     return deferred.promise;
