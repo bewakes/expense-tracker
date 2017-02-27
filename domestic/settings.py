@@ -27,12 +27,29 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SOCIAL_AUTH_USER_MODEL = 'expenses.AppUser'
+SOCIAL_AUTH_ALWAYS_ASSOCIATE = True
+
 SOCIAL_AUTH_FACEBOOK_KEY = "792424380907534"
 SOCIAL_AUTH_FACEBOOK_SECRET = "dcf12e1e439b0f9e7c8029a4f4532190"
 
-SOCIAL_AUTH_USER_MODEL = 'expenses.AppUser'
-
 LOGIN_REDIRECT_URL = "/"
+
+SOCIAL_AUTH_PIPELINE = [
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.mail.mail_validation',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.debug.debug',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'social.pipeline.debug.debug',
+    'expenses.pipeline.create_org',
+]
 
 # Application definition
 

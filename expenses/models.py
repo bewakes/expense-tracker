@@ -3,21 +3,31 @@ from django.contrib.auth.models import User
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    user = models.OneToOneField('AppUser')
+    owner = models.OneToOneField('AppUser')
+    is_individual = models.BooleanField(default=True)
+
+    def __str__(self):
+        return '{}'.format(self.name)
 
 class AppUser(User):
     address = models.CharField(max_length=100, blank=True, null=True)
     occupation = models.CharField(max_length=100, blank=True, null=True)
-    # profile_image = models.ImageField(null=True)
+    organizations = models.ManyToManyField(Organization, null=True, related_name="users")
+    has_setup = models.BooleanField(default=False) # means user has set up for individual or organizational record
 
 
 class Category(models.Model):
     user = models.ForeignKey(AppUser)
     name = models.CharField(max_length=50)
     uses = models.IntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 class Item(models.Model):
@@ -25,9 +35,14 @@ class Item(models.Model):
     category = models.ForeignKey(Category, null=True)
     user = models.ForeignKey(AppUser)
     uses = models.IntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 class Expense(models.Model):
@@ -36,9 +51,15 @@ class Expense(models.Model):
     comment = models.CharField(max_length=1000)
     cost = models.IntegerField(default=0)
     user = models.ForeignKey(AppUser)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '{} {} - {}'.format(str(self.date), str(self.cost), self.item.name)
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+
 
 # not used currently
 class ItemExpense(models.Model):

@@ -1,5 +1,5 @@
-!migrations
 __pycache
+migrations
 *~
 db.sqlite3
 .env/
