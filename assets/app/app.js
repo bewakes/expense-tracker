@@ -17,6 +17,7 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
         app.register = {
             controller: $controllerProvider.register,
             factory: $provide.factory,
+            service: $provide.service,
             directive: $compileProvider.directive
         };
 
@@ -30,7 +31,7 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
 
     function resolve(controllername, templatename) {
         return {
-            templateUrl: 'static/app/templates/'+templatename+'.html',
+            templateUrl: '/static/app/templates/'+templatename+'.html',
             controller: controllername+'Controller',
             resolve: {
                 load: function($q, $rootScope) {
