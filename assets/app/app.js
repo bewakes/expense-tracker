@@ -12,8 +12,9 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
     config.$inject = ['$routeProvider', '$controllerProvider', '$provide', '$compileProvider', '$httpProvider', '$locationProvider'];
     app.config(config);
 
-    function config($routeProvider, $controllerProvider, $provide, $compileProvider, $locationProvider) {
-
+    function config($routeProvider, $controllerProvider, $provide, $compileProvider, $httpProvider, $locationProvider) {
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
         app.register = {
             controller: $controllerProvider.register,
             factory: $provide.factory,

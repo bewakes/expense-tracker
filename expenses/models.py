@@ -16,7 +16,14 @@ class AppUser(User):
     has_setup = models.BooleanField(default=False) # means user has set up for individual or organizational record
 
 
+class CategoryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
+
 class Category(models.Model):
+    objects = models.Manager()
+    valid_objects = CategoryManager()
+
     user = models.ForeignKey(AppUser)
     name = models.CharField(max_length=50)
     uses = models.IntegerField(default=0)

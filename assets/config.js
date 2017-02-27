@@ -9,6 +9,7 @@ require.config({
     'ngRoute': ['https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route'],
     'ngCookies': ['https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-cookies'],
     'services': ['app/services'],
+    'directives': ['app/directives'],
   },
   shim:{
     // Modules and their dependent modules

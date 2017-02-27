@@ -40,7 +40,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     ViewSet for categories
     """
-    queryset = Category.objects.all()
+    queryset = Category.valid_objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
 

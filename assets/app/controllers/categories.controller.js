@@ -1,18 +1,32 @@
-define(['app/app', 'services'], function(app) {
-    categoriesController.$inject = ['$scope', '$location', 'appState', 'getService', 'postService', 'identityHandlerService'];
-    function categoriesController($scope, $location, appState, getService, postService, identityHandler) {
-        identityHandler(); // gets and handles identity
+define(['app/app', 'services', 'directives'], function(app) {
+    categoriesController.$inject = ['$scope', '$location', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService'];
+    function categoriesController($scope, $location, appState, getService, postService, deleteService, identityHandlerService) {
 
-        getService('/categories', {})
-            .then(function(response) {
-            });
+        getService($scope, '/categories/', {}, 'categories');
 
-        $scope.categories= [
-            "Vegetable",
-            "Fruits",
-            "Stationery",
-            "Miscellaneous"
-        ];
+        identityHandlerService().then(function(response){
+            $scope.newCategory.user = appState.identity.id;
+        });
+
+        $scope.newCategory = {
+        };
+
+        $scope.addCategory = function() {
+            postService('/categories/', $scope.newCategory)
+                .then(function(response) {
+                    getService($scope, '/categories/', {}, 'categories');
+                    $scope.newCategory = {};
+                    appState.message = "Category Added";
+                });
+        }
+
+        $scope.remove = function(id) {
+            deleteService('/categories/'+id, {cagetory:id})
+                .then(function(response) {
+                    getService($scope, '/categories/', {}, 'categories');
+                    appState.message = "Category Deleted";
+                });
+        }
     }
 
     app.register.controller('categoriesController', categoriesController);

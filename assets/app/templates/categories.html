@@ -1,7 +1,7 @@
 <div class="row full-width marginless-row">
     <div class="col-md-12 full-width">
         <div class="text-center view-header dark-header">
-            My Categories
+            My Categories<notify-message></notify-message>
         </div>
         <div class="view-content">
             <div class="row marginless-row tmargin-40">
@@ -11,9 +11,9 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in categories">
-                            <span>{{x}}</span>
+                            <span><b>{{x.name}}</b></span>
                             <span style="float:right">
-                                <a class="helper-link" ng-click="" href="javascript:void(0)">Remove</a>
+                                <a class="helper-link" ng-click="remove(x.id)" href="javascript:void(0)">Remove</a>
                             </span>
                         </li>
                     </ul>
@@ -24,14 +24,14 @@
                     </div>
                     <div class="form-element">
                         <label>Category</label>
-                        <input type="text" placeholder="New Category name"/>
+                        <input type="text" ng-model="newCategory.name" placeholder="New Category name"/>
                     </div>
                     <div class="form-element">
                         <label>Description</label>
-                        <textarea></textarea>
+                        <textarea ng-model="newCategory.desription"></textarea>
                     </div>
                     <div class="form-element text-center">
-                        <button class="btn btn-danger long-button">Add Category</button>
+                        <button class="btn btn-danger long-button" ng-click="addCategory()">Add Category</button>
                     </div>
                 </div>
             </div>
