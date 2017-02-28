@@ -14,10 +14,10 @@
                 <button onclick="location='/login/facebook'" class="btn btn-primary long-button social-button"><b>Login with Facebook</b></button>
             </div>
             <div class="irow">
-                <button class="btn btn-info long-button social-button"><b>Login with Twitter</b></button>
+                <button onclick="location='{%url 'social:begin' 'google-oauth2'%}'" class="btn btn-danger long-button social-button"><b>Login with Google</b></button>
             </div>
             <div class="irow">
-                <button class="btn btn-danger long-button social-button"><b>Login with Google</b></button>
+                <button class="btn btn-info long-button social-button"><b>Login with Twitter(not for now)</b></button>
             </div>
         </div>
     </div>

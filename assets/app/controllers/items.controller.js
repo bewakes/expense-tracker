@@ -2,15 +2,17 @@ define(['app/app', 'services', 'directives'], function(app) {
     itemsController.$inject = ['$scope', '$location', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService'];
     function itemsController($scope, $location, appState, getService, postService, deleteService, identityHandlerService) {
 
+        appState.error = appState.message = null;
+
         $scope.newItem = {};
 
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
-                $scope.newItem.user = appState.identity.id;
+                $scope.newItem.organization = appState.current_organization.id;
             });
         }
         else {
-            $scope.newItem.user = appState.identity.id;
+            $scope.newItem.organization = appState.current_organization.id;
         }
 
         getService($scope, '/items/', {}, 'items');

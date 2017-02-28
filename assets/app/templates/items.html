@@ -1,8 +1,7 @@
-<notify-message></notify-message>
 <div class="row full-width marginless-row">
     <div class="col-md-12 full-width">
         <div class="text-center view-header dark-header">
-            My Items
+            My Items<notify-message></notify-message>
         </div>
         <div class="view-content">
             <div class="row marginless-row tmargin-40">
@@ -12,7 +11,7 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in items">
-                            <span>{{x.name}}</span>
+                            <span><b>{{x.name}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" href="javascript:void(0)" ng-click="remove(x.id)">Remove</a>
                             </span>
@@ -25,7 +24,7 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in items">
-                            <span>{{x.name}}</span>
+                            <span><b>{{x.name}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
                             </span>

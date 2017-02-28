@@ -24,7 +24,7 @@ class Category(models.Model):
     objects = models.Manager()
     valid_objects = CategoryManager()
 
-    user = models.ForeignKey(AppUser)
+    organization = models.ForeignKey(Organization, related_name='categories')
     name = models.CharField(max_length=50)
     uses = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
@@ -47,7 +47,7 @@ class Item(models.Model):
 
     name = models.CharField(max_length=50)
     category = models.ForeignKey(Category, null=True)
-    user = models.ForeignKey(AppUser)
+    organization = models.ForeignKey(Organization, related_name='items')
     uses = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
 
