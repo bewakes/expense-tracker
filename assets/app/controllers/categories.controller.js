@@ -2,17 +2,20 @@ define(['app/app', 'services', 'directives'], function(app) {
     categoriesController.$inject = ['$scope', '$location', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService'];
     function categoriesController($scope, $location, appState, getService, postService, deleteService, identityHandlerService) {
 
-        getService($scope, '/categories/', {}, 'categories');
-
         $scope.newCategory = {};
 
-        identityHandlerService().then(function(response){
+        if(!appState.identity) {
+            identityHandlerService().then(function(response){
+                $scope.newCategory.user = appState.identity.id;
+            });
+        }
+        else {
             $scope.newCategory.user = appState.identity.id;
-        });
-        alert(JSON.stringify($scope.newCategory));
+        }
+
+        getService($scope, '/categories/', {}, 'categories');
 
         $scope.addCategory = function() {
-            alert(JSON.stringify($scope.newCategory));
             postService('/categories/', $scope.newCategory)
                 .then(function(response) {
                     getService($scope, '/categories/', {}, 'categories');

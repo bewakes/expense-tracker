@@ -38,7 +38,7 @@ define(['app/app'], function(app) {
                             appState.error = response.data.detail;
                         }else if (response.status== 400) {
                             // TODO: show errors
-                            appState.error = response.data.detail;
+                            appState.error = response.data.detail?response.data.detail:"Invalid params";
                         } else {
                             appState.error = response.data.detail;
                             appState.error = "Error processing";

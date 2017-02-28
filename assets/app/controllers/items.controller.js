@@ -4,18 +4,20 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         $scope.newItem = {};
 
-        identityHandlerService().then(function(response) {
+        if(!appState.identity) {
+            identityHandlerService().then(function(response) {
+                $scope.newItem.user = appState.identity.id;
+            });
+        }
+        else {
             $scope.newItem.user = appState.identity.id;
-        });
+        }
 
         getService($scope, '/items/', {}, 'items');
         getService($scope, '/categories/', {}, 'categories');
 
 
-        alert(JSON.stringify($scope.newItem));
-
         $scope.addItem = function() {
-            alert(JSON.stringify($scope.newItem));
             postService('/items/', $scope.newItem)
                 .then(function(response) {
                     getService($scope, '/items/', {}, 'items');
