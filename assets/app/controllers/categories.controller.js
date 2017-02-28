@@ -15,7 +15,7 @@ define(['app/app', 'services', 'directives'], function(app) {
             postService('/categories/', $scope.newCategory)
                 .then(function(response) {
                     getService($scope, '/categories/', {}, 'categories');
-                    $scope.newCategory = {};
+                    $scope.newCategory = {user:appState.identity.id};
                     appState.message = "Category Added";
                 });
         }

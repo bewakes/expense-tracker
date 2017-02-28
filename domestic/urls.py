@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^$', include('expenses.urls')),
     url(r'^expenses/', include('expenses.urls')),
     url('', include('social_django.urls', namespace='social')),
-    url(r'^login/', login, name='login'),
+    #url(r'^login/', login, name='login'),
     url(r'^identity/', identity, name='identity'),
 ]
 urlpatterns += router.urls
