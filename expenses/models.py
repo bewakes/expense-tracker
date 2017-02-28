@@ -37,7 +37,14 @@ class Category(models.Model):
         self.save()
 
 
+class ItemsManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
+
 class Item(models.Model):
+    objects = models.Manager()
+    valid_objects = ItemsManager()
+
     name = models.CharField(max_length=50)
     category = models.ForeignKey(Category, null=True)
     user = models.ForeignKey(AppUser)

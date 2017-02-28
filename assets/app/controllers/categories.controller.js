@@ -4,14 +4,15 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         getService($scope, '/categories/', {}, 'categories');
 
+        $scope.newCategory = {};
+
         identityHandlerService().then(function(response){
             $scope.newCategory.user = appState.identity.id;
         });
-
-        $scope.newCategory = {
-        };
+        alert(JSON.stringify($scope.newCategory));
 
         $scope.addCategory = function() {
+            alert(JSON.stringify($scope.newCategory));
             postService('/categories/', $scope.newCategory)
                 .then(function(response) {
                     getService($scope, '/categories/', {}, 'categories');

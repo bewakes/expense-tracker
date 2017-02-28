@@ -22,7 +22,7 @@ from rest_framework import routers
 
 router = routers.SimpleRouter()
 router.register(r'categories', CategoryViewSet)
-#router.register(r'accounts', AccountViewSet)
+router.register(r'items', ItemViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

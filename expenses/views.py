@@ -11,7 +11,7 @@ import datetime
 from django.contrib.auth import logout
 
 from expenses.models import *
-from expenses.serializers import CategorySerializer, UserSerializer
+from expenses.serializers import CategorySerializer, UserSerializer, ItemSerializer
 
 import json, re
 
@@ -44,6 +44,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
 
+class ItemViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for items
+    """
+    queryset = Item.valid_objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated]
 
 def login(request):
     if not request.user.is_authenticated():
