@@ -17,6 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from expenses.views import *
+from .hook import webhook
 
 from rest_framework import routers
 
@@ -31,5 +32,6 @@ urlpatterns = [
     url('', include('social_django.urls', namespace='social')),
     #url(r'^login/', login, name='login'),
     url(r'^identity/', identity, name='identity'),
+    url(r'^webhook/', webhook, name='webhook'),
 ]
 urlpatterns += router.urls
