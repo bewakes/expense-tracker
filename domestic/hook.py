@@ -16,6 +16,6 @@ def webhook(request):
     output, err = p.communicate(b"input data that is passed to subprocess' stdin")
     rc = p.returncode
     if not rc:
-        return Response({'status':'success', 'output':output.split('\n')})
+        return Response({'status':'success', 'output':output.decode('utf-8').split('\n')})
     else:
-        return Response({'status': 'failure', 'error': err}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'status': 'failure', 'error': err.decode('utf-8').split('\n')}, status=status.HTTP_400_BAD_REQUEST)
