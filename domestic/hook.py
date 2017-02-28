@@ -18,4 +18,4 @@ def webhook(request):
     if not rc:
         return Response({'status':'success', 'output':output.split('\n')})
     else:
-        return Response({'status': 'failure', 'error': err}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'status': 'failure', 'error': err}, status=status.HTTP_400_BAD_REQUEST)
