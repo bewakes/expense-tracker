@@ -38,7 +38,7 @@ define(['app/app'], function(app) {
                             appState.error = response.data.detail;
                         }else if (response.status== 400) {
                             // TODO: show errors
-                            appState.error = "Invalid field values";
+                            appState.error = response.data.detail;
                         } else {
                             appState.error = response.data.detail;
                             appState.error = "Error processing";
@@ -60,7 +60,7 @@ define(['app/app'], function(app) {
                             appState.error = response.data.detail;
                         }else if (response.status== 400) {
                             // TODO: show errors
-                            appState.error = "Invalid field values";
+                            appState.error = response.data.detail;
                         } else {
                             appState.error = response.data.detail;
                             //appState.error = "Error processing";
