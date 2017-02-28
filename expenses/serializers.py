@@ -30,3 +30,13 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = ('id', 'name')
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    item = serializers.SerializerMethodField(source='get_item')
+    def get_item(self, expense):
+        return ItemSerializer(expense.item).data
+
+    class Meta:
+        model = Expense
+        fields = ('id', 'item', 'date', 'cost')
+

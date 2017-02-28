@@ -27,7 +27,7 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
             .when('/_=_', resolve('home', 'home')) // for social login redirect
             .when('/items', resolve('items', 'items'))
             .when('/categories', resolve('categories', 'categories'))
-            //.when('/expenses', resolve('expenses', 'expenses'))
+            .when('/expenses', resolve('expenses', 'expenses'))
     }
 
     function resolve(controllername, templatename) {

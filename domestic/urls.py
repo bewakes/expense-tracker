@@ -26,6 +26,7 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'items', ItemViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'organizations', UserViewSet)
+router.register(r'expense', ExpenseViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
