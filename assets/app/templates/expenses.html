@@ -11,7 +11,7 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in expenses">
-                            <span><b>{{x.item.name}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
+                            <span><b>{{x.itemname}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" href="javascript:void(0)" ng-click="remove(x.id)">Remove</a>
                             </span>
@@ -24,7 +24,7 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in expenses">
-                            <span><b>{{x.item.name}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
+                            <span><b>{{x.itemname}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
                             </span>
@@ -48,11 +48,11 @@
                     </div>
                     <div class="form-element">
                         <label>Date</label>
-                        <input type="date" ng-model="newExpense.date" placeholder="mm-dd-yyyy"/>
+                        <input type="date" ng-model="newExpense.date" placeholder="yyyy-mm-dd"/>
                     </div>
                     <div class="form-element">
                         <label>Description</label>
-                        <textarea ng-model="newItem.description"></textarea>
+                        <textarea ng-model="newExpense.description"></textarea>
                     </div>
                     <div class="form-element text-center">
                         <button class="btn btn-danger long-button" ng-click="addExpense()">Add Item</button>

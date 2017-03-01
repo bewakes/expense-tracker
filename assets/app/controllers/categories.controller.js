@@ -3,7 +3,7 @@ define(['app/app', 'services', 'directives'], function(app) {
     function categoriesController($scope, $location, appState, getService, postService, deleteService, identityHandlerService) {
         appState.error = appState.message = null;
 
-        $scope.newCategory = {};
+        $scope.newCategory = {description:''};
 
         if(!appState.identity) {
             identityHandlerService().then(function(response){
@@ -20,7 +20,7 @@ define(['app/app', 'services', 'directives'], function(app) {
             postService('/categories/', $scope.newCategory)
                 .then(function(response) {
                     getService($scope, '/categories/', {}, 'categories');
-                    $scope.newCategory = {user:appState.identity.id};
+                    $scope.newCategory = {description:'',organization:appState.current_organization.id};
                     appState.message = "Category Added";
                 });
         }

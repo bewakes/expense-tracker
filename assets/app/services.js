@@ -52,7 +52,7 @@ define(['app/app'], function(app) {
             appState.error = null;
             appState.message = null;
             var deferred = $q.defer();
-            $http.delete(url, params)
+            $http.delete(url, {params:params})
                 .then(
                     deferred.resolve,
                     function(response) {

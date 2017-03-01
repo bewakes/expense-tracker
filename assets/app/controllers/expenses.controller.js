@@ -4,16 +4,14 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         appState.error = appState.message = null;
 
-        $scope.newItem = {};
+        $scope.newExpense = {date:new Date(), description:''};
 
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
-                $scope.newItem.organization = appState.current_organization.id;
                 getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
             });
         }
         else {
-            $scope.newItem.organization = appState.current_organization.id;
             getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
         }
 
@@ -22,20 +20,19 @@ define(['app/app', 'services', 'directives'], function(app) {
 
 
 
-        $scope.addItem = function() {
-            postService('/items/', $scope.newItem)
+        $scope.addExpense= function() {
+            postService('/expense/', $scope.newExpense)
                 .then(function(response) {
-                    getService($scope, '/items/', {}, 'items');
-                    $scope.newItem = {user:appState.identity.id};
-                    appState.message = "Item Added";
+                    getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+                    $scope.newExpense = {date:new Date(), description:''};
+                    appState.message = "Expense Added";
                 });
         }
 
         $scope.remove = function(id) {
-            alert(id);
-            deleteService('/expense/'+id)
+            deleteService('/expense/'+id, {organization:appState.current_organization.id})
                 .then(function(response) {
-                    getService($scope, '/expense/', {organization:appState.current_organization.id}, 'items');
+                    getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
                     appState.message = "Expense Deleted";
                 });
         }

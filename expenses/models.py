@@ -28,7 +28,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50)
     uses = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
-    description = models.CharField(max_length=1000)
+    description = models.CharField(max_length=1000, default='')
 
     def __str__(self):
         return self.name
@@ -50,7 +50,7 @@ class Item(models.Model):
     category = models.ForeignKey(Category, null=True)
     organization = models.ForeignKey(Organization, related_name='items')
     uses = models.IntegerField(default=0)
-    description = models.CharField(max_length=1000)
+    description = models.CharField(max_length=1000, default='')
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -61,10 +61,17 @@ class Item(models.Model):
         self.save()
 
 
+class ExpenseManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
+
 class Expense(models.Model):
+    objects = models.Manager()
+    valid_objects = ExpenseManager()
+
     date = models.DateTimeField('date')
     item = models.ForeignKey(Item)
-    description = models.CharField(max_length=1000)
+    description = models.CharField(max_length=1000, default='')
     cost = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)

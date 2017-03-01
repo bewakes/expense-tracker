@@ -4,7 +4,7 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         appState.error = appState.message = null;
 
-        $scope.newItem = {};
+        $scope.newItem = {description:''};
 
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
@@ -23,7 +23,7 @@ define(['app/app', 'services', 'directives'], function(app) {
             postService('/items/', $scope.newItem)
                 .then(function(response) {
                     getService($scope, '/items/', {}, 'items');
-                    $scope.newItem = {user:appState.identity.id};
+                    $scope.newItem = {description:'',organization:appState.current_organization.id};
                     appState.message = "Item Added";
                 });
         }

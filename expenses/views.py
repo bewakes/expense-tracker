@@ -75,17 +75,19 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     """
     ViewSet for expenses
     """
-    queryset = Expense.objects.all()
+    queryset = Expense.valid_objects.all()
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        allexpenses = Expense.objects.all()
+        allexpenses = Expense.valid_objects.all()
         try:
             org = int(self.request.query_params.get('organization'))
         except:
+            orgs = Organization.objects.filter(owner=self.request.user)
+            if orgs:
+                return allexpenses.filter(item__organization=orgs[0])
             return []
-        #orgs = Organization.objects.filter(owner=self.request.user)
         return allexpenses.filter(item__organization_id=org)
 
 
