@@ -11,7 +11,7 @@ import datetime
 from django.contrib.auth import logout
 
 from expenses.models import *
-from expenses.serializers import CategorySerializer, UserSerializer, ItemSerializer
+from expenses.serializers import *
 
 import json, re
 
@@ -44,12 +44,65 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        allcats = Category.valid_objects.all()
+        if self.request.user.is_superuser:
+            return allcats
+        orgs = Organization.objects.filter(owner=self.request.user)
+        if orgs:
+            return allcats.filter(organization=orgs[0])
+        return []
+
 class ItemViewSet(viewsets.ModelViewSet):
     """
     ViewSet for items
     """
     queryset = Item.valid_objects.all()
     serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        allitems = Item.valid_objects.all()
+        if self.request.user.is_superuser:
+            return allitems
+        orgs = Organization.objects.filter(owner=self.request.user)
+        if orgs:
+            return allitems.filter(organization=orgs[0])
+        return []
+
+
+class ExpenseViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for expenses
+    """
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        allexpenses = Expense.objects.all()
+        try:
+            org = int(self.request.query_params.get('organization'))
+        except:
+            return []
+        #orgs = Organization.objects.filter(owner=self.request.user)
+        return allexpenses.filter(item__organization_id=org)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for users
+    """
+    queryset = AppUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+class OrganizationViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for organization
+    """
+    queryset = Organization.objects.all()
+    serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
 
 def login(request):

@@ -8,3 +8,5 @@ is_new=False, *args, **kwargs):
     if is_new:
         # create Organization for user
         org = Organization.objects.create(owner=user, name=user.first_name+" "+user.last_name)
+        user.organizations.add(org)
+        user.save()

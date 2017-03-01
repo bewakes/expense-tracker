@@ -1,17 +1,17 @@
 <div class="row full-width marginless-row">
     <div class="col-md-12 full-width">
         <div class="text-center view-header dark-header">
-            <b>Items</b><notify-message></notify-message>
+            <b>Expenses</b><notify-message></notify-message>
         </div>
         <div class="view-content">
             <div class="row marginless-row tmargin-40">
                 <div class="col-md-4 items-container">
                     <div class="blue-header">
-                        Top Items
+                        Top Expenses
                     </div>
                     <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="x in items">
-                            <span><b>{{x.name}}</b></span>
+                        <li class="vertical-list-item" ng-repeat="x in expenses">
+                            <span><b>{{x.item.name}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" href="javascript:void(0)" ng-click="remove(x.id)">Remove</a>
                             </span>
@@ -20,11 +20,11 @@
                 </div>
                 <div class="col-md-4 items-container">
                     <div class="blue-header">
-                        All Items
+                        Recent Expenses
                     </div>
                     <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="x in items">
-                            <span><b>{{x.name}}</b></span>
+                        <li class="vertical-list-item" ng-repeat="x in expenses">
+                            <span><b>{{x.item.name}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
                             </span>
@@ -33,28 +33,29 @@
                 </div>
                 <div class="col-md-4 items-container">
                     <div class="blue-header">
-                        Add Item
+                        Add Expense
                     </div>
                     <div class="form-element">
-                        <label>Item Name</label>
-                        <input type="text" ng-model="newItem.name" placeholder="New item name"/>
-                    </div>
-                    <div class="form-element">
-                        <label>Category</label>
-                        <select class="" ng-model="newItem.category">
-                            <option value="" selected="true" disabled>Pick a category</option>
-                            <option value="{{category.id}}" ng-repeat="category in categories">{{category.name}}</option>
+                        <label>Item</label>
+                        <select ng-model="newExpense.item">
+                            <option value="" selected="true" disabled>Pick an Item</option>
+                            <option value="{{item.id}}" ng-repeat="item in items">{{item.name}}</option>
                         </select>
-                        <a class="undecorated" href="javascript:void(0)" title="add a category">
-                            <span style="font-size:1.5em;color:skyblue" class="glyphicon glyphicon-plus-sign"></span>
-                        </a>
+                    </div>
+                    <div class="form-element">
+                        <label>Cost</label>
+                        <input type="number" step="0.01" min="0" ng-model="newExpense.cost" placeholder="Cost for the item"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Date</label>
+                        <input type="date" ng-model="newExpense.date" placeholder="mm-dd-yyyy"/>
                     </div>
                     <div class="form-element">
                         <label>Description</label>
                         <textarea ng-model="newItem.description"></textarea>
                     </div>
                     <div class="form-element text-center">
-                        <button class="btn btn-danger long-button" ng-click="addItem()">Add Item</button>
+                        <button class="btn btn-danger long-button" ng-click="addExpense()">Add Item</button>
                     </div>
                 </div>
             </div>

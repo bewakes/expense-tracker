@@ -1,6 +1,6 @@
 define(['app/app', 'services', 'directives'], function(app) {
-    itemsController.$inject = ['$scope', '$location', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService'];
-    function itemsController($scope, $location, appState, getService, postService, deleteService, identityHandlerService) {
+    expensesController.$inject = ['$scope', '$location', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService'];
+    function expensesController($scope, $location, appState, getService, postService, deleteService, identityHandlerService) {
 
         appState.error = appState.message = null;
 
@@ -9,14 +9,17 @@ define(['app/app', 'services', 'directives'], function(app) {
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
                 $scope.newItem.organization = appState.current_organization.id;
+                getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
             });
         }
         else {
             $scope.newItem.organization = appState.current_organization.id;
+            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
         }
 
         getService($scope, '/items/', {}, 'items');
         getService($scope, '/categories/', {}, 'categories');
+
 
 
         $scope.addItem = function() {
@@ -29,14 +32,15 @@ define(['app/app', 'services', 'directives'], function(app) {
         }
 
         $scope.remove = function(id) {
-            deleteService('/items/'+id, {item:id})
+            alert(id);
+            deleteService('/expense/'+id)
                 .then(function(response) {
-                    getService($scope, '/items/', {}, 'items');
-                    appState.message = "Item Deleted";
+                    getService($scope, '/expense/', {organization:appState.current_organization.id}, 'items');
+                    appState.message = "Expense Deleted";
                 });
         }
 
     }
 
-    app.register.controller('itemsController', itemsController);
+    app.register.controller('expensesController', expensesController);
 })

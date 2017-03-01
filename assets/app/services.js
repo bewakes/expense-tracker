@@ -6,7 +6,7 @@ define(['app/app'], function(app) {
     function getService($http, $q, appState) {
         return function(scope, url, params, scopeVar) {
             var deferred = $q.defer();
-            $http.get(url, params)
+            $http.get(url, {params:params})
                 .then(
                     function(response) {
                         scope[scopeVar] = response.data;
@@ -14,12 +14,12 @@ define(['app/app'], function(app) {
                     },
                     function(response) {
                         if(response.status == 403) {
-                            appState.error = "You are not permitted for action";
+                            //appState.error = "You are not permitted for action";
                         }else if (response.status== 400) {
                             // TODO: show errors
-                            appState.error = "Invalid field values";
+                            //appState.error = "Invalid field values";
                         } else {
-                            appState.error = "Request Could not be completed";
+                            //appState.error = "Request Could not be completed";
                         }
             });
             return deferred.promise;
@@ -79,6 +79,7 @@ define(['app/app'], function(app) {
                 $http.get('/identity', {})
                     .then(function(response) {
                         appState.identity = response.data;
+                        appState.current_organization = appState.identity.default_organization; // TODO: change this later
                         deferred.resolve();
                     }, function(response) {
                         window.location.hash = "";
