@@ -28,7 +28,7 @@
                                 <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
                                     {{x.itemname}} (NRs.{{x.cost}})
                                 </a>
-                                <b> {{x.date | date: 'dd/MM/yyyy'}}</b>
+                                <b> {{x.date | date: 'MMM dd yyyy'}}</b>
                             </span>
                             <span style="float:right">
                                 <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
@@ -37,7 +37,7 @@
                     </ul>
                 </div>
                 <div class="col-md-4 items-container">
-                    <div class="blue-header">
+                    <div class="blue-header" id="editheader">
                         <span ng-show="!editMode">Add Expense</span>
                         <span ng-show="editMode"><b>Update Expense</b></span>
                     </div>

@@ -1,6 +1,6 @@
 define(['app/app', 'services', 'directives'], function(app) {
-    expensesController.$inject = ['$scope', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService', 'putService'];
-    function expensesController($scope, appState, getService, postService, deleteService, identityHandlerService, putService) {
+    expensesController.$inject = ['$location', '$scope', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService', 'putService', '$anchorScroll'];
+    function expensesController($location, $scope, appState, getService, postService, deleteService, identityHandlerService, putService, $anchorScroll) {
 
         appState.error = appState.message = null;
         $scope.editMode = false;
@@ -11,6 +11,8 @@ define(['app/app', 'services', 'directives'], function(app) {
             temp.date = new Date(temp.date);
             $scope.newExpense = temp;
             $scope.newExpense.item = temp.item.toString();
+            $location.hash('editheader');
+            $anchorScroll();
         }
 
         $scope.cancelEdit = function() {
