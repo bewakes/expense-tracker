@@ -38,10 +38,33 @@ define(['app/app'], function(app) {
                             appState.error = response.data.detail;
                         }else if (response.status== 400) {
                             // TODO: show errors
-                            appState.error = response.data.detail?response.data.detail:"Invalid params";
+                            appState.error = JSON.stringify(response.data);//.detail?response.data.detail:"Invalid params";
                         } else {
                             appState.error = response.data.detail;
                             appState.error = "Error processing";
+                        }
+            });
+            return deferred.promise;
+        }
+    }
+
+    function putService($http, $q, appState) {
+        return function(url, params) {
+            appState.error = null;
+            appState.message = null;
+            var deferred = $q.defer();
+            $http.put(url, params)
+                .then(
+                    deferred.resolve,
+                    function(response) {
+                        if(response.status== 403) {
+                            appState.error = response.data.detail;
+                        }else if (response.status== 400) {
+                            // TODO: show errors
+                            appState.error = JSON.stringify(response.data);//.detail?response.data.detail:"Invalid params";
+                        } else {
+                            appState.error = response.data.detail;
+                            //appState.error = "Error processing";
                         }
             });
             return deferred.promise;
@@ -94,9 +117,20 @@ define(['app/app'], function(app) {
         }
     }
 
+    httpService.$inject = ['getService', 'postService', 'putService'];
+    function httpService(getService, postService, putService) {
+        return {
+            'get': getService,
+            'post': postService,
+            'put': putService
+        }
+    }
+
     // register services
     app.register.service('getService', getService);
     app.register.service('postService', postService);
+    app.register.service('putService', putService);
+    app.register.service('httpService', putService);
     app.register.service('deleteService', deleteService);
     app.register.service('identityHandlerService', identityHandlerService);
 });

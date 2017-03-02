@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = AppUser
         fields = ('id', 'username', 'email', 'address', 'has_setup', 'default_organization')
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -25,6 +26,7 @@ class CategorySerializer(serializers.ModelSerializer):
         exclusions = super().get_validation_exclusions()
         return exclusions + ['description']
 
+
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
@@ -32,6 +34,7 @@ class ItemSerializer(serializers.ModelSerializer):
     def get_validation_exclusions(self):
         exclusions = super().get_validation_exclusions()
         return exclusions + ['description']
+
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,7 +45,8 @@ class ExpenseSerializer(serializers.ModelSerializer):
     # item = serializers.SerializerMethodField(source='get_item')
     # def get_item(self, expense):
     #     return ItemSerializer(expense.item).data
-    itemname = serializers.SerializerMethodField(source='get_itemname')
+    date = serializers.DateTimeField(format="%Y-%m-%d")
+    itemname = serializers.SerializerMethodField(required=False, source='get_itemname')
     def get_itemname(self, expense):
         return expense.item.name
 

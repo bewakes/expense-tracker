@@ -28,7 +28,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50)
     uses = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
-    description = models.CharField(max_length=1000, default='')
+    description = models.CharField(max_length=1000,blank=True)
 
     def __str__(self):
         return self.name
@@ -50,7 +50,7 @@ class Item(models.Model):
     category = models.ForeignKey(Category, null=True)
     organization = models.ForeignKey(Organization, related_name='items')
     uses = models.IntegerField(default=0)
-    description = models.CharField(max_length=1000, default='')
+    description = models.CharField(max_length=1000,blank=True)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -71,7 +71,7 @@ class Expense(models.Model):
 
     date = models.DateTimeField('date')
     item = models.ForeignKey(Item)
-    description = models.CharField(max_length=1000, default='')
+    description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)

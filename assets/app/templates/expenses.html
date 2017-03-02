@@ -24,7 +24,12 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in expenses">
-                            <span><b>{{x.itemname}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
+                            <span>
+                                <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
+                                    {{x.itemname}} (NRs.{{x.cost}})
+                                </a>
+                                <b> {{x.date | date: 'dd/MM/yyyy'}}</b>
+                            </span>
                             <span style="float:right">
                                 <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
                             </span>
@@ -33,11 +38,12 @@
                 </div>
                 <div class="col-md-4 items-container">
                     <div class="blue-header">
-                        Add Expense
+                        <span ng-show="!editMode">Add Expense</span>
+                        <span ng-show="editMode"><b>Update Expense</b></span>
                     </div>
                     <div class="form-element">
                         <label>Item</label>
-                        <select ng-model="newExpense.item">
+                        <select id="item-select" ng-change="showid()" ng-model="newExpense.item">
                             <option value="" selected="true" disabled>Pick an Item</option>
                             <option value="{{item.id}}" ng-repeat="item in items">{{item.name}}</option>
                         </select>
@@ -55,7 +61,15 @@
                         <textarea ng-model="newExpense.description"></textarea>
                     </div>
                     <div class="form-element text-center">
-                        <button class="btn btn-danger long-button" ng-click="addExpense()">Add Item</button>
+                        <button class="btn btn-success long-button" ng-click="addExpense()">
+                            <span ng-show="!editMode">Add Expense</span>
+                            <span ng-show="editMode">
+                                <b>Update Expense</b><br>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="form-element text-center" ng-show="editMode">
+                        <button class="btn btn-danger long-button" ng-click="cancelEdit()">Cancel</button>
                     </div>
                 </div>
             </div>
