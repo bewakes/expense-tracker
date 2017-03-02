@@ -91,6 +91,10 @@ ul.horizontal-menu {
     color:#eee;
     padding:10px;
 }
+.view-header {
+    min-height:50px;
+    max-height:50px;
+}
 .blue-header {
     background-color: #2980b9;
     font-size:1.3em;
@@ -131,6 +135,7 @@ ul.horizontal-menu {
 .marginless-row {
     margin-left:0px !important;
     margin-right:0px;
+    padding:0px;
 }
 
 .helper-link {
@@ -160,6 +165,19 @@ ul.horizontal-menu {
     -moz-appearance: none;
     -webkit-appearance: none;
 }
+
+.fancy-select {
+    font-family:Vollkorn;
+    font-size:0.9em;
+    height:30px;
+    background:transparent;
+    color:white;
+    border:none;
+    border-bottom:solid 1px #888;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+}
+
 .form-element input {
     background-color: #eee;
     border:none;

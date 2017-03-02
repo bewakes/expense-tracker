@@ -48,10 +48,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
         allcats = Category.valid_objects.all()
         if self.request.user.is_superuser:
             return allcats
-        orgs = Organization.objects.filter(owner=self.request.user)
-        if orgs:
-            return allcats.filter(organization=orgs[0])
-        return []
+        try:
+            org = int(self.request.query_params.get('organization'))
+        except:
+            orgs = Organization.objects.filter(owner=self.request.user)
+            if orgs:
+                return allcats.filter(organization=orgs[0])
+            return []
+        return allcats.filter(organization_id=org)
 
 class ItemViewSet(viewsets.ModelViewSet):
     """
@@ -65,10 +69,14 @@ class ItemViewSet(viewsets.ModelViewSet):
         allitems = Item.valid_objects.all()
         if self.request.user.is_superuser:
             return allitems
-        orgs = Organization.objects.filter(owner=self.request.user)
-        if orgs:
-            return allitems.filter(organization=orgs[0])
-        return []
+        try:
+            org = int(self.request.query_params.get('organization'))
+        except:
+            orgs = Organization.objects.filter(owner=self.request.user)
+            if orgs:
+                return allitems.filter(organization=orgs[0])
+            return []
+        return allitems.filter(organization_id=org)
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):

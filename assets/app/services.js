@@ -6,6 +6,7 @@ define(['app/app'], function(app) {
     function getService($http, $q, appState) {
         return function(scope, url, params, scopeVar) {
             var deferred = $q.defer();
+            params['organization'] = appState.current_organization.id;
             $http.get(url, {params:params})
                 .then(
                     function(response) {
@@ -112,6 +113,7 @@ define(['app/app'], function(app) {
             }
             else {
                 var deferred = $q.defer();
+                deferred.resolve();
                 return deferred.promise;
             }
         }

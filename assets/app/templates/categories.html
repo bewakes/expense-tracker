@@ -1,7 +1,12 @@
 <div class="row full-width marginless-row">
     <div class="col-md-12 full-width">
         <div class="text-center view-header dark-header">
-            <b>Categories</b><notify-message></notify-message>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"<b>Categories</b></div>
+                <div class="col-md-4"><org-selection/></div>
+            </div>
+            <notify-message></notify-message>
         </div>
         <div class="view-content">
             <div class="row marginless-row tmargin-40">
@@ -31,7 +36,7 @@
                         <textarea ng-model="newCategory.description"></textarea>
                     </div>
                     <div class="form-element text-center">
-                        <button class="btn btn-danger long-button" ng-click="addCategory()">Add Category</button>
+                        <button class="btn btn-success long-button" ng-click="addCategory()">Add Category</button>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,13 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         appState.error = appState.message = null;
         $scope.editMode = false;
+        $scope.newExpense = {date:new Date(), description:''};
+
+        $scope.reload = function() {
+            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+            getService($scope, '/items/', {}, 'items');
+            getService($scope, '/categories/', {}, 'categories');
+        };
 
         $scope.setEditMode = function(id) {
             $scope.editMode = true;
@@ -11,8 +18,10 @@ define(['app/app', 'services', 'directives'], function(app) {
             temp.date = new Date(temp.date);
             $scope.newExpense = temp;
             $scope.newExpense.item = temp.item.toString();
-            $location.hash('editheader');
-            $anchorScroll();
+            if(window.innerWidth < 900){
+                $location.hash('editheader');
+                $anchorScroll();
+            }
         }
 
         $scope.cancelEdit = function() {
@@ -20,21 +29,15 @@ define(['app/app', 'services', 'directives'], function(app) {
             $scope.newExpense = {date:new Date(), description:''};
         }
 
-        $scope.newExpense = {date:new Date(), description:''};
 
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
-                getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+                $scope.reload();
             });
         }
         else {
-            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+            $scope.reload();
         }
-
-        getService($scope, '/items/', {}, 'items');
-        getService($scope, '/categories/', {}, 'categories');
-
-
 
         $scope.addExpense= function() {
             var t, msg;
@@ -48,16 +51,17 @@ define(['app/app', 'services', 'directives'], function(app) {
             }
 
             t.then(function(response) {
-                    getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+                    $scope.reload();
                     $scope.newExpense = {date:new Date(), description:''};
                     appState.message = msg;
                 });
+            $scope.cancelEdit();
         }
 
         $scope.remove = function(id) {
             deleteService('/expense/'+id, {organization:appState.current_organization.id})
                 .then(function(response) {
-                    getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+                    $scope.reload();
                     appState.message = "Expense Deleted";
                 });
         }

@@ -4,25 +4,29 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         appState.error = appState.message = null;
 
+        $scope.reload = function() {
+            getService($scope, '/items/', {}, 'items');
+            getService($scope, '/categories/', {}, 'categories');
+        }
+
         $scope.newItem = {description:''};
 
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
                 $scope.newItem.organization = appState.current_organization.id;
+                $scope.reload();
             });
         }
         else {
             $scope.newItem.organization = appState.current_organization.id;
+            $scope.reload();
         }
-
-        getService($scope, '/items/', {}, 'items');
-        getService($scope, '/categories/', {}, 'categories');
 
 
         $scope.addItem = function() {
             postService('/items/', $scope.newItem)
                 .then(function(response) {
-                    getService($scope, '/items/', {}, 'items');
+                    $scope.reload();
                     $scope.newItem = {description:'',organization:appState.current_organization.id};
                     appState.message = "Item Added";
                 });
@@ -31,7 +35,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.remove = function(id) {
             deleteService('/items/'+id, {item:id})
                 .then(function(response) {
-                    getService($scope, '/items/', {}, 'items');
+                    $scope.reload();
                     appState.message = "Item Deleted";
                 });
         }

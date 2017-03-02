@@ -35,7 +35,7 @@
             </div>
             <div class="col-md-3 text-right">
                 {% if request.user.is_authenticated %}
-                Hi <b>{{request.user}}</b>(<a class="undecorated" href="expenses/logout/">Sign out</a>)
+                <b><i>{{request.user}}</i></b>(<a class="undecorated" href="expenses/logout/">Sign out</a>)
                 {% endif %}
             </div>
         </div>

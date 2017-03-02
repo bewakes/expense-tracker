@@ -6,6 +6,11 @@ from expenses.models import AppUser, Category, Item, Expense, Organization
 
 class UserSerializer(serializers.ModelSerializer):
     default_organization = serializers.SerializerMethodField(source='get_default_organization')
+    organizations = serializers.SerializerMethodField(source='get_organizations')
+
+    def get_organizations(self, user):
+        return OrganizationSerializer(user.organizations, many=True).data
+
     def get_default_organization(self, user):
         orgs = user.organizations.filter(owner=user)
         if orgs:
@@ -14,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AppUser
-        fields = ('id', 'username', 'email', 'address', 'has_setup', 'default_organization')
+        fields = ('id', 'username', 'email', 'address', 'organizations', 'default_organization')
 
 
 class CategorySerializer(serializers.ModelSerializer):
