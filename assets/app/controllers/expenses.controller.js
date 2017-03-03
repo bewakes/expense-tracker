@@ -10,6 +10,7 @@ define(['app/app', 'services', 'directives'], function(app) {
             getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
             getService($scope, '/items/', {}, 'items');
             getService($scope, '/categories/', {}, 'categories');
+            $scope.newExpense = {date:new Date(), description:''};
         };
 
         $scope.setEditMode = function(id) {
@@ -42,7 +43,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.addExpense= function() {
             var t, msg;
             if($scope.editMode) {
-                t = putService('/expense/'+$scope.newExpense.id+'/', $scope.newExpense);
+                t = putService('/expense/'+$scope.newExpense.id+'/?organization='+appState.current_organization.id.toString(), $scope.newExpense);
                 msg = "Expense Updated";
             }
             else {
@@ -52,7 +53,6 @@ define(['app/app', 'services', 'directives'], function(app) {
 
             t.then(function(response) {
                     $scope.reload();
-                    $scope.newExpense = {date:new Date(), description:''};
                     appState.message = msg;
                 });
             $scope.cancelEdit();
