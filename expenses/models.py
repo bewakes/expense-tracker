@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+from django.utils import timezone
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
@@ -74,7 +75,7 @@ class Expense(models.Model):
     item = models.ForeignKey(Item)
     description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateTimeField(default=timezone.now)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
