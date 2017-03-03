@@ -214,6 +214,14 @@ ul.horizontal-menu {
     border: solid 2px #999;
 }
 
+.search-list {
+    position:absolute;
+    horizontal-align:right;
+    left:100px;
+    z-index:5;
+    width:80%;
+}
+
 /*
  * LOGIN PAGE
  */

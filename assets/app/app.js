@@ -28,6 +28,7 @@ define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
             .when('/items', resolve('items', 'items'))
             .when('/categories', resolve('categories', 'categories'))
             .when('/expenses', resolve('expenses', 'expenses'))
+            .when('/settings', resolve('settings', 'settings'))
     }
 
     function resolve(controllername, templatename) {
