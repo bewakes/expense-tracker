@@ -1,0 +1,68 @@
+<div class="row full-width marginless-row">
+    <div class="col-md-12 full-width">
+        <div class="text-center view-header dark-header">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"<b>Categories</b></div>
+                <div class="col-md-4"><org-selection/></div>
+            </div>
+            <notify-message></notify-message>
+        </div>
+        <div class="view-content">
+            <div class="row marginless-row tmargin-40">
+                <div class="col-md-6 items-container">
+                    <div class="blue-header">
+                        Change Settings
+                    </div>
+                    <div class="form-element">
+                        <label>Org Name</label>
+                        <input type="text" ng-model="updateOrg.name" placeholder="Organization name"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Add User</label>
+                        <input type="text" placeholder="Type in username to search"/>
+                        <div class="search-list" ng-show="searchUserList.length>0" style="background-color:#eee;border:solid 2px #999">
+                            <div class="form-element">
+                                <b>Relevant Users</b>
+                            </div>
+                            <div class="form-element" ng-repeat="user in searchUserList">
+                                {{user}}
+                            </div>
+                            <div class="form-element text-center">
+                                <buton class="btn btn-danger long-button">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-element text-center">
+                        <button class="btn btn-success long-button" ng-click="addCategory()">Add Category</button>
+                    </div>
+                </div>
+                <div class="col-md-6 items-container">
+                    <div class="blue-header">
+                        Info
+                    </div>
+                    <div class="form-element">
+                        <label>Current Users</label>
+                        <ul class="ul-undecorated">
+                            <li class="vertical" style="border-bottom:#eee" ng-repeat="x in searchUserList">
+                                <span>{{x}}</span>
+                                <span style="float:right">
+                                    <a class="helper-link" ng-click="removeUser(x.id)" href="javascript:void(0)">Remove</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="form-element">
+                        <label>Note:</label><br>
+                        <div class="text-justify">
+                            My name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandey
+                            My name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandey
+                            My name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandey
+                            My name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandeyMy name is bibek pandey
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
