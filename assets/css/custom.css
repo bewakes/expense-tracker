@@ -152,6 +152,10 @@ ul.horizontal-menu {
     background-color:white;
     border-bottom: solid 1px #eee;
 }
+.form-element p {
+    font-size: 1.2em;
+    padding:5px 20px;
+}
 
 .form-element label {
     min-width:120px;
