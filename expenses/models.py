@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    owner = models.OneToOneField('AppUser')
+    owner = models.OneToOneField('AppUser', null=True)
     is_individual = models.BooleanField(default=True)
 
     def __str__(self):
