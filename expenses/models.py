@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    owner = models.OneToOneField('AppUser', null=True)
+    owner = models.OneToOneField('AppUser', blank=True, null=True)
     is_individual = models.BooleanField(default=True)
 
     def __str__(self):
