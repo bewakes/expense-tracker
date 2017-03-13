@@ -73,6 +73,8 @@ class Expense(models.Model):
 
     date = models.DateTimeField('date')
     item = models.ForeignKey(Item)
+    items = models.TextField(default="")
+    category = models.ForeignKey('Category')
     description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
     date = models.DateTimeField(default=timezone.now)
