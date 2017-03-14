@@ -52,6 +52,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
     #     return ItemSerializer(expense.item).data
     date = serializers.DateTimeField(format="%Y-%m-%d")
     categoryname = serializers.SerializerMethodField(required=False, source='get_categoryname')
+    items = serializers.CharField(allow_blank=True)
     def get_categoryname(self, expense):
         print('get catname', expense.category.name)
         return expense.category.name

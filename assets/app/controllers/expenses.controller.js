@@ -44,6 +44,9 @@ define(['app/app', 'services', 'directives'], function(app) {
             $scope.newExpense = {date:new Date(), description:''};
         }
 
+        $scope.showExpenses = function(date) {
+        }
+
 
         if(!appState.identity) {
             identityHandlerService().then(function(response) {

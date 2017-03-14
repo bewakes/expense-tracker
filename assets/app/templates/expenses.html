@@ -17,11 +17,27 @@
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="(date, value) in expenses_by_date">
                             <span><b>{{date | date: 'MMM dd yyyy'}}</b></span>
-                            <a href="javascript:void(0)" ng-click="showExpenses(date)">
-                                <span style="float:right">
-                                    NRs.{{value.total}}
-                                </span>
-                            </a>
+                            <span style="float:right">
+                                (<a href="javascript:void(0)" ng-click="value.show=!value.show">
+                                <span ng-show="value.show">Hide</span>
+                                <span ng-show="!value.show">More</span>
+                                </a>)
+                            </span>
+                            <span style="float:right">
+                                NRs.{{value.total}}
+                            </span>
+                            <ul class="ul-undecorated" ng-show="value.show">
+                                <li class="vertical-list-item" ng-repeat="x in value.expenses">
+                                    <span>
+                                        <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
+                                            {{x.categoryname}} (NRs.{{x.cost}})
+                                        </a>
+                                    </span>
+                                    <span style="float:right">
+                                        <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
+                                    </span>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
