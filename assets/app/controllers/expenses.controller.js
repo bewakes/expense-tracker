@@ -7,7 +7,21 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.newExpense = {date:new Date(), description:''};
 
         $scope.reload = function() {
-            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
+            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses')
+                .then(function() {
+
+                    $scope.expenses_by_date = {};
+
+                    for(var expense in $scope.expenses) {
+                        if(!$scope.expenses_by_date[$scope.expenses[expense].date]) {
+                            $scope.expenses_by_date[$scope.expenses[expense].date] = {};
+                            $scope.expenses_by_date[$scope.expenses[expense].date].expenses = [];
+                            $scope.expenses_by_date[$scope.expenses[expense].date].total = 0;
+                        }
+                        $scope.expenses_by_date[$scope.expenses[expense].date].expenses.push($scope.expenses[expense]);
+                        $scope.expenses_by_date[$scope.expenses[expense].date].total+= $scope.expenses[expense].cost;
+                    }
+                });
             //getService($scope, '/items/', {}, 'items');
             getService($scope, '/categories/', {}, 'categories');
             $scope.newExpense = {date:new Date(), description:''};
