@@ -16,7 +16,7 @@
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in expenses">
-                            <span><b>{{x.itemname}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
+                            <span><b>{{x.categoryname}} (NRs.{{x.cost}}) {{x.date | date: 'dd/MM/yyyy'}}</b></span>
                             <span style="float:right">
                                 <a class="helper-link" href="javascript:void(0)" ng-click="remove(x.id)">Remove</a>
                             </span>
@@ -31,7 +31,7 @@
                         <li class="vertical-list-item" ng-repeat="x in expenses">
                             <span>
                                 <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
-                                    {{x.itemname}} (NRs.{{x.cost}})
+                                    {{x.categoryname}} (NRs.{{x.cost}})
                                 </a>
                                 <b> {{x.date | date: 'MMM dd yyyy'}}</b>
                             </span>
@@ -47,19 +47,23 @@
                         <span ng-show="editMode"><b>Update Expense</b></span>
                     </div>
                     <div class="form-element">
-                        <label>Item</label>
-                        <select id="item-select" ng-change="showid()" ng-model="newExpense.item">
-                            <option value="" selected="true" disabled>Pick an Item</option>
-                            <option value="{{item.id}}" ng-repeat="item in items">{{item.name}}</option>
+                        <label>Category*</label>
+                        <select id="item-select" ng-change="showid()" ng-model="newExpense.category">
+                            <option value="" selected="true" disabled>Pick a Category</option>
+                            <option value="{{category.id}}" ng-repeat="category in categories">{{category.name}}</option>
                         </select>
                     </div>
                     <div class="form-element">
-                        <label>Cost</label>
+                        <label>Cost*</label>
                         <input type="number" step="0.01" min="0" ng-model="newExpense.cost" placeholder="Cost for the item"/>
                     </div>
                     <div class="form-element">
-                        <label>Date</label>
+                        <label>Date*</label>
                         <input type="date" ng-model="newExpense.date" placeholder="yyyy-mm-dd"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Items</label>
+                        <input type="text" ng-model="newExpense.items" placeholder="Comma separated items"/>
                     </div>
                     <div class="form-element">
                         <label>Description</label>

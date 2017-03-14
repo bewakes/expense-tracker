@@ -94,9 +94,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         except:
             orgs = Organization.objects.filter(owner=self.request.user)
             if orgs:
-                return allexpenses.filter(item__organization=orgs[0])
+                return allexpenses.filter(category__organization=orgs[0])
             return []
-        return allexpenses.filter(item__organization_id=org)
+        return allexpenses.filter(category__organization_id=org)
 
 
 class UserViewSet(viewsets.ModelViewSet):

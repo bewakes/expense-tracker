@@ -51,9 +51,10 @@ class ExpenseSerializer(serializers.ModelSerializer):
     # def get_item(self, expense):
     #     return ItemSerializer(expense.item).data
     date = serializers.DateTimeField(format="%Y-%m-%d")
-    itemname = serializers.SerializerMethodField(required=False, source='get_itemname')
-    def get_itemname(self, expense):
-        return expense.item.name
+    categoryname = serializers.SerializerMethodField(required=False, source='get_categoryname')
+    def get_categoryname(self, expense):
+        print('get catname', expense.category.name)
+        return expense.category.name
 
     def get_validation_exclusions(self):
         exclusions = super().get_validation_exclusions()
@@ -61,5 +62,5 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Expense
-        fields = ('id', 'item', 'date', 'cost', 'itemname', 'description')
+        fields = ('id', 'category', 'date', 'cost', 'categoryname', 'description', 'items')
 

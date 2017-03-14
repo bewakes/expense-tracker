@@ -72,7 +72,7 @@ class Expense(models.Model):
     valid_objects = ExpenseManager()
 
     date = models.DateTimeField('date')
-    item = models.ForeignKey(Item)
+    item = models.ForeignKey(Item, null=True)
     items = models.TextField(default="")
     category = models.ForeignKey('Category')
     description = models.CharField(max_length=1000,blank=True)

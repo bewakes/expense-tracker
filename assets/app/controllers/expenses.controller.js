@@ -7,8 +7,10 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.newExpense = {date:new Date(), description:''};
 
         $scope.reload = function() {
-            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses');
-            getService($scope, '/items/', {}, 'items');
+            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses').then(function(){
+                alert(JSON.stringify($scope.expenses));
+            })
+            //getService($scope, '/items/', {}, 'items');
             getService($scope, '/categories/', {}, 'categories');
             $scope.newExpense = {date:new Date(), description:''};
         };
