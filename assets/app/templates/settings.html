@@ -18,7 +18,7 @@
                         <label>Org/Individual </label>
                         <input type="text" ng-model="updateOrg.name" placeholder="Organization name" ng-disabled="!edit"/>
                         <button type="button" ng-show="!edit" class="btn btn-success" ng-click="edit=true">Edit</button>
-                        <button type="button" ng-show="edit" class="btn btn-success short-button" ng-click="updateOrg()"><small>Update</small></button>
+                        <button type="button" ng-show="edit" class="btn btn-success short-button" ng-click="update()"><small>Update</small></button>
                         <button type="button" ng-show="edit" class="btn btn-danger short-button" ng-click="cancelEdit()"><small>Cancel</small></button>
                     </div>
                     <div class="blue-header">

@@ -33,6 +33,16 @@ define(['app/app', 'services', 'directives'], function(app) {
             $scope.updateOrg = angular.copy(appState.current_organization);
         }
 
+        $scope.update = function() {
+            putService('/organizations/'+appState.current_organization.id+'/', $scope.updateOrg)
+                .then(function(d){
+                    identityHandlerService().then(function(){
+                        $scope.reload();
+                        $scope.edit = false;
+                    });
+                });
+        }
+
     }
 
     app.register.controller('settingsController', settingsController);
