@@ -16,12 +16,14 @@ define(['app/app', 'services', 'directives'], function(app) {
         }
 
         $scope.edit = false;
+        $scope.editUsers = false;
 
         $scope.searchUserList = [];
 
         $scope.reload = function() {
             $scope.updateOrg = angular.copy(appState.current_organization);
             getService($scope, '/orgusers/', {organization:appState.current_organization.id}, 'orgUsers');
+            $scope.edit = $scope.editUser = false;
         }
 
         $scope.setEditMode = function() {
@@ -32,13 +34,16 @@ define(['app/app', 'services', 'directives'], function(app) {
             $scope.edit = false;
             $scope.updateOrg = angular.copy(appState.current_organization);
         }
+        $scope.cancelEditUser = function() {
+            $scope.editUser = false;
+        }
 
         $scope.update = function() {
+            var name = $scope.updateOrg.name;
             putService('/organizations/'+appState.current_organization.id+'/', $scope.updateOrg)
                 .then(function(d){
                     identityHandlerService().then(function(){
-                        $scope.reload();
-                        $scope.edit = false;
+                        location.reload();
                     });
                 });
         }

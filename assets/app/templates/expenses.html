@@ -12,7 +12,7 @@
             <div class="row marginless-row tmargin-40">
                 <div class="col-md-4 items-container">
                     <div class="blue-header">
-                        Top Expenses
+                        Recent Expenses
                     </div>
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="(date, value) in expenses_by_date">
@@ -43,10 +43,10 @@
                 </div>
                 <div class="col-md-4 items-container">
                     <div class="blue-header">
-                        Recent Expenses
+                        Top Expenses
                     </div>
                     <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="x in expenses">
+                        <li class="vertical-list-item" ng-repeat="x in sorted_expenses">
                             <span>
                                 <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
                                     {{x.categoryname}} (NRs.{{x.cost}})

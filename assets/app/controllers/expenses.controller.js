@@ -9,6 +9,8 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.reload = function() {
             getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses')
                 .then(function() {
+                    $scope.sorted_expenses = angular.copy($scope.expenses);
+                    $scope.sorted_expenses.sort(function(a,b){return b.cost-a.cost;});
 
                     $scope.expenses_by_date = {};
 

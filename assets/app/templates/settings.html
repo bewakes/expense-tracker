@@ -27,13 +27,13 @@
                     <div class="form-element">
                         <ul class="ul-undecorated">
                             <li class="vertical-list-item" ng-repeat="user in orgUsers">{{user.username}} &nbsp;&nbsp;
-                                <a href="javascript:void(0)" ng-show="edit && user.id!=currentUser.id"> Remove</a>
+                                <a href="javascript:void(0)" ng-show="editUser && user.id!=currentUser.id"> Remove</a>
                             </li>
                         </ul>
                     </div>
-                    <div class="form-element" ng-show="edit">
+                    <div class="form-element" ng-show="editUser">
                         <label>Add User</label>
-                        <input type="text" placeholder="Type in username to search" ng-disabled="!edit"/>
+                        <input type="text" placeholder="Type in username to search"/>
                         <div class="search-list" ng-show="searchUserList.length>0" style="background-color:#eee;border:solid 2px #999">
                             <div class="form-element">
                                 <b>Relevant Users</b>
@@ -46,14 +46,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-element text-center" ng-show="edit">
-                        <button class="btn btn-success long-button" ng-click="update()">Update</button>
+                    <div class="form-element text-center" ng-show="editUser">
+                        <button class="btn btn-success long-button" ng-click="addUsers()">Add Users</button>
                     </div>
-                    <div class="form-element text-center" ng-show="edit">
-                        <button class="btn btn-danger long-button" ng-click="cancelEdit()">Cancel</button>
+                    <div class="form-element text-center" ng-show="editUser">
+                        <button class="btn btn-danger long-button" ng-click="cancelEditUser()">Cancel</button>
                     </div>
-                    <div ng-show="!edit" class="form-element text-center">
-                        <button class="btn btn-info long-button" ng-click="setEditMode()">Edit</button>
+                    <div ng-show="!editUser" class="form-element text-center">
+                        <button class="btn btn-success long-button" ng-click="editUser=true">Edit</button>
                     </div>
                 </div>
                 <div class="col-md-6 items-container">
