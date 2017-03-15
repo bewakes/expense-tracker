@@ -25,6 +25,7 @@ router = routers.SimpleRouter()
 router.register(r'categories', CategoryViewSet)
 router.register(r'items', ItemViewSet)
 router.register(r'users', UserViewSet)
+router.register(r'orgusers', OrgUsersViewSet, base_name='orgusers')
 router.register(r'organizations', UserViewSet)
 router.register(r'expense', ExpenseViewSet)
 

@@ -16,9 +16,11 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         $scope.edit = false;
 
-        //$scope.searchUserList = ["bibek", "pandey"];
+        $scope.searchUserList = [];
+
         $scope.reload = function() {
             $scope.updateOrg = angular.copy(appState.current_organization);
+            getService($scope, '/orgusers/', {organization:appState.current_organization.id}, 'orgUsers');
         }
 
         $scope.setEditMode = function() {

@@ -107,6 +107,27 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+class OrgUsersViewSet(viewsets.ViewSet):
+    """
+    ViewSet for org users
+    """
+    def list(self, request):
+        """
+        List the users for org
+        """
+        try:
+            orgid = int(request.query_params.get('organization'))
+        except Exception as e:
+            return Response([])
+            print(e)
+        try:
+            org = Organization.objects.get(id=orgid)
+        except:
+            return Response([])
+        users = org.users
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
 class OrganizationViewSet(viewsets.ModelViewSet):
     """
     ViewSet for organization
