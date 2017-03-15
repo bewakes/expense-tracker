@@ -186,7 +186,7 @@ ul.horizontal-menu {
     background-color: #eee;
     border:none;
     height:35px;
-    width:60%;
+    width:50%;
     padding-left:5px;
 }
 .form-element input:placeholder-shown {
@@ -232,6 +232,9 @@ ul.horizontal-menu {
 
 .long-button {
     width:95%;
+}
+.short-button {
+    max-width:50%;
 }
 .social-button {
     height:40px;

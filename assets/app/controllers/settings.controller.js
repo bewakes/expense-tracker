@@ -8,6 +8,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
                 $scope.reload();
+                $scope.currentUser = appState.identity;
             });
         }
         else {
@@ -29,6 +30,7 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         $scope.cancelEdit = function() {
             $scope.edit = false;
+            $scope.updateOrg = angular.copy(appState.current_organization);
         }
 
     }

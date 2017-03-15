@@ -17,9 +17,19 @@
                     <div class="form-element">
                         <label>Org/Individual </label>
                         <input type="text" ng-model="updateOrg.name" placeholder="Organization name" ng-disabled="!edit"/>
+                        <button type="button" ng-show="!edit" class="btn btn-success" ng-click="edit=true">Edit</button>
+                        <button type="button" ng-show="edit" class="btn btn-success short-button" ng-click="updateOrg()"><small>Update</small></button>
+                        <button type="button" ng-show="edit" class="btn btn-danger short-button" ng-click="cancelEdit()"><small>Cancel</small></button>
                     </div>
-                    <div class="form-element" ng-show="!edit">
-                        Click 'Edit' to add users
+                    <div class="blue-header">
+                        Users
+                    </div>
+                    <div class="form-element">
+                        <ul class="ul-undecorated">
+                            <li class="vertical-list-item" ng-repeat="user in orgUsers">{{user.username}} &nbsp;&nbsp;
+                                <a href="javascript:void(0)" ng-show="edit && user.id!=currentUser.id"> Remove</a>
+                            </li>
+                        </ul>
                     </div>
                     <div class="form-element" ng-show="edit">
                         <label>Add User</label>
@@ -58,19 +68,6 @@
                         <p>
                             Furthermore, you can add users to collaborate in tracking expenses as well.
                         </p>
-                    </div>
-                    <div class="blue-header">
-                        Collaborating Users
-                    </div>
-                    <div class="form-element">
-                        <ul class="ul-undecorated">
-                            <li class="vertical-list-item" ng-repeat="x in searchUserList">
-                                <span>{{x}}</span>
-                                <span style="float:right">
-                                    <a class="helper-link" ng-click="removeUser(x.id)" href="javascript:void(0)">Remove</a>
-                                </span>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
