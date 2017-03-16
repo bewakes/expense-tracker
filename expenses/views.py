@@ -189,7 +189,9 @@ def removeuser(request):
         org = Organization.objects.get(pk=data['organization'])
         user = AppUser.objects.get(pk=data['user'])
 
-        if not org in request.user.organizations.all() or request.user==user:
+        if request.user==user:
+            return Response({"detail":"Can't remove yourself"}, status=status.HTTP_403_FORBIDDEN)
+        if not org in request.user.organizations.all():
             return Response({"detail":"User does not have permission"}, status=status.HTTP_403_FORBIDDEN)
         user.organizations.remove(org)
         return Response({"detail":"user removed"})

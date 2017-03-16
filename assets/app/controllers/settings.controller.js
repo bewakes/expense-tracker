@@ -21,6 +21,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         }
         else {
             $scope.reload();
+            $scope.currentUser = appState.identity;
         }
 
         $scope.edit = false;
