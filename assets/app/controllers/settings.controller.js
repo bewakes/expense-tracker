@@ -5,6 +5,12 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         appState.error = appState.message = null;
 
+        $scope.reload = function() {
+            $scope.updateOrg = angular.copy(appState.current_organization);
+            getService($scope, '/orgusers/', {organization:appState.current_organization.id}, 'orgUsers');
+            $scope.edit = $scope.editUser = false;
+        }
+
         if(!appState.identity) {
             identityHandlerService().then(function(response) {
                 $scope.reload();
@@ -19,12 +25,6 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.editUsers = false;
 
         $scope.searchUserList = [];
-
-        $scope.reload = function() {
-            $scope.updateOrg = angular.copy(appState.current_organization);
-            getService($scope, '/orgusers/', {organization:appState.current_organization.id}, 'orgUsers');
-            $scope.edit = $scope.editUser = false;
-        }
 
         $scope.setEditMode = function() {
             $scope.edit = true;
