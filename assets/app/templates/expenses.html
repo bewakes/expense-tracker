@@ -29,7 +29,7 @@
                             <ul class="ul-undecorated" ng-show="value.show">
                                 <li class="vertical-list-item" ng-repeat="x in value.expenses">
                                     <span>
-                                        <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
+                                        <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.items?x.items + ' || ':''}} {{x.description}}">
                                             {{x.categoryname}} (NRs.{{x.cost}})
                                         </a>
                                     </span>
@@ -48,7 +48,7 @@
                     <ul class="ul-undecorated">
                         <li class="vertical-list-item" ng-repeat="x in sorted_expenses">
                             <span>
-                                <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.description}}">
+                                <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.items?x.items+' ||':''}} {{x.description}}">
                                     {{x.categoryname}} (NRs.{{x.cost}})
                                 </a>
                                 <b> {{x.date | date: 'MMM dd yyyy'}}</b>
