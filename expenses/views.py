@@ -150,6 +150,12 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        user = self.request.user
+        org = serializer.save()
+        user.organizations.add(org)
+        user.save()
+
 @api_view(['POST'])
 def adduser(request):
     """

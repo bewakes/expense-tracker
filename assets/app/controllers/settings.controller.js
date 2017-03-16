@@ -8,7 +8,9 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.reload = function() {
             $scope.updateOrg = angular.copy(appState.current_organization);
             getService($scope, '/orgusers/', {organization:appState.current_organization.id}, 'orgUsers');
-            $scope.edit = $scope.editUser = false;
+            $scope.edit = $scope.editUser = $scope.addOrg= false;
+            $scope.orgs = appState.identity.organizations;
+            $scope.newOrg = {name:''};
         }
 
         if(!appState.identity) {
@@ -36,6 +38,13 @@ define(['app/app', 'services', 'directives'], function(app) {
             postService('/expenses/adduser/', {user:user.id, organization:appState.current_organization.id})
                 .then(function(d) {
                     $scope.reload();
+                });
+        }
+
+        $scope.addNewOrg = function() {
+            postService('/organizations/', $scope.newOrg)
+                .then(function(d) {
+                    location.reload();
                 });
         }
 

@@ -58,16 +58,21 @@
                 </div>
                 <div class="col-md-6 items-container">
                     <div class="blue-header">
-                        Note
+                        <span>All of Your Organizations</span>
+                        <button class="btn btn-success" style="float:right" ng-show="!addOrg" ng-click="addOrg=true">Add</button>
                     </div>
                     <div class="form-element">
-                        <p>
-                            Using <i>Expenses</i> you can not only track you personal expenses, you can do so for any number of
-                            entities(individuals, your family or your organization).
-                        </p>
-                        <p>
-                            Furthermore, you can add users to collaborate in tracking expenses as well.
-                        </p>
+                        <ul class="ul-undecorated">
+                            <li class="vertical-list-item" ng-repeat="org in orgs">{{org.name}}</li>
+                        </ul>
+                    </div>
+                    <div class="form-element" ng-show="addOrg">
+                        <label>Org Name</label>
+                        <input type="text" ng-model="newOrg.name"/>
+                    </div>
+                    <div class="form-element" ng-show="addOrg">
+                        <button class="btn btn-success" ng-disabled="newOrg.name.trim()==''" ng-click="addNewOrg()">Add Organization</button>&nbsp;
+                        <button class="btn btn-danger" ng-click="addOrg=false">Cancel</button>
                     </div>
                 </div>
             </div>
