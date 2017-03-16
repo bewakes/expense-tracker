@@ -13,33 +13,37 @@
                 <div class="col-md-6 items-container">
                     <div class="blue-header">
                         Change Settings
+                        <button style="float:right" type="button" ng-show="!edit" class="btn btn-success" ng-click="edit=true">Edit</button>
                     </div>
                     <div class="form-element">
                         <label>Org/Individual </label>
                         <input type="text" ng-model="updateOrg.name" placeholder="Organization name" ng-disabled="!edit"/>
-                        <button type="button" ng-show="!edit" class="btn btn-success" ng-click="edit=true">Edit</button>
                         <button type="button" ng-show="edit" class="btn btn-success short-button" ng-click="update()"><small>Update</small></button>
                         <button type="button" ng-show="edit" class="btn btn-danger short-button" ng-click="cancelEdit()"><small>Cancel</small></button>
                     </div>
                     <div class="blue-header">
-                        Users
+                        <span>Users</span>
+                        <button ng-show="!editUser" style="float:right" class="btn btn-success" ng-click="editUser=true">Add</button>
                     </div>
                     <div class="form-element">
                         <ul class="ul-undecorated">
-                            <li class="vertical-list-item" ng-repeat="user in orgUsers">{{user.username}} &nbsp;&nbsp;
-                                <a href="javascript:void(0)" ng-show="editUser && user.id!=currentUser.id"> Remove</a>
+                            <li class="vertical-list-item" ng-repeat="user in orgUsers"><b>{{user.username}} &nbsp;&nbsp;</b>
+                                <a href="javascript:void(0)" ng-click="removeUser(user)" ng-show="user.id!=currentUser.id"> Remove</a>
                             </li>
                         </ul>
                     </div>
                     <div class="form-element" ng-show="editUser">
                         <label>Add User</label>
-                        <input type="text" placeholder="Type in username to search"/>
+                        <input type="text" ng-model="searchText" placeholder="Type in username to search" ng-change="loadUsers()"/>
                         <div class="search-list" ng-show="searchUserList.length>0" style="background-color:#eee;border:solid 2px #999">
                             <div class="form-element">
-                                <b>Relevant Users</b>
+                                <b>Search Users Result</b>
                             </div>
-                            <div class="form-element" ng-repeat="user in searchUserList">
-                                {{user}}
+                            <div class="form-element" style="background-color:#ccc" ng-repeat="user in searchUserList">
+                                <span>{{user.username}}<span>
+                                <span style="float:right">
+                                    <a href="javascript:void(0)" ng-click="addUser(user)">Add</a>
+                                </span>
                             </div>
                             <div class="form-element text-center">
                                 <buton class="btn btn-danger long-button" ng-click="searchUserList=[]">Cancel</button>
@@ -47,13 +51,9 @@
                         </div>
                     </div>
                     <div class="form-element text-center" ng-show="editUser">
-                        <button class="btn btn-success long-button" ng-click="addUsers()">Add Users</button>
-                    </div>
-                    <div class="form-element text-center" ng-show="editUser">
                         <button class="btn btn-danger long-button" ng-click="cancelEditUser()">Cancel</button>
                     </div>
                     <div ng-show="!editUser" class="form-element text-center">
-                        <button class="btn btn-success long-button" ng-click="editUser=true">Edit</button>
                     </div>
                 </div>
                 <div class="col-md-6 items-container">

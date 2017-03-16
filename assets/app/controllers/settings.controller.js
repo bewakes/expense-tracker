@@ -26,6 +26,26 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         $scope.searchUserList = [];
 
+        $scope.loadUsers = function() {
+            if ($scope.searchText.length>=3) {
+                getService($scope, '/users/', {query:$scope.searchText}, 'searchUserList');
+            }
+        }
+
+        $scope.addUser = function(user) {
+            postService('/expenses/adduser/', {user:user.id, organization:appState.current_organization.id})
+                .then(function(d) {
+                    $scope.reload();
+                });
+        }
+
+        $scope.removeUser = function(user) {
+            postService('/expenses/removeuser/', {user:user.id, organization:appState.current_organization.id})
+                .then(function(d) {
+                    $scope.reload();
+                });
+        }
+
         $scope.setEditMode = function() {
             $scope.edit = true;
         }

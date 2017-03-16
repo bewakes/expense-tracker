@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import View
+from django.db.models import Q
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -107,6 +108,19 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        allusers = AppUser.objects.all()
+        try:
+            query = self.request.query_params.get('query')
+            return allusers.filter(
+                Q(username__contains=query) |
+                Q(first_name__contains=query) |
+                Q(last_name__contains=query)
+            )
+        except Exception as e:
+            print(e)
+            return allusers
+
 class OrgUsersViewSet(viewsets.ViewSet):
     """
     ViewSet for org users
@@ -135,6 +149,47 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
+
+@api_view(['POST'])
+def adduser(request):
+    """
+    add user to organization
+    """
+    try:
+        data = request.data
+        org = Organization.objects.get(pk=data['organization'])
+        user = AppUser.objects.get(pk=data['user'])
+
+        if not org in request.user.organizations.all():
+            return Response({"detail":"User does not have permission"}, status=status.HTTP_403_FORBIDDEN)
+
+        if org in user.organizations.all():
+            return Response({"detail":"Already added"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.organizations.add(org)
+        user.save()
+        return Response({"detail":"user added"})
+    except Exception as e:
+        print(e)
+        return Response({"detail":"invalid user/orgid"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def removeuser(request):
+    """
+    remove user from organization
+    """
+    try:
+        data = request.data
+        org = Organization.objects.get(pk=data['organization'])
+        user = AppUser.objects.get(pk=data['user'])
+
+        if not org in request.user.organizations.all() or request.user==user:
+            return Response({"detail":"User does not have permission"}, status=status.HTTP_403_FORBIDDEN)
+        user.organizations.remove(org)
+        return Response({"detail":"user removed"})
+    except Exception as e:
+        print(e)
+        return Response({"detail":"invalid user/orgid"}, status=status.HTTP_400_BAD_REQUEST)
 
 def login(request):
     if not request.user.is_authenticated():
