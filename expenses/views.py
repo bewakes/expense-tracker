@@ -17,6 +17,7 @@ from expenses.serializers import *
 import json, re
 
 months = ['BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ', 'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA']
+EXPENSES_LIMIT = 5
 
 # Create your views here.
 
@@ -104,7 +105,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         if top:
             expenses = Expense.objects.filter(category__organization_id=orgid).\
                 order_by('-cost')[:10]
-            return Response(expenses)
+            return Response(ExpenseSerializer(expenses, many=True).data)
+
+        group_by = request.query_params.get('group_by') or 'date'
 
 
         fromDate = self.request.query_params.get('fromDate', None)
@@ -117,12 +120,12 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             offset = int(request.query_params.get('offset'))
         except:
             offset = 0
-        limit = 10
+        limit = EXPENSES_LIMIT
         if not forDate and not fromDate and not toDate:
             return Response(Expense.objects.\
                 filter(category__organization_id=orgid).\
                 order_by('-date').\
-                values('date').\
+                values(group_by).\
                 annotate(total=Sum('cost'))[offset*limit:limit*(offset+1)])
 
         elif not fromDate or not toDate:
@@ -134,7 +137,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             return Response(Expense.objects.\
                 filter(category__organization_id=orgid,date__gte=fromDate, date__lt=toDate).\
                 order_by('-date').\
-                values('date').\
+                values(group_by).\
                 annotate(total=Sum('cost'))[0:5][offset:limit*(offset+1)])
 
 

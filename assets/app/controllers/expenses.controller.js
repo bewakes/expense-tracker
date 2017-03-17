@@ -7,6 +7,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.newExpense = {date:new Date(), description:''};
 
         $scope.reload = function() {
+            $scope.no_more = false;
             $scope.offset = 0;
             $scope.expenses_by_date = [];
             var data = {};
@@ -19,12 +20,17 @@ define(['app/app', 'services', 'directives'], function(app) {
             getService($scope, '/categories/', {}, 'categories');
             $scope.newExpense = {date:new Date(), description:''};
 
-            $scope.date_expense = {};
+            data = angular.copy(data);
+            delete data.offset;
+            data.top=1;
+            getService($scope, '/expense/',data, 'sorted_expenses');
+
+            $scope.date_expense = {}; // store expenses by date key
         };
 
-        $scope.setEditMode = function(id) {
+        $scope.setEditMode = function(expense) {
             $scope.editMode = true;
-            var temp = angular.copy($scope.expenses.filter(function(e){ return e.id == id;})[0]);
+            var temp = angular.copy(expense);
             temp.date = new Date(temp.date);
             $scope.newExpense = temp;
             $scope.newExpense.category = temp.category.toString();
@@ -52,6 +58,21 @@ define(['app/app', 'services', 'directives'], function(app) {
         }
 
         $scope.showExpenses = function(date) {
+        }
+
+        $scope.loadMore = function () {
+            $scope.offset +=1;
+            var data = {
+                organization:appState.current_organization.id,
+                offset:$scope.offset,
+            }
+            getService($scope, '/expense/', data, 'tempexpenses')
+                .then(function(d) {
+                    alert();
+                    $scope.expenses_by_date = $scope.expenses_by_date.concat($scope.tempexpenses);
+                    if($scope.tempexpenses.length==0)
+                        $scope.no_more = true;
+                });
         }
 
 
