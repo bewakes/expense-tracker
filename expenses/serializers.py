@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from expenses.models import AppUser, Category, Item, Expense, Organization
+from expenses.models import AppUser, Category, Item, Expense, Organization, Feedback
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,6 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = ('id', 'username', 'email', 'address', 'organizations', 'default_organization')
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ('id', 'user', 'content')
 
 
 class CategorySerializer(serializers.ModelSerializer):

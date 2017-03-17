@@ -220,6 +220,12 @@ def adduser(request):
         print(e)
         return Response({"detail":"invalid user/orgid"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class FeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = [IsAuthenticated]
+
 @api_view(['POST'])
 def removeuser(request):
     """

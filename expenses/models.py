@@ -86,6 +86,13 @@ class Expense(models.Model):
         self.is_deleted = True
         self.save()
 
+class Feedback(models.Model):
+    user = models.ForeignKey('AppUser')
+    content = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.user.username
+
 
 # not used currently
 class ItemExpense(models.Model):

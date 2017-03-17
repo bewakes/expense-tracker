@@ -28,9 +28,10 @@ router.register(r'users', UserViewSet)
 router.register(r'orgusers', OrgUsersViewSet, base_name='orgusers')
 router.register(r'organizations', OrganizationViewSet)
 router.register(r'expense', ExpenseViewSet)
+router.register(r'feedback', FeedbackViewSet)
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^ulala/', admin.site.urls),
     url(r'^$', include('expenses.urls')),
     url(r'^expenses/', include('expenses.urls')),
     url('', include('social_django.urls', namespace='social')),
