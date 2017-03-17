@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import View
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -91,27 +91,42 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     # def list(self, request, *args, **kwargs):
     #     queryset = self.get_queryset()
 
-    def get_queryset(self):
+    def list(self, request):
         allexpenses = Expense.valid_objects.all()
         today = timezone.now().date()
 
         fromDate = self.request.query_params.get('fromDate', None)
         toDate = self.request.query_params.get('toDate', None)
-        if not toDate: toDate = today
-        if not fromDate: fromDate = toDate - timedelta(days=10)
-        try:
-            org = int(self.request.query_params.get('organization'))
-        except:
-            orgs = Organization.objects.filter(owner=self.request.user)
-            if orgs:
-                expenses = allexpenses.filter(
-                    category__organization=orgs[0]
-                ).order_by('-date')
-            return []
-        expenses = allexpenses.filter(category__organization_id=org).order_by('-date')
 
-        expenses = expenses.filter(date__lte=toDate, date__gt=fromDate)
-        return expenses
+        forDate = request.query_params.get('forDate', None)
+        toDate = request.query_params.get('toDate', None)
+
+        try:
+            orgid = int(request.query_params.get('organization'))
+        except:
+            orgid = Organization.objects.filter(owner=request.user)[0].id
+
+        offset = request.query_params.get('offset') or 0
+        print(offset)
+        limit = 10
+        if not forDate and not fromDate and not toDate:
+            return Response(Expense.objects.\
+                filter(category__organization_id=orgid).\
+                order_by('-date').\
+                values('date').\
+                annotate(total=Sum('cost'))[offset:limit*(offset+1)])
+
+        elif not fromDate or not toDate:
+            expenses = Expense.objects.\
+                filter(category__organization_id=orgid,date=forDate).\
+                order_by('-date')
+            return Response(ExpenseSerializer(expenses, many=True).data)
+        else:
+            return Response(Expense.objects.\
+                filter(category__organization_id=orgid,date__gte=fromDate, date__lt=toDate).\
+                order_by('-date').\
+                values('date').\
+                annotate(total=Sum('cost'))[0:5][offset:limit*(offset+1)])
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -147,7 +162,6 @@ class OrgUsersViewSet(viewsets.ViewSet):
             orgid = int(request.query_params.get('organization'))
         except Exception as e:
             return Response([])
-            print(e)
         try:
             org = Organization.objects.get(id=orgid)
         except:

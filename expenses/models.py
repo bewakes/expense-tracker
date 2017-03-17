@@ -71,17 +71,16 @@ class Expense(models.Model):
     objects = models.Manager()
     valid_objects = ExpenseManager()
 
-    date = models.DateTimeField('date')
+    date = models.DateField('date')
     item = models.ForeignKey(Item, null=True)
     items = models.TextField(default="")
     category = models.ForeignKey('Category')
     description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
-    date = models.DateTimeField(default=timezone.now)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return '{} {} - {}'.format(str(self.date), str(self.cost), self.item.name)
+        return '{} {} - {}'.format(self.date.strftime('%Y-%m-%d'), str(self.cost), self.category.name)
 
     def delete(self):
         self.is_deleted = True
