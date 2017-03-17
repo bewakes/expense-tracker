@@ -42,9 +42,11 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.getExpensesForDate = function(date) {
             if ($scope.date_expense[date]==undefined){
                 $scope.date_expense[date] = {};
-                $scope.date_expense[date].show = true;
                 $scope.date_expense[date].expenses = [];
-                getService($scope.date_expense[date], '/expense/',{organization:appState.current_organization.id,forDate:date}, 'expenses');
+                getService($scope.date_expense[date], '/expense/',{organization:appState.current_organization.id,forDate:date}, 'expenses')
+                    .then(function(d){
+                        $scope.date_expense[date].show = true;
+                    });
             }
             else {
                 if ($scope.date_expense[date].show) $scope.date_expense[date].show=false;
@@ -68,7 +70,6 @@ define(['app/app', 'services', 'directives'], function(app) {
             }
             getService($scope, '/expense/', data, 'tempexpenses')
                 .then(function(d) {
-                    alert();
                     $scope.expenses_by_date = $scope.expenses_by_date.concat($scope.tempexpenses);
                     if($scope.tempexpenses.length==0)
                         $scope.no_more = true;

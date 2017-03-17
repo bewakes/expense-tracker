@@ -55,7 +55,6 @@ class ExpenseSerializer(serializers.ModelSerializer):
     items = serializers.CharField(allow_blank=True, required=False)
 
     def get_categoryname(self, expense):
-        print('get catname', expense.category.name)
         return expense.category.name
 
     def get_validation_exclusions(self):
