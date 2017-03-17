@@ -1,5 +1,5 @@
-define(['angular', 'ngRoute', 'ngCookies'], function(angular) {
-    var app = angular.module('expenses', ['ngRoute', 'ngCookies']);
+define(['angular', 'ngRoute', 'ngCookies', 'angular-nvd3'], function(angular) {
+    var app = angular.module('expenses', ['ngRoute', 'ngCookies', 'nvd3']);
 
     var appState = {
         error: '',

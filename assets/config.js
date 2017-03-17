@@ -9,6 +9,9 @@ require.config({
     //'jquery-ui': ['//code.jquery.com/ui/1.12.1/jquery-ui'],
     'ngRoute': ['https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route'],
     'ngCookies': ['https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-cookies'],
+    'angular-nvd3': ['https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min', 'lib/angular-nvd3.min'],
+    'd3': ['lib/d3.v3.min'],
+    'nvd3': ['lib/nv.d3.min'],
     'services': ['app/services'],
     'directives': ['app/directives'],
   },
@@ -24,6 +27,17 @@ require.config({
     'ngCookies': {
         'deps': ['angular'],
         'exports': 'ngCookies'
+    },
+    'd3': {
+        'exports': 'd3'
+    },
+    'nvd3': {
+        'deps': ['d3'],
+        'exports': 'nvd3'
+    },
+    'angular-nvd3': {
+        'exports':'angular-nvd3',
+        'deps':['nvd3', 'angular']
     },
 	'jquery': {
         'exports': 'jquery'
