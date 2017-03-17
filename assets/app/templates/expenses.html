@@ -15,19 +15,19 @@
                         Recent Expenses
                     </div>
                     <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="(date, value) in expenses_by_date">
-                            <span><b>{{date | date: 'MMM dd yyyy'}}</b></span>
+                        <li class="vertical-list-item" ng-repeat="item in expenses_by_date">
+                            <span><b>{{item.date | date: 'MMM dd yyyy'}}</b></span>
                             <span style="float:right">
-                                (<a href="javascript:void(0)" ng-click="value.show=!value.show">
-                                <span ng-show="value.show">Hide</span>
-                                <span ng-show="!value.show">More</span>
+                                (<a href="javascript:void(0)" ng-click="getExpensesForDate(item.date)">
+                                <span ng-show="date_expense[item.date].show==true">Hide</span>
+                                <span ng-show="date_expense[item.date].show!=true">More</span>
                                 </a>)
                             </span>
                             <span style="float:right">
-                                NRs.{{value.total}}
+                                NRs.{{item.total}}
                             </span>
-                            <ul class="ul-undecorated" ng-show="value.show">
-                                <li class="vertical-list-item" ng-repeat="x in value.expenses">
+                            <ul class="ul-undecorated" ng-show="date_expense[item.date].show">
+                                <li class="vertical-list-item" ng-repeat="x in date_expense[item.date].expenses">
                                     <span>
                                         <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x.id)" title="{{x.items?x.items + ' || ':''}} {{x.description}}">
                                             {{x.categoryname}} (NRs.{{x.cost}})

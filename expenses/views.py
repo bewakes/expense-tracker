@@ -95,6 +95,18 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         allexpenses = Expense.valid_objects.all()
         today = timezone.now().date()
 
+        try:
+            orgid = int(request.query_params.get('organization'))
+        except:
+            orgid = Organization.objects.filter(owner=request.user)[0].id
+
+        top = request.query_params.get('top')
+        if top:
+            expenses = Expense.objects.filter(category__organization_id=orgid).\
+                order_by('-cost')[:10]
+            return Response(expenses)
+
+
         fromDate = self.request.query_params.get('fromDate', None)
         toDate = self.request.query_params.get('toDate', None)
 
@@ -102,19 +114,16 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         toDate = request.query_params.get('toDate', None)
 
         try:
-            orgid = int(request.query_params.get('organization'))
+            offset = int(request.query_params.get('offset'))
         except:
-            orgid = Organization.objects.filter(owner=request.user)[0].id
-
-        offset = request.query_params.get('offset') or 0
-        print(offset)
+            offset = 0
         limit = 10
         if not forDate and not fromDate and not toDate:
             return Response(Expense.objects.\
                 filter(category__organization_id=orgid).\
                 order_by('-date').\
                 values('date').\
-                annotate(total=Sum('cost'))[offset:limit*(offset+1)])
+                annotate(total=Sum('cost'))[offset*limit:limit*(offset+1)])
 
         elif not fromDate or not toDate:
             expenses = Expense.objects.\

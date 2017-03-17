@@ -7,26 +7,19 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.newExpense = {date:new Date(), description:''};
 
         $scope.reload = function() {
-            getService($scope, '/expense/', {organization:appState.current_organization.id}, 'expenses')
+            $scope.offset = 0;
+            $scope.expenses_by_date = [];
+            var data = {};
+            data.organization=appState.current_organization.id;
+            data.offset = $scope.offset;
+            getService($scope, '/expense/', data, 'expenses')
                 .then(function() {
-                    $scope.sorted_expenses = angular.copy($scope.expenses);
-                    $scope.sorted_expenses.sort(function(a,b){return b.cost-a.cost;});
-
-                    $scope.expenses_by_date = {};
-
-                    for(var expense in $scope.expenses) {
-                        if(!$scope.expenses_by_date[$scope.expenses[expense].date]) {
-                            $scope.expenses_by_date[$scope.expenses[expense].date] = {};
-                            $scope.expenses_by_date[$scope.expenses[expense].date].expenses = [];
-                            $scope.expenses_by_date[$scope.expenses[expense].date].total = 0;
-                        }
-                        $scope.expenses_by_date[$scope.expenses[expense].date].expenses.push($scope.expenses[expense]);
-                        $scope.expenses_by_date[$scope.expenses[expense].date].total+= $scope.expenses[expense].cost;
-                    }
+                    $scope.expenses_by_date = $scope.expenses_by_date.concat($scope.expenses);
                 });
-            //getService($scope, '/items/', {}, 'items');
             getService($scope, '/categories/', {}, 'categories');
             $scope.newExpense = {date:new Date(), description:''};
+
+            $scope.date_expense = {};
         };
 
         $scope.setEditMode = function(id) {
@@ -38,6 +31,18 @@ define(['app/app', 'services', 'directives'], function(app) {
             if(window.innerWidth < 900){
                 $location.hash('editheader');
                 $anchorScroll();
+            }
+        }
+        $scope.getExpensesForDate = function(date) {
+            if ($scope.date_expense[date]==undefined){
+                $scope.date_expense[date] = {};
+                $scope.date_expense[date].show = true;
+                $scope.date_expense[date].expenses = [];
+                getService($scope.date_expense[date], '/expense/',{organization:appState.current_organization.id,forDate:date}, 'expenses');
+            }
+            else {
+                if ($scope.date_expense[date].show) $scope.date_expense[date].show=false;
+                else $scope.date_expense[date].show=true;
             }
         }
 
