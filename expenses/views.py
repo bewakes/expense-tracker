@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
-import datetime
+from datetime import timedelta
 from django.contrib.auth import logout
 
 from expenses.models import *
@@ -88,16 +88,30 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
 
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.get_queryset()
+
     def get_queryset(self):
         allexpenses = Expense.valid_objects.all()
+        today = timezone.now().date()
+
+        fromDate = self.request.query_params.get('fromDate', None)
+        toDate = self.request.query_params.get('toDate', None)
+        if not toDate: toDate = today
+        if not fromDate: fromDate = toDate - timedelta(days=10)
         try:
             org = int(self.request.query_params.get('organization'))
         except:
             orgs = Organization.objects.filter(owner=self.request.user)
             if orgs:
-                return allexpenses.filter(category__organization=orgs[0]).order_by('-date')
+                expenses = allexpenses.filter(
+                    category__organization=orgs[0]
+                ).order_by('-date')
             return []
-        return allexpenses.filter(category__organization_id=org).order_by('-date')
+        expenses = allexpenses.filter(category__organization_id=org).order_by('-date')
+
+        expenses = expenses.filter(date__lte=toDate, date__gt=fromDate)
+        return expenses
 
 
 class UserViewSet(viewsets.ModelViewSet):
