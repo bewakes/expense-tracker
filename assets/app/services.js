@@ -145,26 +145,18 @@ define(['app/app'], function(app) {
             getService({}, url, params, 'temp')
                 .then(function(d){
                     scope.data = [{values:d.data.reverse(), key:'Daily Expense', color:'red'}];
-                    var tickvals= [];
-                    var labels = [];
-                    for (var x=0;x<d.data.length;x++) { 
-                        tickvals.push(x);
-                        labels.push(d.data[x].date);
-                    }
-                    scope.options.chart.xAxis.tickValues = tickvals;
-                    scope.options.chart.xAxis.tickFormat = function(d) { return labels[d]};
                 });
             scope.options = {
                 chart: {
                     type: 'lineChart',
-                    height: 450,
+                    height: 290,
                     margin : {
                         top: 20,
                         right: 20,
                         bottom: 40,
                         left: 55
                     },
-                    x: function(d, i){ return i; },
+                    x: function(d){ return new Date(d.date); },
                     y: function(d){ return d.total; },
                     useInteractiveGuideline: true,
                     dispatch: {
@@ -174,7 +166,8 @@ define(['app/app'], function(app) {
                         tooltipHide: function(e){ console.log("tooltipHide"); }
                     },
                     xAxis: {
-                        axisLabel: 'Day'
+                        axisLabel: 'Day',
+                        tickFormat: function(d){ return d3.time.format('%Y %b %d')(new Date(d));}
                     },
                     yAxis: {
                         axisLabel: 'Expense',
