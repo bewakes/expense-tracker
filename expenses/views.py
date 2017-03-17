@@ -18,6 +18,7 @@ import json, re
 
 months = ['BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ', 'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA']
 EXPENSES_LIMIT = 5
+TOP_LIMIT = 7
 
 # Create your views here.
 
@@ -104,7 +105,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         top = request.query_params.get('top')
         if top:
             expenses = Expense.objects.filter(category__organization_id=orgid).\
-                order_by('-cost')[:10]
+                order_by('-cost')[:TOP_LIMIT]
             return Response(ExpenseSerializer(expenses, many=True).data)
 
         group_by = request.query_params.get('group_by') or 'date'

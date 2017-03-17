@@ -1,15 +1,42 @@
-<div class="row full-width">
-    <div class="col-md-12 text-center full-width">
+<div class="row full-width marginless-row">
+    <div class="col-md-12 full-width">
         <div class="view-header dark-header">
-            Welcome!!
+            <div class="row text-center">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"<b>Dashboard</b></div>
+                <div class="col-md-4"><org-selection/></div>
+            </div>
+
         </div>
         <div class="view-content">
             <div class="row marginless-row tmargin-40">
-                <div class="col-md-6">
-                    <nvd3 options="options" data="data"></nvd3>
+                <div class="col-md-5 items-container">
+                    <div class="blue-header ">
+                        <b>Welcome!!</b>
+                    </div>
+                    <div class="form-element">
+                        <b style="font-size:1.53em">You might want to:</b>
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item"><b>Create some <a href="#/categories">categories</a></b></li>
+                        <li class="vertical-list-item"><b>Add your daily <a href="#/expenses">expenses</a></b></li>
+                        <li class="vertical-list-item"><b>Add other registered <a href="#/settings">users </a> to track expenses for your organization/group.</b></li>
+                        <li class="vertical-list-item"><b>Add other <a href="#/settings">organizations/groups</a> to track expenses for</b></li>
+                    </ul>
+                    <div class="form-element">
+                        <b style="font-size:1.4em;color:#666">HAPPY EXPENSES TRACKING!!</b>
+                    </div>
+
                 </div>
-                <div class="col-md-6">
-                    <nvd3 options="options" data="data"></nvd3>
+                <div class="col-md-7 items-container">
+                    <div class="blue-header">
+                        <span><b>Summary</b></span>
+                    </div>
+                    <div class="form-element">
+                        <div ng-if="data">
+                            <nvd3 options="options" data="data"></nvd3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
