@@ -58,6 +58,12 @@ class ExpenseSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(format="%Y-%m-%d")
     categoryname = serializers.SerializerMethodField(required=False, source='get_categoryname')
     items = serializers.CharField(allow_blank=True, required=False)
+    modifier = serializers.SerializerMethodField(required=False, source='get_modifier')
+
+    def get_modifier(self, expense):
+        if not expense.modified_by:
+            return ""
+        return expense.modified_by.username
 
     def get_categoryname(self, expense):
         return expense.category.name
@@ -68,5 +74,5 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Expense
-        fields = ('id', 'category', 'date', 'cost', 'categoryname', 'description', 'items')
+        fields = ('id', 'category', 'date', 'cost', 'categoryname', 'description', 'items', 'created_by','modified_by','modifier')
 
