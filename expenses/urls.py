@@ -7,4 +7,7 @@ urlpatterns=[
          url(r'^logout/$', user_logout, name='logout'),
          url(r'^adduser/$', adduser, name='adduser'),
          url(r'^removeuser/$', removeuser, name='removeuser'),
+         url(r'^(?P<backend>[^/]+)/login$', fblogin, name='fblogin'),
 ]
+
+

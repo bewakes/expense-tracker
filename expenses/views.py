@@ -16,6 +16,9 @@ from expenses.serializers import *
 
 import json, re
 
+from django.contrib.auth import login
+from social_django.utils import psa
+
 months = ['BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ', 'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA']
 EXPENSES_LIMIT = 5
 TOP_LIMIT = 7
@@ -255,3 +258,13 @@ def login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+@psa('social:complete')
+def fblogin(request, backend):
+    token = request.GET.get('access_token')
+    user = request.backend.do_auth(request.GET.get('access_token'))
+    if user:
+        login(request, user)
+        return HttpResponse('{"status":true}', content_type="application/json")#'OK'
+    else:
+        return HttpResponse('', status_code=403)#'ERROR'
