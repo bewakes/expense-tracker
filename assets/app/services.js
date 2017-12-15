@@ -33,6 +33,7 @@ define(['app/app'], function(app) {
             appState.error = null;
             appState.message = null;
             var deferred = $q.defer();
+            params['modified_by'] = appState.identity.id;
             $http.post(url, params)
                 .then(
                     deferred.resolve,
@@ -56,6 +57,7 @@ define(['app/app'], function(app) {
             appState.error = null;
             appState.message = null;
             var deferred = $q.defer();
+            params['modified_by'] = appState.identity.id;
             $http.put(url, params)
                 .then(
                     deferred.resolve,

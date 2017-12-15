@@ -78,9 +78,18 @@ class Expense(models.Model):
     description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
+    created_by = models.ForeignKey('AppUser', null=True, related_name='created')
+    modified_by = models.ForeignKey('AppUser', null=True, related_name='modified')
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{} {} - {}'.format(self.date.strftime('%Y-%m-%d'), str(self.cost), self.category.name)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_by = self.modified_by
+        super().save(*args, **kwargs)
 
     def delete(self):
         self.is_deleted = True
