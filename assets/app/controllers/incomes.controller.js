@@ -17,7 +17,7 @@ define(['app/app', 'services', 'directives'], function(app) {
                 .then(function() {
                     $scope.incomes_by_date = $scope.incomes_by_date.concat($scope.incomes);
                 });
-            getService($scope, '/categories/', {}, 'categories');
+            //getService($scope, '/categories/', {}, 'categories');
             $scope.newIncome = {date:new Date(), description:''};
 
             data = angular.copy(data);

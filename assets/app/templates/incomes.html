@@ -15,12 +15,12 @@
                         Recent Incomes
                     </div>
                     <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="item in expenses_by_date">
+                        <li class="vertical-list-item" ng-repeat="item in incomes_by_date">
                             <span><b>{{item.date | date: 'MMM dd yyyy'}}</b></span>
                             <span style="float:right">
                                 (<a href="javascript:void(0)">
-                                <span ng-show="date_expense[item.date].show==true">Hide</span>
-                                <span ng-show="date_expense[item.date].show!=true">More</span>
+                                <span ng-show="date_income[item.date].show==true">Hide</span>
+                                <span ng-show="date_income[item.date].show!=true">More</span>
                                 </a>)
                             </span>
                             <span style="float:right">
