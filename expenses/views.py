@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.views.generic import View
 from django.db.models import Q, Sum
 
@@ -8,22 +8,23 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
-from datetime import timedelta
 from django.contrib.auth import logout
 
 from expenses.models import *
 from expenses.serializers import *
 
-import json, re
-
 from django.contrib.auth import login as auth_login
 from social_django.utils import psa
 
-months = ['BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ', 'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA']
+months = [
+    'BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ',
+    'KARTIK', 'MANGSIR', 'POUSH', 'MAGH', 'FALGUN', 'CHAITRA'
+]
 EXPENSES_LIMIT = 5
 TOP_LIMIT = 7
 
 # Create your views here.
+
 
 @api_view(['GET'])
 def identity(request):
@@ -83,6 +84,15 @@ class ItemViewSet(viewsets.ModelViewSet):
                 return allitems.filter(organization=orgs[0])
             return []
         return allitems.filter(organization_id=org)
+
+
+class IncomeViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for incomes
+    """
+    queryset = Income.objects.all()
+    serializer_class = IncomeSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
@@ -166,6 +176,7 @@ class UserViewSet(viewsets.ModelViewSet):
             print(e)
             return allusers
 
+
 class OrgUsersViewSet(viewsets.ViewSet):
     """
     ViewSet for org users
@@ -186,6 +197,7 @@ class OrgUsersViewSet(viewsets.ViewSet):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+
 class OrganizationViewSet(viewsets.ModelViewSet):
     """
     ViewSet for organization
@@ -199,6 +211,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         org = serializer.save()
         user.organizations.add(org)
         user.save()
+
 
 @api_view(['POST'])
 def adduser(request):
@@ -229,6 +242,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     serializer_class = FeedbackSerializer
     permission_classes = [IsAuthenticated]
 
+
 @api_view(['POST'])
 def removeuser(request):
     """
@@ -249,22 +263,25 @@ def removeuser(request):
         print(e)
         return Response({"detail":"invalid user/orgid"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 def login(request):
     if not request.user.is_authenticated():
         return render(request, "expenses/login.html", {})
     else:
         return redirect('index')
 
+
 def user_logout(request):
     logout(request)
     return redirect('login')
 
+
 @psa('social:complete')
 def fblogin(request, backend):
     token = request.GET.get('access_token')
-    user = request.backend.do_auth(request.GET.get('access_token'))
+    user = request.backend.do_auth(token)
     if user:
         auth_login(request, user)
-        return HttpResponse('{"status":true}', content_type="application/json")#'OK'
+        return HttpResponse('{"status":true}', content_type="application/json")
     else:
-        return HttpResponse('', status_code=403)#'ERROR'
+        return HttpResponse('', status_code=403)  # 'ERROR'

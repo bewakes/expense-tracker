@@ -28,6 +28,7 @@ router.register(r'users', UserViewSet)
 router.register(r'orgusers', OrgUsersViewSet, base_name='orgusers')
 router.register(r'organizations', OrganizationViewSet)
 router.register(r'expense', ExpenseViewSet)
+router.register(r'income', IncomeViewSet)
 router.register(r'feedback', FeedbackViewSet)
 
 urlpatterns = [

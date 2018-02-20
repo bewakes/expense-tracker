@@ -112,3 +112,28 @@ class ItemExpense(models.Model):
 
     def __str__(self):
         return str(self.expense.date) +" "+ self.item.name+" "+str(self.cost)
+
+
+class Income(models.Model):
+    objects = models.Manager()
+
+    date = models.DateField('date')
+    description = models.CharField(max_length=1000,blank=True)
+    total = models.IntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
+    created_by = models.ForeignKey('AppUser', null=True, related_name='created_income')
+    modified_by = models.ForeignKey('AppUser', null=True, related_name='modified_income')
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.date.strftime('%Y-%m-%d'), str(self.total))
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_by = self.modified_by
+        super().save(*args, **kwargs)
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()

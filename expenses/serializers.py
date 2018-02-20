@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from expenses.models import AppUser, Category, Item, Expense, Organization, Feedback
+from expenses.models import (
+        AppUser, Category, Item, Expense, Organization, Feedback, Income
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,9 +54,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class ExpenseSerializer(serializers.ModelSerializer):
-    # item = serializers.SerializerMethodField(source='get_item')
-    # def get_item(self, expense):
-    #     return ItemSerializer(expense.item).data
     date = serializers.DateTimeField(format="%Y-%m-%d")
     categoryname = serializers.SerializerMethodField(required=False, source='get_categoryname')
     items = serializers.CharField(allow_blank=True, required=False)
@@ -76,3 +75,24 @@ class ExpenseSerializer(serializers.ModelSerializer):
         model = Expense
         fields = ('id', 'category', 'date', 'cost', 'categoryname', 'description', 'items', 'created_by','modified_by','modifier')
 
+
+class IncomeSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(format="%Y-%m-%d")
+    modifier = serializers.SerializerMethodField(required=False, source='get_modifier')
+
+    def get_modifier(self, income):
+        if not income.modified_by:
+            return ""
+        return income.modified_by.username
+
+    def get_validation_exclusions(self):
+        exclusions = super().get_validation_exclusions()
+        return exclusions + ['description']
+
+    class Meta:
+        model = Income
+        fields = (
+            'id', 'date', 'total',
+            'description',
+            'created_by', 'modified_by', 'modifier'
+        )

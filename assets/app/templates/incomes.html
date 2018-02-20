@@ -1,0 +1,67 @@
+<div class="row full-width marginless-row">
+    <div class="col-md-12 full-width">
+        <div class="text-center view-header dark-header">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"<b>Incomes</b></div>
+                <div class="col-md-4"><org-selection/></div>
+            </div>
+            <notify-message></notify-message>
+        </div>
+        <div class="view-content">
+            <div class="row marginless-row tmargin-40">
+                <div class="col-md-4 items-container">
+                    <div class="blue-header">
+                        Recent Incomes
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item" ng-repeat="item in expenses_by_date">
+                            <span><b>{{item.date | date: 'MMM dd yyyy'}}</b></span>
+                            <span style="float:right">
+                                (<a href="javascript:void(0)">
+                                <span ng-show="date_expense[item.date].show==true">Hide</span>
+                                <span ng-show="date_expense[item.date].show!=true">More</span>
+                                </a>)
+                            </span>
+                            <span style="float:right">
+                                NRs.{{item.total}}
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="form-element" ng-show="!no_more">
+                        <button class="btn btn-success long-button" ng-click="loadMore()">Load More</button>
+                    </div>
+                </div>
+                <div class="col-md-4 items-container">
+                    <div class="blue-header" id="editheader">
+                        <span ng-show="!editMode">Add Income</span>
+                        <span ng-show="editMode"><b>Update Income</b></span>
+                    </div>
+                    <div class="form-element">
+                        <label>Cost*</label>
+                        <input type="number" step="0.01" min="0" ng-model="newIncome.total" placeholder="Total value"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Date*</label>
+                        <input type="date" ng-model="newIncome.date" placeholder="yyyy-mm-dd"/>
+                    </div>
+                    <div class="form-element">
+                        <label>Description</label>
+                        <textarea ng-model="newIncome.description"></textarea>
+                    </div>
+                    <div class="form-element text-center">
+                        <button class="btn btn-success long-button" ng-click="addIncome()">
+                            <span ng-show="!editMode">Add Income</span>
+                            <span ng-show="editMode">
+                                <b>Update Income</b><br>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="form-element text-center" ng-show="editMode">
+                        <button class="btn btn-danger long-button" ng-click="cancelEdit()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

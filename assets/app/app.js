@@ -28,6 +28,7 @@ define(['angular', 'ngRoute', 'ngCookies', 'angular-nvd3'], function(angular) {
             .when('/items', resolve('items', 'items'))
             .when('/categories', resolve('categories', 'categories'))
             .when('/expenses', resolve('expenses', 'expenses'))
+            .when('/incomes', resolve('incomes', 'incomes'))
             .when('/settings', resolve('settings', 'settings'))
             .when('/feedback', resolve('feedback', 'feedback'))
     }
