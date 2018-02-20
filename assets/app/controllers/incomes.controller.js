@@ -1,6 +1,6 @@
 define(['app/app', 'services', 'directives'], function(app) {
-    expensesController.$inject = ['$location', '$scope', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService', 'putService', '$anchorScroll'];
-    function expensesController($location, $scope, appState, getService, postService, deleteService, identityHandlerService, putService, $anchorScroll) {
+    incomesController.$inject = ['$location', '$scope', 'appState', 'getService', 'postService', 'deleteService', 'identityHandlerService', 'putService', '$anchorScroll'];
+    function incomesController($location, $scope, appState, getService, postService, deleteService, identityHandlerService, putService, $anchorScroll) {
 
         appState.error = appState.message = null;
         $scope.editMode = false;
