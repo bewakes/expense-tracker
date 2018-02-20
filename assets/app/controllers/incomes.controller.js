@@ -9,13 +9,13 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.reload = function() {
             $scope.no_more = false;
             $scope.offset = 0;
-            $scope.expenses_by_date = [];
+            $scope.incomes_by_date = [];
             var data = {};
             data.organization=appState.current_organization.id;
             data.offset = $scope.offset;
-            getService($scope, '/expense/', data, 'expenses')
+            getService($scope, '/income/', data, 'incomes')
                 .then(function() {
-                    $scope.expenses_by_date = $scope.expenses_by_date.concat($scope.expenses);
+                    $scope.incomes_by_date = $scope.incomes_by_date.concat($scope.incomes);
                 });
             getService($scope, '/categories/', {}, 'categories');
             $scope.newIncome = {date:new Date(), description:''};
@@ -23,14 +23,14 @@ define(['app/app', 'services', 'directives'], function(app) {
             data = angular.copy(data);
             delete data.offset;
             data.top=1;
-            getService($scope, '/expense/',data, 'sorted_expenses');
+            getService($scope, '/income/',data, 'sorted_incomes');
 
-            $scope.date_expense = {}; // store expenses by date key
+            $scope.date_income = {}; // store incomes by date key
         };
 
-        $scope.setEditMode = function(expense) {
+        $scope.setEditMode = function(income) {
             $scope.editMode = true;
-            var temp = angular.copy(expense);
+            var temp = angular.copy(income);
             temp.date = new Date(temp.date);
             $scope.newIncome = temp;
             $scope.newIncome.category = temp.category.toString();
@@ -40,17 +40,17 @@ define(['app/app', 'services', 'directives'], function(app) {
             }
         }
         $scope.getIncomesForDate = function(date) {
-            if ($scope.date_expense[date]==undefined){
-                $scope.date_expense[date] = {};
-                $scope.date_expense[date].expenses = [];
-                getService($scope.date_expense[date], '/expense/',{organization:appState.current_organization.id,forDate:date}, 'expenses')
+            if ($scope.date_income[date]==undefined){
+                $scope.date_income[date] = {};
+                $scope.date_income[date].incomes = [];
+                getService($scope.date_income[date], '/income/',{organization:appState.current_organization.id,forDate:date}, 'incomes')
                     .then(function(d){
-                        $scope.date_expense[date].show = true;
+                        $scope.date_income[date].show = true;
                     });
             }
             else {
-                if ($scope.date_expense[date].show) $scope.date_expense[date].show=false;
-                else $scope.date_expense[date].show=true;
+                if ($scope.date_income[date].show) $scope.date_income[date].show=false;
+                else $scope.date_income[date].show=true;
             }
         }
 
@@ -68,10 +68,10 @@ define(['app/app', 'services', 'directives'], function(app) {
                 organization:appState.current_organization.id,
                 offset:$scope.offset,
             }
-            getService($scope, '/expense/', data, 'tempexpenses')
+            getService($scope, '/income/', data, 'tempincomes')
                 .then(function(d) {
-                    $scope.expenses_by_date = $scope.expenses_by_date.concat($scope.tempexpenses);
-                    if($scope.tempexpenses.length==0)
+                    $scope.incomes_by_date = $scope.incomes_by_date.concat($scope.tempincomes);
+                    if($scope.tempincomes.length==0)
                         $scope.no_more = true;
                 });
         }
@@ -89,11 +89,11 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.addIncome = function() {
             var t, msg;
             if($scope.editMode) {
-                t = putService('/expense/'+$scope.newIncome.id+'/?organization='+appState.current_organization.id.toString(), $scope.newIncome);
+                t = putService('/income/'+$scope.newIncome.id+'/?organization='+appState.current_organization.id.toString(), $scope.newIncome);
                 msg = "Income Updated";
             }
             else {
-                t = postService('/expense/', $scope.newIncome);
+                t = postService('/income/', $scope.newIncome);
                 msg = "Income Added";
             }
 
@@ -105,7 +105,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         }
 
         $scope.remove = function(id) {
-            deleteService('/expense/'+id, {organization:appState.current_organization.id})
+            deleteService('/income/'+id, {organization:appState.current_organization.id})
                 .then(function(response) {
                     $scope.reload();
                     appState.message = "Income Deleted";
