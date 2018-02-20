@@ -114,5 +114,5 @@ define(['app/app', 'services', 'directives'], function(app) {
 
     }
 
-    app.register.controller('expensesController', expensesController);
+    app.register.controller('incomesController', incomesController);
 })
