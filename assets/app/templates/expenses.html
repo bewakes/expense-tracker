@@ -11,58 +11,6 @@
         <div class="view-content">
             <div class="row marginless-row tmargin-40">
                 <div class="col-md-4 items-container">
-                    <div class="blue-header">
-                        Recent Expenses
-                    </div>
-                    <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="item in expenses_by_date">
-                            <span><b>{{item.date | date: 'MMM dd yyyy'}}</b></span>
-                            <span style="float:right">
-                                (<a href="javascript:void(0)" ng-click="getExpensesForDate(item.date)">
-                                <span ng-show="date_expense[item.date].show==true">Hide</span>
-                                <span ng-show="date_expense[item.date].show!=true">More</span>
-                                </a>)
-                            </span>
-                            <span style="float:right">
-                                NRs.{{item.total}}
-                            </span>
-                            <ul class="ul-undecorated" ng-show="date_expense[item.date].show">
-                                <li class="vertical-list-item" ng-repeat="x in date_expense[item.date].expenses">
-                                    <span>
-                                        <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x)" title="{{x.items?x.items + ' || ':''}} {{x.description}} -{{x.modifier}}">
-                                            {{x.categoryname}} (NRs.{{x.cost}})
-                                        </a>
-                                    </span>
-                                    <span style="float:right">
-                                        <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
-                                    </span>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <div class="form-element" ng-show="!no_more">
-                        <button class="btn btn-success long-button" ng-click="loadMore()">Load More</button>
-                    </div>
-                </div>
-                <div class="col-md-4 items-container">
-                    <div class="blue-header">
-                        Top Expenses
-                    </div>
-                    <ul class="ul-undecorated">
-                        <li class="vertical-list-item" ng-repeat="x in sorted_expenses">
-                            <span>
-                                <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x)" title="{{x.items?x.items+' ||':''}} {{x.description}} -{{x.modifier}}">
-                                    {{x.categoryname}} (NRs.{{x.cost}})
-                                </a>
-                                <b> {{x.date | date: 'MMM dd yyyy'}}</b>
-                            </span>
-                            <span style="float:right">
-                                <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-4 items-container">
                     <div class="blue-header" id="editheader">
                         <span ng-show="!editMode">Add Expense</span>
                         <span ng-show="editMode"><b>Update Expense</b></span>
@@ -101,6 +49,80 @@
                     <div class="form-element text-center" ng-show="editMode">
                         <button class="btn btn-danger long-button" ng-click="cancelEdit()">Cancel</button>
                     </div>
+                </div>
+                <div class="col-md-3 items-container">
+                    <div class="blue-header">
+                        Recent Expenses
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item" ng-repeat="item in expenses_by_date">
+                            <span><b>{{item.date | date: 'MMM dd yyyy'}}</b></span>
+                            <span style="float:right">
+                                (<a href="javascript:void(0)" ng-click="getExpensesForDate(item.date, item)">
+                                <span ng-show="item.show==true">Hide</span>
+                                <span ng-show="item.show!=true">More</span>
+                                </a>)
+                            </span>
+                            <span style="float:right">
+                                NRs.{{item.total}}
+                            </span>
+                            <ul class="ul-undecorated" ng-show="item.show">
+                                <li class="vertical-list-item" ng-repeat="x in date_expense[item.date].expenses">
+                                    <span>
+                                        <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x)" title="{{x.items?x.items + ' || ':''}} {{x.description}} -{{x.modifier}}">
+                                            {{x.categoryname}} (NRs.{{x.cost}})
+                                        </a>
+                                    </span>
+                                    <span style="float:right">
+                                        <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="form-element" ng-show="!no_more">
+                        <button class="btn btn-success long-button" ng-click="loadMore()">Load More</button>
+                    </div>
+                </div>
+                <div class="col-md-5 items-container">
+                    <div class="blue-header">
+                        Search Expenses
+                        <div class="header-form">
+                            <input type="text" class="horizontal-form-element" ng-change="changeQueryString()"
+                                ng-keyup="$event.keyCode == 13 ? sendQuery() : null"
+                                ng-model='search.querystring' placeholder="Type and press Enter"/>
+                            <select class="horizontal-form-element" ng-change="changeDuration()" ng-model="search.durationindex">
+                                <option value="" selected="true">Select Duration</option>
+                                <option value="{{$index}}" ng-repeat="duration in durations">{{duration.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <ul class="ul-undecorated">
+                        <li class="vertical-list-item" ng-repeat="item in searchResults">
+                            <span><b>{{item.date | date: 'MMM dd yyyy'}}</b></span>
+                            <span style="float:right">
+                                (<a href="javascript:void(0)" ng-click="getExpensesForDate(item.date, item)">
+                                <span ng-show="item.show==true">Hide</span>
+                                <span ng-show="item.show!=true">More</span>
+                                </a>)
+                            </span>
+                            <span style="float:right">
+                                NRs.{{item.total}}
+                            </span>
+                            <ul class="ul-undecorated" ng-show="item.show">
+                                <li class="vertical-list-item" ng-repeat="x in date_expense[item.date].expenses">
+                                    <span>
+                                        <a style="text-decoration:none" href="javascript:void(0)" ng-click="setEditMode(x)" title="{{x.items?x.items + ' || ':''}} {{x.description}} -{{x.modifier}}">
+                                            {{x.categoryname}} (NRs.{{x.cost}})
+                                        </a>
+                                    </span>
+                                    <span style="float:right">
+                                        <a class="helper-link" ng-click="remove(x.id)"  href="javascript:void(0)">Remove</a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

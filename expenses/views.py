@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import View
@@ -10,8 +12,13 @@ from rest_framework.decorators import api_view
 
 from django.contrib.auth import logout
 
-from expenses.models import *
-from expenses.serializers import *
+from expenses.models import (
+    Expense, Item, Organization, Category, Income, AppUser, Feedback
+)
+from expenses.serializers import (
+    ExpenseSerializer, ItemSerializer, CategorySerializer, IncomeSerializer,
+    UserSerializer, OrganizationSerializer, FeedbackSerializer
+)
 
 from django.contrib.auth import login as auth_login
 from social_django.utils import psa
@@ -64,6 +71,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return []
         return allcats.filter(organization_id=org)
 
+
 class ItemViewSet(viewsets.ModelViewSet):
     """
     ViewSet for items
@@ -95,6 +103,17 @@ class IncomeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+def datediff(days):
+    return datetime.datetime.now().date() - datetime.timedelta(days=days)
+
+
+DURATIONS = {
+    'week': lambda x: datediff(7*x),
+    'month': lambda x: datediff(30*x),
+    'year': lambda x: datediff(365*x),
+}
+
+
 class ExpenseViewSet(viewsets.ModelViewSet):
     """
     ViewSet for expenses
@@ -103,26 +122,21 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
 
-    # def list(self, request, *args, **kwargs):
-    #     queryset = self.get_queryset()
-
     def list(self, request):
-        allexpenses = Expense.valid_objects.all()
-        today = timezone.now().date()
-
         try:
             orgid = int(request.query_params.get('organization'))
-        except:
+        except Exception as e:
             orgid = Organization.objects.filter(owner=request.user)[0].id
 
         top = request.query_params.get('top')
         if top:
-            expenses = Expense.objects.filter(category__organization_id=orgid).\
+            expenses = Expense.objects.filter(
+                    category__organization_id=orgid
+                ).\
                 order_by('-cost')[:TOP_LIMIT]
             return Response(ExpenseSerializer(expenses, many=True).data)
 
         group_by = request.query_params.get('group_by') or 'date'
-
 
         fromDate = self.request.query_params.get('fromDate', None)
         toDate = self.request.query_params.get('toDate', None)
@@ -130,28 +144,56 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         forDate = request.query_params.get('forDate', None)
         toDate = request.query_params.get('toDate', None)
 
+        duration = request.query_params.get('duration')
+        if duration:
+            try:
+                num = int(request.query_params.get('n'))
+            except (ValueError, TypeError):
+                num = 1
+            now = datetime.datetime.now().date()
+            fromDate = DURATIONS.get(duration, lambda x: now)(num)
+            toDate = now + datetime.timedelta(days=1)
+
+        query = request.query_params.get('query')
+        orfilter = Q(category__organization_id=orgid)
+        if query:
+            orfilter = Q(category__name__icontains=query) |\
+                Q(items__icontains=query) |\
+                Q(description__icontains=query)
+
         try:
             offset = int(request.query_params.get('offset'))
-        except:
+        except Exception as e:
             offset = 0
         limit = EXPENSES_LIMIT
         if not forDate and not fromDate and not toDate:
-            return Response(Expense.objects.\
-                filter(category__organization_id=orgid).\
-                order_by('-date').\
-                values(group_by).\
+            print('if not forDate and not fromDate and not toDate')
+            return Response(Expense.objects.
+                filter(Q(category__organization_id=orgid), orfilter).
+                order_by('-date').
+                values(group_by).
                 annotate(total=Sum('cost'))[offset*limit:limit*(offset+1)])
-
         elif not fromDate or not toDate:
+            print('not fromDate or not toDate')
             expenses = Expense.objects.\
-                filter(category__organization_id=orgid,date=forDate).\
+                filter(Q(
+                    category__organization_id=orgid,
+                    date=forDate
+                    ), orfilter
+                ).\
                 order_by('-date')
             return Response(ExpenseSerializer(expenses, many=True).data)
         else:
-            return Response(Expense.objects.\
-                filter(category__organization_id=orgid,date__gte=fromDate, date__lt=toDate).\
-                order_by('-date').\
-                values(group_by).\
+            print('else', fromDate, toDate)
+            return Response(Expense.objects.
+                filter(Q(
+                    category__organization_id=orgid,
+                    date__gte=fromDate,
+                    date__lt=toDate
+                    ), orfilter
+                ).
+                order_by('-date').
+                values(group_by).
                 annotate(total=Sum('cost'))[0:5][offset:limit*(offset+1)])
 
 
