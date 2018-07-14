@@ -1,0 +1,42 @@
+<div class="row full-width marginless-row">
+    <div class="col-md-12 full-width">
+        <div class="text-center view-header dark-header">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"<b>Expenses Summary</b></div>
+                <div class="col-md-4"><org-selection/></div>
+            </div>
+            <notify-message></notify-message>
+        </div>
+        <div class="view-content">
+            <div class="row marginless-row">
+                <div class="col-md-12 items-container">
+                    <div class="blue-header">&nbsp;
+                        <div class="header-form">
+                            <b>Summary for </b>
+                            <select class="horizontal-form-element" 
+                                ng-change="changeDuration()"
+                                ng-model="dur_index"
+                            >
+                                <option value="{{$index}}" ng-repeat="duration in durations">{{duration.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <table ng-show="expenses.length > 0" class="table table-striped">
+                        <tr>
+                            <th>Date</th><th>Category</th><th>Items</th><th>Price</th><th>Description</th>
+                        </tr>
+                        <tr ng-repeat="item in expenses">
+                            <td>{{item.date}}</td>
+                            <td>{{item.categoryname}}</td>
+                            <td>{{item.items}}</td>
+                            <td>Rs. {{item.cost}}</td>
+                            <td>{{item.description}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

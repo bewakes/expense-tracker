@@ -154,6 +154,20 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             fromDate = DURATIONS.get(duration, lambda x: now)(num)
             toDate = now + datetime.timedelta(days=1)
 
+        individual = request.query_params.get('individual')
+        if individual:
+            filterargs = {
+                'category__organization_id': orgid
+            }
+            if fromDate:
+                filterargs['date__gte'] = fromDate
+            if toDate:
+                filterargs['date__lte'] = toDate
+            expenses = Expense.objects.filter(
+                **filterargs
+            ).order_by('-date')
+            return Response(ExpenseSerializer(expenses, many=True).data)
+
         query = request.query_params.get('query')
         orfilter = Q(category__organization_id=orgid)
         if query:

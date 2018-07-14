@@ -11,9 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
     organizations = serializers.SerializerMethodField(source='get_organizations')
 
     def get_organizations(self, user):
+        if not isinstance(user, AppUser):
+            user = AppUser.objects.get(username=user.username)
         return OrganizationSerializer(user.organizations, many=True).data
 
     def get_default_organization(self, user):
+        if not isinstance(user, AppUser):
+            user = AppUser.objects.get(username=user.username)
         orgs = user.organizations.filter(owner=user)
         if orgs:
             return OrganizationSerializer(orgs[0]).data
