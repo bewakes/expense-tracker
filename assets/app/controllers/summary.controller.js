@@ -36,6 +36,9 @@ define(['app/app', 'services', 'directives'], function(app) {
 
         $scope.getSummary = function() {
             getService($scope, '/expense/', $scope.summary_params, 'expenses')
+            .then(function(r) {
+                $scope.total = $scope.expenses.reduce(function(a, x) { return a + x.cost;}, 0);
+            });
         }
         
         $scope.changeDuration = function() {

@@ -1,3 +1,8 @@
+<style>
+    .table tbody > tr > td{
+        padding:3px;
+    }
+</style>
 <div class="row full-width marginless-row">
     <div class="col-md-12 full-width">
         <div class="text-center view-header dark-header">
@@ -23,7 +28,7 @@
                         </div>
                     </div>
                     <br>
-                    <table ng-show="expenses.length > 0" class="table table-striped">
+                    <table ng-show="expenses.length > 0" class="table table-striped table-bordered">
                         <tr>
                             <th>Date</th><th>Category</th><th>Items</th><th>Price</th><th>Description</th>
                         </tr>
@@ -33,6 +38,13 @@
                             <td>{{item.items}}</td>
                             <td>Rs. {{item.cost}}</td>
                             <td>{{item.description}}</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td><b>TOTAL</b></td>
+                            <td><b>Rs. {{total}}</b></td>
+                            <td></td>
                         </tr>
                     </table>
                 </div>
