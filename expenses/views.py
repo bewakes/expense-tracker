@@ -40,7 +40,7 @@ TOP_LIMIT = 7
 @api_view(['GET'])
 def identity(request):
     if not request.user.is_authenticated:
-        return Response({}, status=status.STATUS_401_UNAUTHORIZED)
+        return Response({}, status=status.HTTP_401_UNAUTHORIZED)
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 

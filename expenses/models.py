@@ -157,4 +157,4 @@ class Token(models.Model):
         )
 
     def __str__(self):
-        return self.app_user
+        return str(self.app_user)
