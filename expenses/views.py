@@ -1,4 +1,7 @@
 import datetime
+import random
+import string
+import json
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -11,9 +14,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
 from django.contrib.auth import logout
+from django.utils import timezone
 
 from expenses.models import (
-    Expense, Item, Organization, Category, Income, AppUser, Feedback
+    Expense, Item, Organization, Category, Income, AppUser, Feedback, Token
 )
 from expenses.serializers import (
     ExpenseSerializer, ItemSerializer, CategorySerializer, IncomeSerializer,
@@ -35,8 +39,8 @@ TOP_LIMIT = 7
 
 @api_view(['GET'])
 def identity(request):
-    if not request.user.is_authenticated():
-        return Response({}, status=status.STATUS_401_UNAUTHORIZED)
+    if not request.user.is_authenticated:
+        return Response({}, status=status.HTTP_401_UNAUTHORIZED)
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
@@ -45,7 +49,7 @@ class IndexPage(View):
     context = {}
 
     def get(self, request):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return redirect('login')
         return render(request, 'expenses/index.html', self.context)
 
@@ -321,7 +325,7 @@ def removeuser(request):
 
 
 def login(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render(request, "expenses/login.html", {})
     else:
         return redirect('index')
@@ -341,3 +345,22 @@ def fblogin(request, backend):
         return HttpResponse('{"status":true}', content_type="application/json")
     else:
         return HttpResponse('', status_code=403)  # 'ERROR'
+
+def get_token(request):
+    if not request.user.is_authenticated:
+        return HttpResponse(json.dumps({}), content_type="application/json")
+    # Check for token
+    token = Token.objects.filter(app_user=request.user).first()
+    if not token:
+        now = timezone.now()
+        token = Token.objects.create(
+            app_user=request.user,
+            value=Token.get_random_string(),
+            expiry=now + datetime.timedelta(days=30),
+        )
+    # TODO: check for expiry and auto renew
+    data = {
+        'value': token.value,
+        'expiry': token.expiry.strftime('%Y-%m-%d')
+    }
+    return HttpResponse(json.dumps(data), content_type="application/json")

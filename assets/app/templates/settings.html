@@ -32,6 +32,19 @@
                             </li>
                         </ul>
                     </div>
+                    <div class="blue-header">
+                        <span>Token</span>
+                    </div>
+                    <div class="form-element">
+                        <div ng-show="token">
+                            <span><b>Token: </b> {{token.value}}</span><br>
+                            <span><b>expiry: </b> {{token.expiry}}</span>
+                        </div>
+                        <span ng-show="!token">
+                            No token
+                        </span>
+                        <button ng-show="!token" style="float:right" class="btn btn-success" ng-click="requestToken()">Request Token</button>
+                    </div>
                     <div class="form-element" ng-show="editUser">
                         <label>Add User</label>
                         <input type="text" ng-model="searchText" placeholder="Type in username to search" ng-change="loadUsers()"/>
@@ -75,6 +88,7 @@
                         <button class="btn btn-danger" ng-click="addOrg=false">Cancel</button>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>
