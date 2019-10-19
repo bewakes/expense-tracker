@@ -3,7 +3,7 @@
         <div class="text-center view-header dark-header">
             <div class="row">
                 <div class="col-md-4"></div>
-                <div class="col-md-4"<b>Settings</b></div>
+                <div class="col-md-4"<b>Settingss</b></div>
                 <div class="col-md-4"><org-selection/></div>
             </div>
             <notify-message></notify-message>
@@ -31,6 +31,19 @@
                                 <a href="javascript:void(0)" ng-click="removeUser(user)" ng-show="user.id!=currentUser.id"> Remove</a>
                             </li>
                         </ul>
+                    </div>
+                    <div class="blue-header">
+                        <span>Token</span>
+                    </div>
+                    <div class="form-element">
+                        <div ng-show="token">
+                            <span><b>Token: </b> {{token.value}}</span><br>
+                            <span><b>expiry: </b> {{token.expiry}}</span>
+                        </div>
+                        <span ng-show="!token">
+                            No token
+                        </span>
+                        <button ng-show="!token" style="float:right" class="btn btn-success" ng-click="requestToken()">Request Token</button>
                     </div>
                     <div class="form-element" ng-show="editUser">
                         <label>Add User</label>
@@ -75,6 +88,7 @@
                         <button class="btn btn-danger" ng-click="addOrg=false">Cancel</button>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>

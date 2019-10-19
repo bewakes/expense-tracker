@@ -1,3 +1,6 @@
+import string
+import random
+
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -5,7 +8,7 @@ from django.utils import timezone
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    owner = models.OneToOneField('AppUser', blank=True, null=True)
+    owner = models.OneToOneField('AppUser', blank=True, null=True, on_delete=models.CASCADE)
     is_individual = models.BooleanField(default=True)
 
     def __str__(self):
@@ -26,7 +29,7 @@ class Category(models.Model):
     objects = models.Manager()
     valid_objects = CategoryManager()
 
-    organization = models.ForeignKey(Organization, related_name='categories')
+    organization = models.ForeignKey(Organization, related_name='categories', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     uses = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
@@ -49,8 +52,8 @@ class Item(models.Model):
     valid_objects = ItemsManager()
 
     name = models.CharField(max_length=50)
-    category = models.ForeignKey(Category, null=True)
-    organization = models.ForeignKey(Organization, related_name='items')
+    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, related_name='items', on_delete=models.CASCADE)
     uses = models.IntegerField(default=0)
     description = models.CharField(max_length=1000,blank=True)
     is_deleted = models.BooleanField(default=False)
@@ -72,14 +75,14 @@ class Expense(models.Model):
     valid_objects = ExpenseManager()
 
     date = models.DateField('date')
-    item = models.ForeignKey(Item, null=True)
+    item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
     items = models.TextField(default="")
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
     description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
-    created_by = models.ForeignKey('AppUser', null=True, related_name='created')
-    modified_by = models.ForeignKey('AppUser', null=True, related_name='modified')
+    created_by = models.ForeignKey('AppUser', null=True, related_name='created', on_delete=models.CASCADE)
+    modified_by = models.ForeignKey('AppUser', null=True, related_name='modified', on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
 
@@ -96,7 +99,7 @@ class Expense(models.Model):
         self.save()
 
 class Feedback(models.Model):
-    user = models.ForeignKey('AppUser')
+    user = models.ForeignKey('AppUser', on_delete=models.CASCADE)
     content = models.CharField(max_length=1000)
 
     def __str__(self):
@@ -105,8 +108,8 @@ class Feedback(models.Model):
 
 # not used currently
 class ItemExpense(models.Model):
-    item = models.ForeignKey(Item, null=True)
-    expense = models.ForeignKey(Expense, null=True)
+    item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
+    expense = models.ForeignKey(Expense, null=True, on_delete=models.CASCADE)
     quantity = models.FloatField(default=1)
     cost = models.IntegerField(default=0)
 
@@ -121,8 +124,8 @@ class Income(models.Model):
     description = models.CharField(max_length=1000,blank=True)
     total = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
-    created_by = models.ForeignKey('AppUser', null=True, related_name='created_income')
-    modified_by = models.ForeignKey('AppUser', null=True, related_name='modified_income')
+    created_by = models.ForeignKey('AppUser', null=True, related_name='created_income', on_delete=models.CASCADE)
+    modified_by = models.ForeignKey('AppUser', null=True, related_name='modified_income', on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
 
@@ -137,3 +140,21 @@ class Income(models.Model):
     def delete(self):
         self.is_deleted = True
         self.save()
+
+
+class Token(models.Model):
+    app_user = models.OneToOneField(AppUser, on_delete=models.CASCADE)
+    value = models.CharField(max_length=64)
+    expiry = models.DateTimeField()
+
+    @staticmethod
+    def get_random_string():
+        return ''.join(
+            random.choices(
+                string.ascii_lowercase + string.ascii_uppercase,
+                k=64,
+            )
+        )
+
+    def __str__(self):
+        return self.app_user

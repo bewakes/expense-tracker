@@ -8,6 +8,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.reload = function() {
             $scope.updateOrg = angular.copy(appState.current_organization);
             getService($scope, '/orgusers/', {organization:appState.current_organization.id}, 'orgUsers');
+            getService($scope, '/token/', {}, 'token');
             $scope.edit = $scope.editUser = $scope.addOrg= false;
             $scope.orgs = appState.identity.organizations;
             $scope.newOrg = {name:''};

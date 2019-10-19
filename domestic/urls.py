@@ -38,6 +38,7 @@ urlpatterns = [
     url('', include('social_django.urls', namespace='social')),
     #url(r'^login/', login, name='login'),
     url(r'^identity/', identity, name='identity'),
+    url(r'^token/', get_token, name='token'),
     url(r'^webhook/', webhook, name='webhook'),
 ]
 urlpatterns += router.urls
