@@ -149,12 +149,8 @@ class Token(models.Model):
 
     @staticmethod
     def get_random_string():
-        return ''.join(
-            random.choices(
-                string.ascii_lowercase + string.ascii_uppercase,
-                k=64,
-            )
-        )
+        strs = string.ascii_lowercase + string.ascii_uppercase
+        return ''.join([random.choice(strs) for _ in range(64)])
 
     def __str__(self):
         return str(self.app_user)
