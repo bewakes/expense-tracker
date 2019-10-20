@@ -58,7 +58,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class ExpenseSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(format="%Y-%m-%d")
+    date = serializers.DateField(format="%Y-%m-%d")
     categoryname = serializers.SerializerMethodField(required=False, source='get_categoryname')
     items = serializers.CharField(allow_blank=True, required=False)
     modifier = serializers.SerializerMethodField(required=False, source='get_modifier')

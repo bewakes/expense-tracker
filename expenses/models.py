@@ -66,13 +66,8 @@ class Item(models.Model):
         self.save()
 
 
-class ExpenseManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_deleted=False)
-
 class Expense(models.Model):
     objects = models.Manager()
-    valid_objects = ExpenseManager()
 
     date = models.DateField('date')
     item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
@@ -80,7 +75,6 @@ class Expense(models.Model):
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     description = models.CharField(max_length=1000,blank=True)
     cost = models.IntegerField(default=0)
-    is_deleted = models.BooleanField(default=False)
     created_by = models.ForeignKey('AppUser', null=True, related_name='created', on_delete=models.CASCADE)
     modified_by = models.ForeignKey('AppUser', null=True, related_name='modified', on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -94,9 +88,6 @@ class Expense(models.Model):
             self.created_by = self.modified_by
         super().save(*args, **kwargs)
 
-    def delete(self):
-        self.is_deleted = True
-        self.save()
 
 class Feedback(models.Model):
     user = models.ForeignKey('AppUser', on_delete=models.CASCADE)

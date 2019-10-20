@@ -122,7 +122,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     """
     ViewSet for expenses
     """
-    queryset = Expense.valid_objects.all()
+    queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
 

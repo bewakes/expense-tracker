@@ -3,6 +3,12 @@ define(['app/app', 'services', 'directives'], function(app) {
     function expensesController($location, $scope, appState, getService, postService, deleteService, identityHandlerService, putService, $anchorScroll) {
 
         appState.error = appState.message = null;
+
+        function formatExpenseDate(expense) {
+            expense.date = expense.date.toJSON().substr(0, 10);
+            return expense
+        }
+
         $scope.editMode = false;
         $scope.newExpense = {date:new Date(), description:''};
         $scope.durations = [
@@ -103,11 +109,14 @@ define(['app/app', 'services', 'directives'], function(app) {
         $scope.addExpense = function() {
             var t, msg;
             if($scope.editMode) {
-                t = putService('/expense/'+$scope.newExpense.id+'/?organization='+appState.current_organization.id.toString(), $scope.newExpense);
+                t = putService(
+                    '/expense/'+$scope.newExpense.id+'/?organization='+appState.current_organization.id.toString(),
+                    formatExpenseDate($scope.newExpense)
+                );
                 msg = "Expense Updated";
             }
             else {
-                t = postService('/expense/', $scope.newExpense);
+                t = postService('/expense/', formatExpenseDate($scope.newExpense));
                 msg = "Expense Added";
             }
 
@@ -119,7 +128,7 @@ define(['app/app', 'services', 'directives'], function(app) {
         }
 
         $scope.remove = function(id) {
-            deleteService('/expense/'+id, {organization:appState.current_organization.id})
+            deleteService('/expense/'+id+'/', {organization:appState.current_organization.id})
                 .then(function(response) {
                     $scope.reload();
                     appState.message = "Expense Deleted";
