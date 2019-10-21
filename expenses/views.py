@@ -1,6 +1,4 @@
 import datetime
-import random
-import string
 import json
 
 from django.shortcuts import render, redirect
@@ -12,6 +10,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from django.contrib.auth import logout
 from django.utils import timezone
@@ -19,6 +18,8 @@ from django.utils import timezone
 from expenses.models import (
     Expense, Item, Organization, Category, Income, AppUser, Feedback, Token
 )
+from expenses.token_authentication import TokenAuthentication
+
 from expenses.serializers import (
     ExpenseSerializer, ItemSerializer, CategorySerializer, IncomeSerializer,
     UserSerializer, OrganizationSerializer, FeedbackSerializer
@@ -125,6 +126,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, BasicAuthentication, SessionAuthentication]
 
     def list(self, request):
         try:

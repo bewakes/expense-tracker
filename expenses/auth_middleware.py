@@ -4,17 +4,16 @@ from expenses.models import Token
 def TokenAuthenticationMiddleware(get_response):
     def middleware(request):
         auth_header = request.META.get('HTTP_AUTHORIZATION')
-        response = get_response(request)
         if auth_header is None:
-            return response
+            return get_response(request)
 
         token = auth_header.split()
         if token[0] == 'Token':
             token_obj = Token.objects.filter(value=token[-1]).first()
             if not token_obj:
-                return response
+                return get_response(request)
             request.user = token_obj.app_user
             response = get_response(request)
 
-        return response 
+        return response
     return middleware
