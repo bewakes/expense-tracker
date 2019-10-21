@@ -1,5 +1,4 @@
 from rest_framework import authentication
-from rest_framework import exceptions
 
 from expenses.models import Token
 
@@ -13,5 +12,7 @@ class TokenAuthentication(authentication.BaseAuthentication):
         token = auth_header.split()
         if token[0] == 'Token':
             token_obj = Token.objects.filter(value=token[-1]).first()
+            if token_obj is None:
+                return None
             return (token_obj.app_user, None)
         return None
