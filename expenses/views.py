@@ -5,11 +5,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import View
 from django.db.models import Q, Sum
+from django.contrib.auth import login as auth_login
+from social_django.utils import psa
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from django.contrib.auth import logout
@@ -24,9 +26,8 @@ from expenses.serializers import (
     ExpenseSerializer, ItemSerializer, CategorySerializer, IncomeSerializer,
     UserSerializer, OrganizationSerializer, FeedbackSerializer
 )
+from expenses.helpers import get_duration_range_from_request
 
-from django.contrib.auth import login as auth_login
-from social_django.utils import psa
 
 months = [
     'BAISAKH', 'JESTHA', 'ASHAR', 'SHRAWAN', 'BHADRA', 'ASHOJ',
@@ -108,17 +109,6 @@ class IncomeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-def datediff(days):
-    return datetime.datetime.now().date() - datetime.timedelta(days=days)
-
-
-DURATIONS = {
-    'week': lambda x: datediff(7*x),
-    'month': lambda x: datediff(30*x),
-    'year': lambda x: datediff(365*x),
-}
-
-
 class ExpenseViewSet(viewsets.ModelViewSet):
     """
     ViewSet for expenses
@@ -144,21 +134,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
         group_by = request.query_params.get('group_by') or 'date'
 
-        fromDate = self.request.query_params.get('fromDate', None)
-        toDate = self.request.query_params.get('toDate', None)
-
-        forDate = request.query_params.get('forDate', None)
-        toDate = request.query_params.get('toDate', None)
-
-        duration = request.query_params.get('duration')
-        if duration:
-            try:
-                num = int(request.query_params.get('n'))
-            except (ValueError, TypeError):
-                num = 1
-            now = datetime.datetime.now().date()
-            fromDate = DURATIONS.get(duration, lambda x: now)(num)
-            toDate = now + datetime.timedelta(days=1)
+        fromDate, toDate, forDate = get_duration_range_from_request(self.request)
 
         individual = request.query_params.get('individual')
         if individual:
@@ -187,14 +163,12 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             offset = 0
         limit = EXPENSES_LIMIT
         if not forDate and not fromDate and not toDate:
-            print('if not forDate and not fromDate and not toDate')
             return Response(Expense.objects.
                 filter(Q(category__organization_id=orgid), orfilter).
                 order_by('-date').
                 values(group_by).
                 annotate(total=Sum('cost'))[offset*limit:limit*(offset+1)])
         elif not fromDate or not toDate:
-            print('not fromDate or not toDate')
             expenses = Expense.objects.\
                 filter(Q(
                     category__organization_id=orgid,
@@ -215,6 +189,31 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 order_by('-date').
                 values(group_by).
                 annotate(total=Sum('cost'))[0:5][offset:limit*(offset+1)])
+
+    @action(detail=False, methods=['get'])
+    def summary(self, request):
+        try:
+            orgid = int(request.query_params.get('organization'))
+        except Exception:
+            orgid = Organization.objects.filter(owner=request.user)[0].id
+
+        filter_args = {
+            'category__organization_id': orgid,
+        }
+
+        fromDate, toDate, forDate = get_duration_range_from_request(request)
+        if forDate:
+            filter_args['date'] = forDate
+        if fromDate:
+            filter_args['date__gte'] = fromDate
+        if toDate:
+            filter_args['date__lte'] = toDate
+
+        expenses = Expense.objects.filter(**filter_args).\
+            values('category').\
+            annotate(total=Sum('cost')).\
+            values('category__name', 'total')
+        return Response(expenses)
 
 
 class UserViewSet(viewsets.ModelViewSet):

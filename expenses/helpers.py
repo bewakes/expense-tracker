@@ -1,3 +1,6 @@
+import datetime
+
+
 def convert_to_nepali(engdate, delta=-1):
     # date min 2000, push 17
     # date max 2090, Chaitra 30
@@ -37,43 +40,74 @@ def convert_to_nepali(engdate, delta=-1):
             ind+=1
         rem_days = nepali_date[ind][mt]
 
+
 def get_eng_date_range(nep_year, nep_month):
-        start_eng_year = int(nep_year) - 57   # generally, engyr = nepyr-57
-        month_ind = months.index(nep_month)+1
-        if month_ind > 9: # but if month is > MAGH then nepyr-57+1
-            start_eng_year+=1
+    start_eng_year = int(nep_year) - 57   # generally, engyr = nepyr-57
+    month_ind = months.index(nep_month)+1
+    if month_ind > 9: # but if month is > MAGH then nepyr-57+1
+        start_eng_year+=1
 
-        end_eng_year = start_eng_year
-        start_eng_month = (month_ind+3)%13
-        end_eng_month = start_eng_month+1
-        if end_eng_month>12:
-            end_eng_month=1
-            end_eng_year += 1
-        start_date = 15
-        end_date = 20
-        # we check from 15th of start month to 20th of next month so that we wont miss anything 
+    end_eng_year = start_eng_year
+    start_eng_month = (month_ind+3)%13
+    end_eng_month = start_eng_month+1
+    if end_eng_month>12:
+        end_eng_month=1
+        end_eng_year += 1
+    start_date = 15
+    end_date = 20
+    # we check from 15th of start month to 20th of next month so that we wont miss anything 
 
-        # check first 6 days for our desired month
-        nep = convert_to_nepali(datetime.datetime(start_eng_year, start_eng_month, start_date))
-        # the month should not be equal to the month we seek( generally new month starts from 17/18)
+    # check first 6 days for our desired month
+    nep = convert_to_nepali(datetime.datetime(start_eng_year, start_eng_month, start_date))
+    # the month should not be equal to the month we seek( generally new month starts from 17/18)
+    if nep[1]-1==month_ind:
+        raise Http404('Something error with month calculation')
+    for x in range(6):
+        nep = convert_to_nepali(datetime.datetime(start_eng_year, start_eng_month, start_date+x))
         if nep[1]-1==month_ind:
-            raise Http404('Something error with month calculation')
-        for x in range(6):
-            nep = convert_to_nepali(datetime.datetime(start_eng_year, start_eng_month, start_date+x))
-            if nep[1]-1==month_ind:
-                start_date = start_date+x
-                break
+            start_date = start_date+x
+            break
 
-        # now check last 6 days for our desired month
-        nep = convert_to_nepali(datetime.datetime(end_eng_year, end_eng_month, end_date))
-        # the month should not be equal to the month we seek( generally new month starts from 17/18)
+    # now check last 6 days for our desired month
+    nep = convert_to_nepali(datetime.datetime(end_eng_year, end_eng_month, end_date))
+    # the month should not be equal to the month we seek( generally new month starts from 17/18)
+    if nep[1]==month_ind:
+        raise Http404('Something error with month calculation')
+    for x in range(6):
+        nep = convert_to_nepali(datetime.datetime(end_eng_year, end_eng_month, end_date-x))
         if nep[1]==month_ind:
-            raise Http404('Something error with month calculation')
-        for x in range(6):
-            nep = convert_to_nepali(datetime.datetime(end_eng_year, end_eng_month, end_date-x))
-            if nep[1]==month_ind:
-                end_date = end_date-x
-                break
-        return [datetime.datetime(start_eng_year, start_eng_month, start_date).date(),
-                    datetime.datetime(end_eng_year, end_eng_month, end_date).date()]
+            end_date = end_date-x
+            break
+    return [datetime.datetime(start_eng_year, start_eng_month, start_date).date(),
+                datetime.datetime(end_eng_year, end_eng_month, end_date).date()]
 
+
+def datediff(days):
+    return datetime.datetime.now().date() - datetime.timedelta(days=days)
+
+
+DURATIONS = {
+    'week': lambda x: datediff(7*x),
+    'month': lambda x: datediff(30*x),
+    'year': lambda x: datediff(365*x),
+}
+
+
+def get_duration_range_from_request(request):
+    fromDate = request.query_params.get('fromDate', None)
+    toDate = request.query_params.get('toDate', None)
+
+    forDate = request.query_params.get('forDate', None)
+    toDate = request.query_params.get('toDate', None)
+
+    duration = request.query_params.get('duration')
+    if duration:
+        try:
+            num = int(request.query_params.get('n'))
+        except (ValueError, TypeError):
+            num = 1
+        now = datetime.datetime.now().date()
+        fromDate = DURATIONS.get(duration, lambda x: now)(num)
+        toDate = now + datetime.timedelta(days=1)
+
+    return fromDate, toDate, forDate
