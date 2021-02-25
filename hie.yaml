@@ -1,0 +1,9 @@
+cradle:
+  multi:
+    - path: "./"
+      config:
+        cradle:
+          stack:
+            - path: "./app/"
+            - path: "./test/Spec.hs"
+

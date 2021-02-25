@@ -1,0 +1,4 @@
+.stack-work/
+*~
+tasks/
+postgres-data/
