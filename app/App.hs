@@ -16,17 +16,17 @@ import           Servant.API
 server :: ConnectionPool -> Server Api
 server pool = expenseListH :<|> expensePostH :<|> userListH :<|> userAddH
     where expenseListH = liftIO expenseGet
+          dbpool = flip runSqlPersistMPool pool
+
           expenseGet :: IO [Expense]
-          expenseGet = flip runSqlPersistMPool pool $ do
+          expenseGet = dbpool $ do
               expenses <- selectList [] []
               return $ entityVal <$> expenses
 
           expensePostH exp = liftIO $ expenseAdd exp
           expenseAdd :: Expense -> IO (Maybe (Key Expense))
           --       exists <- selectFirst [UserName ==. (userName newUser)] []
-          expenseAdd exp = flip runSqlPersistMPool pool $ Just <$> insert exp
-
-          dbpool = flip runSqlPersistMPool pool
+          expenseAdd exp = dbpool $ Just <$> insert exp
 
           userListH = liftIO userGet
           userGet :: IO [User]
