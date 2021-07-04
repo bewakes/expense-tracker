@@ -43,14 +43,13 @@ import           System.Log.FastLogger                (defaultBufSize,
                                                        newStdoutLoggerSet,
                                                        toLogStr)
 
+import           System.Environment
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
 import           Handler.Category
-import           Handler.Comment
 import           Handler.Common
 import           Handler.Group
 import           Handler.Home
-import           Handler.Profile
 import           Handler.User
 
 -- This line actually creates our YesodDispatch instance. It is the second half
@@ -72,6 +71,7 @@ makeFoundation appSettings = do
         (if appMutableStatic appSettings then staticDevel else static)
         (appStaticDir appSettings)
 
+    appGoogleOAuthKeys <- getGoogleOAuthKeys
     -- We need a log function to create a connection pool. We need a connection
     -- pool to create our foundation. And we need our foundation to get a
     -- logging function. To get out of this loop, we initially create a
@@ -94,6 +94,11 @@ makeFoundation appSettings = do
 
     -- Return the foundation
     return $ mkFoundation pool
+    where getGoogleOAuthKeys = do
+            cid <- getEnv "GOOGLE_CLIENT_ID"
+            csec <- getEnv "GOOGLE_SECRET"
+            pure (pack cid, pack csec)
+
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applying some additional middlewares.

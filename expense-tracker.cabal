@@ -21,9 +21,9 @@ flag library-only
 library
   exposed-modules:
       Application
+      Credentials
       Foundation
       Handler.Category
-      Handler.Comment
       Handler.Common
       Handler.Group
       Handler.Home
@@ -43,6 +43,7 @@ library
   build-depends:
       aeson
     , base
+    , blaze-html
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -77,6 +78,7 @@ library
     , yaml
     , yesod
     , yesod-auth
+    , yesod-auth-oauth2
     , yesod-core
     , yesod-form
     , yesod-static
@@ -100,6 +102,7 @@ executable expense-tracker
   build-depends:
       aeson
     , base
+    , blaze-html
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -135,6 +138,7 @@ executable expense-tracker
     , yaml
     , yesod
     , yesod-auth
+    , yesod-auth-oauth2
     , yesod-core
     , yesod-form
     , yesod-static
@@ -158,6 +162,7 @@ test-suite expense-tracker-test
   build-depends:
       aeson
     , base
+    , blaze-html
     , bytestring
     , case-insensitive
     , classy-prelude
@@ -194,6 +199,7 @@ test-suite expense-tracker-test
     , yaml
     , yesod
     , yesod-auth
+    , yesod-auth-oauth2
     , yesod-core
     , yesod-form
     , yesod-static

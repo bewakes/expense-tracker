@@ -6,6 +6,7 @@ User json
     firstName Text Maybe
     lastName Text Maybe
     password Text Maybe
+    email Text Maybe
     groupId GroupId Maybe
     UniqueUser ident
     deriving Typeable
@@ -38,8 +39,3 @@ Email
     userId UserId Maybe
     verkey Text Maybe
     UniqueEmail email
-Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived.
-    message Text
-    userId UserId Maybe
-    deriving Eq
-    deriving Show

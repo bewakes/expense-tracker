@@ -7,7 +7,7 @@
 /favicon.ico FaviconR GET
 /robots.txt RobotsR GET
 
-/ HomeR GET POST
+/ HomeR GET
 /categories CategoryR GET POST
 
 /users UserR GET POST
@@ -15,7 +15,3 @@
 /groups/new GroupNewR GET POST
 /groups GroupR GET POST
 /groups/!#GroupId GroupDetailR GET
-
-/comments CommentR POST
-
-/profile ProfileR GET

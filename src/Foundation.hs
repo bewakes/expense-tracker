@@ -9,32 +9,36 @@
 
 module Foundation where
 
-import           Control.Monad.Logger (LogSource)
-import           Database.Persist.Sql (ConnectionPool, runSqlPool)
+import           Control.Monad.Logger     (LogSource)
+import           Credentials
+import           Data.Aeson
+import qualified Data.Text.Lazy           as LT
+import           Database.Persist.Sql     (ConnectionPool, runSqlPool)
 import           Import.NoFoundation
-import           Text.Hamlet          (hamletFile)
-import           Text.Jasmine         (minifym)
+import           Text.Hamlet              (hamletFile)
+import           Text.Jasmine             (minifym)
 
 -- Used only when in "auth-dummy-login" setting is enabled.
-import           Yesod.Auth.Dummy
 
-import qualified Data.CaseInsensitive as CI
-import qualified Data.Text.Encoding   as TE
-import           Yesod.Auth.OpenId    (IdentifierType (Claimed), authOpenId)
-import           Yesod.Core.Types     (Logger)
-import qualified Yesod.Core.Unsafe    as Unsafe
-import           Yesod.Default.Util   (addStaticContentExternal)
+import qualified Data.CaseInsensitive     as CI
+import qualified Data.Text.Encoding       as TE
+import           Yesod.Auth.OAuth2.Google
+import           Yesod.Core.Types         (Logger)
+import qualified Yesod.Core.Unsafe        as Unsafe
+import           Yesod.Default.Util       (addStaticContentExternal)
+
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
 -- access to the data present here.
 data App = App
-    { appSettings    :: AppSettings
-    , appStatic      :: Static -- ^ Settings for static file serving.
-    , appConnPool    :: ConnectionPool -- ^ Database connection pool.
-    , appHttpManager :: Manager
-    , appLogger      :: Logger
+    { appSettings        :: AppSettings
+    , appStatic          :: Static -- ^ Settings for static file serving.
+    , appConnPool        :: ConnectionPool -- ^ Database connection pool.
+    , appHttpManager     :: Manager
+    , appLogger          :: Logger
+    , appGoogleOAuthKeys :: (Text, Text)
     }
 
 data MenuItem = MenuItem
@@ -104,20 +108,12 @@ instance Yesod App where
         muser <- maybeAuthPair
         mcurrentRoute <- getCurrentRoute
 
-        -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
-        (title, parents) <- breadcrumbs
-
         -- Define the menu items of the header.
         let menuItems =
                 [ NavbarLeft $ MenuItem
                     { menuItemLabel = "Home"
                     , menuItemRoute = HomeR
                     , menuItemAccessCallback = True
-                    }
-                , NavbarLeft $ MenuItem
-                    { menuItemLabel = "Profile"
-                    , menuItemRoute = ProfileR
-                    , menuItemAccessCallback = isJust muser
                     }
                 , NavbarRight $ MenuItem
                     { menuItemLabel = "Login"
@@ -160,7 +156,6 @@ instance Yesod App where
         -> Handler AuthResult
     -- Routes not requiring authentication.
     isAuthorized (AuthR _) _        = return Authorized
-    isAuthorized CommentR _         = return Authorized
     isAuthorized HomeR _            = return Authorized
     isAuthorized FaviconR _         = return Authorized
     isAuthorized RobotsR _          = return Authorized
@@ -172,7 +167,6 @@ instance Yesod App where
 
     -- the profile route requires that the user is authenticated, so we
     -- delegate to that function
-    isAuthorized ProfileR _         = isAuthenticated
     isAuthorized CategoryR _        = isAuthenticated
 
     -- This function creates static content files in the static folder
@@ -212,6 +206,7 @@ instance Yesod App where
     makeLogger = return . appLogger
 
 -- Define breadcrumbs.
+{-
 instance YesodBreadcrumbs App where
     -- Takes the route that the user is currently on, and returns a tuple
     -- of the 'Text' that you want the label to display, and a previous
@@ -221,8 +216,8 @@ instance YesodBreadcrumbs App where
         -> Handler (Text, Maybe (Route App))
     breadcrumb HomeR     = return ("Home", Nothing)
     breadcrumb (AuthR _) = return ("Login", Just HomeR)
-    breadcrumb ProfileR  = return ("Profile", Just HomeR)
     breadcrumb  _        = return ("home", Nothing)
+-}
 
 -- How to run database actions.
 instance YesodPersist App where
@@ -235,6 +230,11 @@ instance YesodPersist App where
 instance YesodPersistRunner App where
     getDBRunner :: Handler (DBRunner App, Handler ())
     getDBRunner = defaultGetDBRunner appConnPool
+
+mergeMaybe :: Maybe (Maybe a) -> Maybe a
+mergeMaybe (Just Nothing)  = Nothing
+mergeMaybe Nothing         = Nothing
+mergeMaybe (Just (Just x)) = Just x
 
 instance YesodAuth App where
     type AuthId App = UserId
@@ -252,22 +252,36 @@ instance YesodAuth App where
     authenticate :: (MonadHandler m, HandlerSite m ~ App)
                  => Creds App -> m (AuthenticationResult App)
     authenticate creds = liftHandler $ runDB $ do
+        liftIO $ print creds
+        let maybedata = getFromCredsExtra "userResponse" creds
+            maybeExtraCreds = mergeMaybe $ (decode . encodeUtf8 . LT.fromStrict) <$> maybedata
+        liftIO $ print maybeExtraCreds
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
-            Nothing -> Authenticated <$> insert User
-                { userIdent = credsIdent creds
-                , userPassword = Nothing
-                , userGroupId = Nothing
-                , userFirstName = Nothing
-                , userLastName = Nothing
-                }
+            Nothing -> do
+                -- Create a group for the user
+                grpid <- insert Group
+                    { groupName = fromMaybe "Individual" (extraCredsFirstName <$> maybeExtraCreds)
+                    , groupDescription = " "
+                    }
+                Authenticated <$> insert User
+                    { userIdent = credsIdent creds
+                    , userPassword = Nothing
+                    , userGroupId = Just grpid
+                    , userFirstName = extraCredsFirstName <$> maybeExtraCreds
+                    , userLastName = extraCredsLastName <$> maybeExtraCreds
+                    , userEmail = extraCredsEmail <$> maybeExtraCreds
+                    }
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins :: App -> [AuthPlugin App]
-    authPlugins app = [authOpenId Claimed []] ++ extraAuthPlugins
-        -- Enable authDummy login if enabled.
-        where extraAuthPlugins = [authDummy | appAuthDummyLogin $ appSettings app]
+    authPlugins app = [oauth2GoogleScoped ["profile", "email", "openid"] cid csec]
+        where (cid, csec) = appGoogleOAuthKeys app
+
+    loginHandler = authLayout $ do
+        setTitle "Expenses Login"
+        $(widgetFile "login")
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult
