@@ -1,0 +1,4 @@
+<h1> New Group
+<form method=post action=@{GroupNewR} enctype=#{enctype}>
+    ^{widget}
+    <button class="btn btn-success">Create Group

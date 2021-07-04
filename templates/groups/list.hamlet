@@ -1,0 +1,5 @@
+<h1> Groups
+<ul>
+    $forall (Entity id group) <- groups
+        <li>
+            <a href=@{GroupDetailR id}>#{groupName group}

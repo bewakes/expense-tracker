@@ -48,6 +48,13 @@ dependencies:
 library:
   source-dirs: src
   default-extensions: DataKinds
+                    , NoImplicitPrelude
+                    , TemplateHaskell
+                    , MultiParamTypeClasses
+                    , TypeFamilies
+                    , OverloadedStrings
+                    , QuasiQuotes
+                    , ViewPatterns
   when:
   - condition: (flag(dev)) || (flag(library-only))
     then:
@@ -71,6 +78,14 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    default-extensions: DataKinds
+                    , NoImplicitPrelude
+                    , TemplateHaskell
+                    , MultiParamTypeClasses
+                    , TypeFamilies
+                    , OverloadedStrings
+                    , QuasiQuotes
+                    , ViewPatterns
     dependencies:
     - expense-tracker
     when:

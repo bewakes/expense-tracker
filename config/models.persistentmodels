@@ -1,11 +1,38 @@
 -- By default this file is used by `persistFileWith` in Model.hs (which is imported by Foundation.hs)
 -- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
 
-User
+User json
     ident Text
+    firstName Text Maybe
+    lastName Text Maybe
     password Text Maybe
+    groupId GroupId Maybe
     UniqueUser ident
     deriving Typeable
+Group json
+    name Text
+    description Text
+Category json
+    name Text
+    userId UserId
+    groupId GroupId
+SavCategory json
+    name Text
+    userId UserId
+    groupId GroupId
+Expense json
+    amount Double
+    categoryId CategoryId
+    date UTCTime
+    items [Text]
+    description Text
+    userId UserId
+Saving json
+    amount Double
+    date UTCTime
+    description Text
+    savCategoryId SavCategoryId
+    userId UserId
 Email
     email Text
     userId UserId Maybe

@@ -22,10 +22,13 @@ library
   exposed-modules:
       Application
       Foundation
+      Handler.Category
       Handler.Comment
       Handler.Common
+      Handler.Group
       Handler.Home
       Handler.Profile
+      Handler.User
       Import
       Import.NoFoundation
       Model
@@ -36,7 +39,7 @@ library
   hs-source-dirs:
       src
   default-extensions:
-      DataKinds
+      DataKinds , NoImplicitPrelude , TemplateHaskell , MultiParamTypeClasses , TypeFamilies , OverloadedStrings , QuasiQuotes , ViewPatterns
   build-depends:
       aeson
     , base
@@ -91,6 +94,8 @@ executable expense-tracker
       Paths_expense_tracker
   hs-source-dirs:
       app
+  default-extensions:
+      DataKinds , NoImplicitPrelude , TemplateHaskell , MultiParamTypeClasses , TypeFamilies , OverloadedStrings , QuasiQuotes , ViewPatterns
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
