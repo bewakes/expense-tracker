@@ -2,3 +2,6 @@
 *~
 tasks/
 postgres-data/
+dist/
+*.o
+*.hi
