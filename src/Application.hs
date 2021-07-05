@@ -48,6 +48,7 @@ import           System.Environment
 -- Don't forget to add new modules to your cabal file!
 import           Handler.Category
 import           Handler.Common
+import           Handler.Expense
 import           Handler.Group
 import           Handler.Home
 import           Handler.User

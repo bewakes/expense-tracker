@@ -14,6 +14,7 @@ import           Credentials
 import           Data.Aeson
 import qualified Data.Text.Lazy           as LT
 import           Database.Persist.Sql     (ConnectionPool, runSqlPool)
+import           ExpenseItems
 import           Import.NoFoundation
 import           Text.Hamlet              (hamletFile)
 import           Text.Jasmine             (minifym)
@@ -167,6 +168,7 @@ instance Yesod App where
     isAuthorized GroupR _           = isAuthenticated
     isAuthorized GroupNewR _        = isAuthenticated
     isAuthorized (GroupDetailR _) _ = isAuthenticated
+    isAuthorized ExpenseNewR _      = isAuthenticated
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
@@ -269,7 +271,6 @@ instance YesodAuth App where
                     , userEmail = extraCredsEmail <$> maybeExtraCreds
                     }
                 time <- liftIO getCurrentTime
-                -- Add user group
                 _ <- insert UsersGroups
                     { usersGroupsUserId     = usrid
                     , usersGroupsGroupId    = grpid
@@ -277,6 +278,9 @@ instance YesodAuth App where
                     , usersGroupsJoinedAt   = time
                     , usersGroupsRole       = SuperAdmin
                     }
+                -- Add default categories
+                let categories = getDefaultCategories usrid grpid
+                _ <- insertMany_ categories
                 return $ Authenticated usrid
 
     -- You can add other plugins like Google Email, email or OAuth here

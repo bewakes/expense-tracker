@@ -7,8 +7,9 @@
         Total Saving
     <h2>
         NRs. 10,000
-    <button .btn.btn-primary.btn-lg>
-        Add an Expense
+    <form method=get action=@{ExpenseNewR}>
+        <button .btn.btn-primary.btn-lg>
+            Add an Expense
 
 <div .container>
     <!-- Dashboard

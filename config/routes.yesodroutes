@@ -12,6 +12,8 @@
 
 /users UserR GET POST
 
+/expenses/new ExpenseNewR GET POST
+
 /groups/new GroupNewR GET POST
 /groups GroupR GET POST
 /groups/!#GroupId GroupDetailR GET

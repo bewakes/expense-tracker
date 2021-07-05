@@ -22,9 +22,11 @@ library
   exposed-modules:
       Application
       Credentials
+      ExpenseItems
       Foundation
       Handler.Category
       Handler.Common
+      Handler.Expense
       Handler.Group
       Handler.Home
       Handler.Profile

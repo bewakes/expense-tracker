@@ -1,0 +1,4 @@
+<h1> Add expense
+<form method=post aciton=@{ExpenseNewR} enctype=#{enctype}>
+    ^{widget}
+    <button class="btn btn-success">Add
