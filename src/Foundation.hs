@@ -160,15 +160,13 @@ instance Yesod App where
     isAuthorized FaviconR _         = return Authorized
     isAuthorized RobotsR _          = return Authorized
     isAuthorized (StaticR _) _      = return Authorized
-    isAuthorized UserR _            = return Authorized
-    isAuthorized GroupR _           = return Authorized
-    isAuthorized GroupNewR _        = return Authorized
-    isAuthorized (GroupDetailR _) _ = return Authorized
-
     -- the profile route requires that the user is authenticated, so we
     -- delegate to that function
     isAuthorized CategoryR _        = isAuthenticated
-
+    isAuthorized UserR _            = isAuthenticated
+    isAuthorized GroupR _           = isAuthenticated
+    isAuthorized GroupNewR _        = isAuthenticated
+    isAuthorized (GroupDetailR _) _ = isAuthenticated
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
@@ -252,27 +250,34 @@ instance YesodAuth App where
     authenticate :: (MonadHandler m, HandlerSite m ~ App)
                  => Creds App -> m (AuthenticationResult App)
     authenticate creds = liftHandler $ runDB $ do
-        liftIO $ print creds
         let maybedata = getFromCredsExtra "userResponse" creds
             maybeExtraCreds = mergeMaybe $ (decode . encodeUtf8 . LT.fromStrict) <$> maybedata
-        liftIO $ print maybeExtraCreds
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
             Nothing -> do
                 -- Create a group for the user
                 grpid <- insert Group
-                    { groupName = fromMaybe "Individual" (extraCredsFirstName <$> maybeExtraCreds)
+                    { groupName = fromMaybe "Personal" (extraCredsFirstName <$> maybeExtraCreds)
                     , groupDescription = " "
                     }
-                Authenticated <$> insert User
+                usrid <- insert User
                     { userIdent = credsIdent creds
                     , userPassword = Nothing
-                    , userGroupId = Just grpid
                     , userFirstName = extraCredsFirstName <$> maybeExtraCreds
                     , userLastName = extraCredsLastName <$> maybeExtraCreds
                     , userEmail = extraCredsEmail <$> maybeExtraCreds
                     }
+                time <- liftIO getCurrentTime
+                -- Add user group
+                _ <- insert UsersGroups
+                    { usersGroupsUserId     = usrid
+                    , usersGroupsGroupId    = grpid
+                    , usersGroupsIsDefault  = True
+                    , usersGroupsJoinedAt   = time
+                    , usersGroupsRole       = SuperAdmin
+                    }
+                return $ Authenticated usrid
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins :: App -> [AuthPlugin App]

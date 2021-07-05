@@ -7,3 +7,4 @@ dist/
 *.hi
 static/tmp/
 yesod-devel/
+env

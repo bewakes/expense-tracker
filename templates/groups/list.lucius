@@ -1,0 +1,15 @@
+.list-item {
+    padding: 1rem;
+    border: solid 1px gray;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.list-item:hover {
+    background: #ddd7;
+}

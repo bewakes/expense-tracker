@@ -7,16 +7,24 @@ User json
     lastName Text Maybe
     password Text Maybe
     email Text Maybe
-    groupId GroupId Maybe
     UniqueUser ident
     deriving Typeable
 Group json
     name Text
     description Text
+UsersGroups json
+    userId UserId
+    groupId GroupId
+    role Role
+    joinedAt UTCTime default=now()
+    isDefault Bool default=False
+    UniqueUserGroup userId groupId
+    deriving Show
 Category json
     name Text
     userId UserId
     groupId GroupId
+    deriving Show
 SavCategory json
     name Text
     userId UserId

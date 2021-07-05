@@ -1,5 +1,15 @@
-<h1> Groups
-<ul>
+<h1> My Groups
+<table .table>
+    <thead .thead-light>
+        <tr>
+            <th>Group Name
+            <th>Default?
+
+    <tbody>
     $forall (Entity id group) <- groups
-        <li>
-            <a href=@{GroupDetailR id}>#{groupName group}
+        <tr>
+            <td>
+                <a .text-decoration-none href=@{GroupDetailR id}>
+                    #{groupName group}
+            <td>
+                Yes
