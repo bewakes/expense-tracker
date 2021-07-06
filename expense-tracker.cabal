@@ -55,6 +55,7 @@ library
     , containers
     , data-default
     , directory
+    , esqueleto
     , fast-logger
     , file-embed
     , foreign-store
@@ -114,6 +115,7 @@ executable expense-tracker
     , containers
     , data-default
     , directory
+    , esqueleto
     , expense-tracker
     , fast-logger
     , file-embed
@@ -174,6 +176,7 @@ test-suite expense-tracker-test
     , containers
     , data-default
     , directory
+    , esqueleto
     , expense-tracker
     , fast-logger
     , file-embed

@@ -36,12 +36,14 @@ Expense json
     items [Text]
     description Text
     userId UserId
+    deriving Show
 Saving json
     amount Double
     date UTCTime
     description Text
     savCategoryId SavCategoryId
     userId UserId
+    deriving Show
 Email
     email Text
     userId UserId Maybe

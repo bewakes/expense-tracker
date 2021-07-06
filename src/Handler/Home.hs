@@ -1,11 +1,11 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NoImplicitPrelude     #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE TemplateHaskell       #-}
-{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RankNTypes       #-}
 module Handler.Home where
 
+import           Database.Esqueleto ((^.))
+import qualified Database.Esqueleto as E
 import           Import
+import qualified Prelude            as P
 
 -- Define our data that will be used for creating the form.
 data FileForm = FileForm
@@ -20,11 +20,34 @@ data FileForm = FileForm
 -- The majority of the code you will write in Yesod lives in these handler
 -- functions. You can spread them across multiple files if you are so
 -- inclined, or create a single monolithic file.
+
+fst3 :: (a, b, c) -> a
+fst3 (a, _, _) = a
+
 getHomeR :: Handler Html
 getHomeR = do
-    session <- getSession
-    liftIO $ print session
+    uid <- maybeAuthId
+    expenses <- runDB $ getAllUserExpenses uid
+    let total = fmap P.sum $ sequence $ map fst3 expenses
     defaultLayout $ do
-        setTitle "Welcome To Expense Tracker!"
-        $(widgetFile "homepage")
+        case uid of
+          Nothing -> do
+            setTitle "Welcome To Expense Tracker!"
+            $(widgetFile "welcome")
+          Just usrid -> do
+              setTitle "Expenses Home"
+              $(widgetFile "homepage")
 
+
+getAllUserExpenses :: Maybe UserId -> DB [(E.Value Double, E.Value UTCTime, E.Value Text)]
+getAllUserExpenses Nothing    = return []
+getAllUserExpenses (Just _) = do
+    E.select
+           $ E.from $ \(expense `E.InnerJoin` category) -> do
+                E.on $ expense ^. ExpenseCategoryId E.==. category ^. CategoryId
+                return
+                    ( expense   ^. ExpenseAmount
+                    , expense ^. ExpenseDate
+                    , category ^. CategoryName
+                    )
+-- selectList [ExpenseUserId ==. uid] []

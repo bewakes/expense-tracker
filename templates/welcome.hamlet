@@ -1,0 +1,8 @@
+<div .jumbotron.text-center>
+    <h1>
+        Ready for the best expenses management?
+    <h2>
+        Join now to streamline your finance.
+    <form method=get action=@{AuthR LoginR}>
+        <button .btn.btn-primary.btn-lg>
+            Login/Register

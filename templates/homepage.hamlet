@@ -2,11 +2,11 @@
     <h1>
         Total Expense
     <h2>
-        NRs. 32,000
+        NRs. -
     <h1>
         Total Saving
     <h2>
-        NRs. 10,000
+        NRs. -
     <form method=get action=@{ExpenseNewR}>
         <button .btn.btn-primary.btn-lg>
             Add an Expense
@@ -18,7 +18,20 @@
         <div .row>
             <div .col-lg-12>
                 <div .page-header>
-                    <h1 #start>Dashboard
-
-                    <p>
-                        A beautiful dashboard goes here
+                    <h1 #start>All Expenses
+                    <table .table.table-striped.table-bordered>
+                        <thead>
+                            <tr>
+                                <th>Date
+                                <th>Category
+                                <th>Amount(NRs.)
+                        <tbody>
+                            $forall (E.Value amount, E.Value date, E.Value categoryName) <- expenses
+                                <tr>
+                                    <td>#{formatTime defaultTimeLocale "%B %d, %Y" date}
+                                    <td>#{categoryName}
+                                    <td>#{amount}
+                            <tr>
+                                <th>Total
+                                <td>
+                                <th>#{E.unValue total}
