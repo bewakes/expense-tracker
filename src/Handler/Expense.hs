@@ -16,11 +16,11 @@ newExpenseForm cats usrid = Expense
 
 getExpenseNewR :: Handler Html
 getExpenseNewR = do
-    cats <- runDB getCategories
     uid <- maybeAuthId
     case uid of
       Nothing -> redirect $ AuthR LoginR
       Just u -> do
+        cats <- runDB $ getCategories u
         let catList = map (\(Entity k v) -> (categoryName v, k)) cats
         (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList u
         defaultLayout $ do
@@ -30,11 +30,11 @@ getExpenseNewR = do
 
 postExpenseNewR :: Handler Html
 postExpenseNewR = do
-    cats <- runDB getCategories
     uid <- maybeAuthId
     case uid of
       Nothing -> redirect $ AuthR LoginR
       Just u -> do
+        cats <- runDB $ getCategories u
         let catList = map (\(Entity k v) -> (categoryName v, k)) cats
         ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList u
         case res of
@@ -44,5 +44,5 @@ postExpenseNewR = do
           _ -> defaultLayout $(widgetFile "expenses/new")
 
 
-getCategories :: DB [Entity Category]
-getCategories = selectList [] []
+getCategories :: UserId -> DB [Entity Category]
+getCategories u = selectList [CategoryUserId ==. u] []

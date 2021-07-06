@@ -40,14 +40,14 @@ getHomeR = do
 
 
 getAllUserExpenses :: Maybe UserId -> DB [(E.Value Double, E.Value UTCTime, E.Value Text)]
-getAllUserExpenses Nothing    = return []
-getAllUserExpenses (Just _) = do
+getAllUserExpenses Nothing      = return []
+getAllUserExpenses (Just uid)     = do
     E.select
            $ E.from $ \(expense `E.InnerJoin` category) -> do
                 E.on $ expense ^. ExpenseCategoryId E.==. category ^. CategoryId
+                E.where_ (expense ^. ExpenseUserId E.==. E.val uid)
                 return
                     ( expense   ^. ExpenseAmount
-                    , expense ^. ExpenseDate
-                    , category ^. CategoryName
+                    , expense   ^. ExpenseDate
+                    , category  ^. CategoryName
                     )
--- selectList [ExpenseUserId ==. uid] []

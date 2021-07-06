@@ -41,7 +41,7 @@ library
   hs-source-dirs:
       src
   default-extensions:
-      DataKinds , NoImplicitPrelude , TemplateHaskell , MultiParamTypeClasses , TypeFamilies , OverloadedStrings , QuasiQuotes , ViewPatterns
+      DataKinds , NoImplicitPrelude , TemplateHaskell , MultiParamTypeClasses , TypeFamilies , OverloadedStrings , QuasiQuotes , ViewPatterns , RankNTypes
   build-depends:
       aeson
     , base

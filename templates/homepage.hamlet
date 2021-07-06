@@ -1,37 +1,27 @@
-<div .jumbotron.text-center>
-    <h1>
-        Total Expense
-    <h2>
-        NRs. -
-    <h1>
-        Total Saving
-    <h2>
-        NRs. -
-    <form method=get action=@{ExpenseNewR}>
-        <button .btn.btn-primary.btn-lg>
-            Add an Expense
-
 <div .container>
-    <!-- Dashboard
-        ================================================== -->
     <div .bs-docs-section>
         <div .row>
             <div .col-lg-12>
-                <div .page-header>
-                    <h1 #start>All Expenses
-                    <table .table.table-striped.table-bordered>
-                        <thead>
+                <div .table-header>
+
+                    <h3>My Expenses
+                    <form method=get action=@{ExpenseNewR}>
+                        <button .btn.btn-success.btn-sm>
+                            <b>Add an Expense
+
+                <table .table.table-striped.table-bordered>
+                    <thead>
+                        <tr>
+                            <th>Date
+                            <th>Category
+                            <th>Amount(NRs.)
+                    <tbody>
+                        $forall (E.Value amount, E.Value date, E.Value categoryName) <- expenses
                             <tr>
-                                <th>Date
-                                <th>Category
-                                <th>Amount(NRs.)
-                        <tbody>
-                            $forall (E.Value amount, E.Value date, E.Value categoryName) <- expenses
-                                <tr>
-                                    <td>#{formatTime defaultTimeLocale "%B %d, %Y" date}
-                                    <td>#{categoryName}
-                                    <td>#{amount}
-                            <tr>
-                                <th>Total
-                                <td>
-                                <th>#{E.unValue total}
+                                <td>#{formatTime defaultTimeLocale "%B %d, %Y" date}
+                                <td>#{categoryName}
+                                <td>#{amount}
+                        <tr>
+                            <th>Total
+                            <td>
+                            <th>#{E.unValue total}
