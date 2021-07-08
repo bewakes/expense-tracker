@@ -2,9 +2,13 @@
     <div .bs-docs-section>
         <div .row>
             <div .col-lg-12>
+                <h3 .text-center>My Expenses
                 <div .table-header>
+                    <div #month-selector>
+                        <span .previous> &lt;
+                        <span .month> July 2021
+                        <span .next > &gt;
 
-                    <h3>My Expenses
                     <form method=get action=@{ExpenseNewR}>
                         <button .btn.btn-success.btn-sm>
                             <b>Add an Expense

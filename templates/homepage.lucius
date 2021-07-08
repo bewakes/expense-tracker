@@ -3,8 +3,31 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
 
-    h3 {
-        margin-top: 3px;
+h3 {
+    margin-top: 3px;
+}
+
+#month-selector {
+    line-height: 2.5;
+
+    .previous {
+        padding: 0.4rem 0.6rem;
+        border: solid 1px gray;
+        border-radius: 3px 0 0 3px;
+        box-shadow: 1px 1px;
+    }
+
+    .month {
+        width: 200px;
+        text-align: center;
+    }
+
+    .next {
+        padding: 0.4rem 0.6rem;
+        border: solid 1px gray;
+        border-radius: 0 3px 3px 0;
+        box-shadow: 1px 1px;
     }
 }

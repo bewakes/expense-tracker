@@ -40,6 +40,7 @@ postExpenseNewR = do
         case res of
           FormSuccess expense -> do
               _ <- runDB $ insert expense
+              addMessageI "success" ("Expense added" :: Text)
               redirect HomeR
           _ -> defaultLayout $(widgetFile "expenses/new")
 
