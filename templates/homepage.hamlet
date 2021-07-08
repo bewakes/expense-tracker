@@ -5,13 +5,13 @@
                 <h3 .text-center>My Expenses
                 <div .table-header>
                     <div #month-selector>
-                        <span .previous> &lt;
-                        <span .month> July 2021
-                        <span .next > &gt;
+                        <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}> &lt;
+                        <span .month>#{formatTime defaultTimeLocale "%B %Y" day}
+                        <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}> &gt;
 
                     <form method=get action=@{ExpenseNewR}>
                         <button .btn.btn-success.btn-sm>
-                            <b>Add an Expense
+                            <b style="font-size: 1.6rem">Add an Expense
 
                 <table .table.table-striped.table-bordered>
                     <thead>

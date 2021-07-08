@@ -13,19 +13,23 @@ h3 {
     line-height: 2.5;
 
     .previous {
-        padding: 0.4rem 0.6rem;
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
         border: solid 1px gray;
         border-radius: 3px 0 0 3px;
         box-shadow: 1px 1px;
     }
 
     .month {
-        width: 200px;
+        display: inline-block;
+        width: 110px;
+        border: solid 1px gray;
         text-align: center;
     }
 
     .next {
-        padding: 0.4rem 0.6rem;
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
         border: solid 1px gray;
         border-radius: 0 3px 3px 0;
         box-shadow: 1px 1px;
