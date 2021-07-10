@@ -1,17 +1,25 @@
 const ticks = new Array(30).map((x, i) => ([i+1, i+1]));
 const pieOptions = {
-        series:
-        {
-            pie: {
-                show: true,
-                innerRadius: 0.5,
-                label: {
-                    show: true
-                }
+    series:
+    {
+        pie: {
+            show: true,
+            innerRadius: 0.5,
+            label: {
+                show: true
             },
-        }
-    };
-const barOptions = {
+            legend: {
+                show: true
+            }
+        },
+    },
+    grid: {
+        hoverable: true,
+        clickable: true,
+    }
+};
+
+const newBarOptions = () => ({
     series: {
         bars: {
             show: true
@@ -19,24 +27,47 @@ const barOptions = {
     },
     bars: {
         align: "center",
-        barWidth: 0.5
+        barWidth: 0.2
     },
     xaxis: {
         // ticks: ticks,
         axisLabelFontSizePixels: 3,
-        axisLabel: "Days"
+        axisLabel: "Days",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 10
+    },
+    yaxis: {
+        axisLabelFontSizePixels: 2,
+        axisLabel: "Amount (NRs.)",
     },
     grid: {
         hoverable: true,
         clickable: true,
         borderWidth: 2,
-        // backgroundColor: { colors: ["#ffffff", "#EDF5FF"] }
     }
-};
+});
 
-$.getJSON("/expenses/summary", function(respJSON) {
-    const monthData = respJSON.month;
-    const categoryData = respJSON.category.map(([a, b]) => ({label: a, data: b}));
+var month = null;
+
+var COLORS = [
+    '#003f5c',
+    '#2f4b7c',
+    '#665191',
+    '#a05195',
+    '#d45087',
+    '#f95d6a',
+    '#ff7c43',
+    '#ffa600',
+];
+
+$.getJSON("/expenses/summary"+location.search, function(respJSON) {
+    const monthData = respJSON.month_data;
+    month = respJSON.month;
+    const categoryData = respJSON.category_data.map(([a, b], i) => ({label: a, data: b}));
+    const categories = respJSON.category_data.map(x => x[0]);
+    const categoryBar = respJSON.category_data.map((x, i) => ([i, x[1]]));
     const dataObj = monthData.reduce((a, x) => ({...a, [parseInt(x[0])]: x[1]}), {});
     const data = [];
     for(let i=1; i<=32; i++) {
@@ -49,51 +80,61 @@ $.getJSON("/expenses/summary", function(respJSON) {
             color: "#5482FF"
         }
     ];
-    $.plot($("#bar-graph-container"), dataset, barOptions);
+    $.plot($("#bar-graph-container"), dataset, newBarOptions());
+    const catOptions = newBarOptions();
+    catOptions.xaxis = {
+        ...catOptions.xaxis,
+        show: true,
+        axisLabel: "Categories",
+        ticks: categories.map((x, i) => ([i, x])),
+    };
+    $.plot($("#cat-bar-graph-container"), [categoryBar], catOptions);
     $.plot($("#pie-chart-container"), categoryData, pieOptions);
+    const barTTFn = (item) => {
+        var x = item.datapoint[0];
+        var y = item.datapoint[1];
+        return month + " " + x + "<br/>" + "<strong>NRs. " + y + "</strong>";
+    };
+    $("#bar-graph-container").UseTooltip(barTTFn);
+    const catBarTTFn = (item) => {
+        var x = item.datapoint[0];
+        var y = item.datapoint[1];
+        return categories[x] + "<br />" + "<strong>NRs. " + y + "</strong>";
+    }
+    $("#cat-bar-graph-container").UseTooltip();
 });
 
-$("<div id='tooltip'></div>").css({
-    position: "absolute",
-    display: "none",
-    border: "1px solid #fdd",
-    padding: "2px",
-    "background-color": "#fee",
-    opacity: 0.80
-}).appendTo("body");
-
-$("bar-graph-container").bind("plothover", function (event, pos, item) {
-
-    if (!pos.x || !pos.y) {
-        return;
+var previousPoint = null;
+$.fn.UseTooltip = function (tooltipFn) {
+    if (!tooltipFn) {
+        tooltipFn = (item) => "<br/>" + item.datapoint[1];
     }
-
-    if ($("#enablePosition:checked").length > 0) {
-        var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
-        $("#hoverdata").text(str);
-    }
-
-    if ($("#enableTooltip:checked").length > 0) {
+    $(this).bind("plothover", function (event, pos, item) {
         if (item) {
-            var x = item.datapoint[0].toFixed(2),
-                y = item.datapoint[1].toFixed(2);
-
-            $("#tooltip").html(item.series.label + " of " + x + " = " + y)
-                .css({top: item.pageY+5, left: item.pageX+5})
-                .fadeIn(200);
-        } else {
-            $("#tooltip").hide();
+            if (previousPoint != item.dataIndex) {
+                previousPoint = item.dataIndex;
+                $("#tooltip").remove();
+                showTooltip(item.pageX, item.pageY, tooltipFn(item));
+            }
         }
-    }
-});
+        else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
 
-$("#bar-graph-container").bind("plothovercleanup", function (event, pos, item) {
-        $("#tooltip").hide();
-});
-
-$("#bar-graph-container").bind("plotclick", function (event, pos, item) {
-    if (item) {
-        $("#clickdata").text(" - click point " + item.dataIndex + " in " + item.series.label);
-        plot.highlight(item.series, item.datapoint);
-    }
-});
+function showTooltip(x, y, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y + 5,
+        left: x + 20,
+        border: '2px solid #4572A7',
+        padding: '2px',
+        size: '10',
+        'border-radius': '6px 6px 6px 6px',
+        'background-color': '#fff',
+        opacity: 0.80
+    }).appendTo("body").fadeIn(200);
+}

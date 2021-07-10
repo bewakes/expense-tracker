@@ -3,7 +3,6 @@
 {-# LANGUAGE TypeApplications #-}
 module Handler.Home where
 
-import           Data.Aeson                           ((.=))
 import qualified Data.Text                            as T
 import           Data.Time.Calendar
 import           Data.Time.Clock
@@ -58,9 +57,12 @@ getExpenseSummaryR = do
     category_summary <- runDB $ getCategoryAggregated uid curr
     let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary
         cat_processed = map (extractValFromTuple_ id (fromMaybe 0)) category_summary
+        total = P.sum $ P.map snd cat_processed
     returnJson $ object
-        [ "category" .= toJSON cat_processed
-        , "month" .= toJSON month_processed
+        [ "category_data" .= toJSON cat_processed
+        , "month_data" .= toJSON month_processed
+        , "month" .= formatTime defaultTimeLocale "%B" curr
+        , "total" .= total
         ]
 
 

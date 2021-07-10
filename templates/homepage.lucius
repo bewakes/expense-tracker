@@ -36,10 +36,12 @@ h3 {
     }
 }
 
-#pie-chart-container {
+.graph {
+    margin-top: 5px;
     background: #f1f1f5;
 }
 
-#bar-graph-container {
+.graph {
+    margin-top: 5px;
     background: #f1f1f5;
 }

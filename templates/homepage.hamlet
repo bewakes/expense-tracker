@@ -14,10 +14,16 @@
                             <b style="font-size: 1.6rem">Add an Expense
         <div .row>
             <div .col-md-6.col-sm-12>
-                <div #bar-graph-container style="width:100%;height:300px">
+                <div .graph #bar-graph-container style="width:100%;height:300px">
             <div .col-md-6>
-                <div #pie-chart-container style="width:100%;height:300px">
-        <hr>
+                <div .graph #pie-chart-container style="width:100%;height:300px">
+
+        <div .row>
+            <div .col-md-6>
+                <div .graph #cat-bar-graph-container style="width:100%;height:300px">
+            <div .col-md-6>
+
+        <h2> Daily details
         <div .row>
             <div .col-lg-12>
                 <table .table.table-striped.table-bordered>
