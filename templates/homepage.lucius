@@ -35,3 +35,11 @@ h3 {
         box-shadow: 1px 1px;
     }
 }
+
+#pie-chart-container {
+    background: #f1f1f5;
+}
+
+#bar-graph-container {
+    background: #f1f1f5;
+}

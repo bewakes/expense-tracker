@@ -1,18 +1,25 @@
 <div .container>
     <div .bs-docs-section>
         <div .row>
-            <div .col-lg-12>
+            <div .col-lg-12.col-md-12>
                 <h3 .text-center>My Expenses
                 <div .table-header>
                     <div #month-selector>
                         <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}> &lt;
-                        <span .month>#{formatTime defaultTimeLocale "%B %Y" day}
+                        <span .month>#{formatTime defaultTimeLocale "%B %Y" curr}
                         <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}> &gt;
 
                     <form method=get action=@{ExpenseNewR}>
                         <button .btn.btn-success.btn-sm>
                             <b style="font-size: 1.6rem">Add an Expense
-
+        <div .row>
+            <div .col-md-6.col-sm-12>
+                <div #bar-graph-container style="width:100%;height:300px">
+            <div .col-md-6>
+                <div #pie-chart-container style="width:100%;height:300px">
+        <hr>
+        <div .row>
+            <div .col-lg-12>
                 <table .table.table-striped.table-bordered>
                     <thead>
                         <tr>

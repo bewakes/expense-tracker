@@ -13,6 +13,7 @@
 /users UserR GET POST
 
 /expenses/new ExpenseNewR GET POST
+/expenses/summary ExpenseSummaryR GET
 
 /groups/new GroupNewR GET POST
 /groups GroupR GET POST

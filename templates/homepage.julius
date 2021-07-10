@@ -1,0 +1,99 @@
+const ticks = new Array(30).map((x, i) => ([i+1, i+1]));
+const pieOptions = {
+        series:
+        {
+            pie: {
+                show: true,
+                innerRadius: 0.5,
+                label: {
+                    show: true
+                }
+            },
+        }
+    };
+const barOptions = {
+    series: {
+        bars: {
+            show: true
+        }
+    },
+    bars: {
+        align: "center",
+        barWidth: 0.5
+    },
+    xaxis: {
+        // ticks: ticks,
+        axisLabelFontSizePixels: 3,
+        axisLabel: "Days"
+    },
+    grid: {
+        hoverable: true,
+        clickable: true,
+        borderWidth: 2,
+        // backgroundColor: { colors: ["#ffffff", "#EDF5FF"] }
+    }
+};
+
+$.getJSON("/expenses/summary", function(respJSON) {
+    const monthData = respJSON.month;
+    const categoryData = respJSON.category.map(([a, b]) => ({label: a, data: b}));
+    const dataObj = monthData.reduce((a, x) => ({...a, [parseInt(x[0])]: x[1]}), {});
+    const data = [];
+    for(let i=1; i<=32; i++) {
+        data.push([i, dataObj[i] || 0]);
+    }
+    const dataset = [
+        {
+            label: "Daily Expense",
+            data: data,
+            color: "#5482FF"
+        }
+    ];
+    $.plot($("#bar-graph-container"), dataset, barOptions);
+    $.plot($("#pie-chart-container"), categoryData, pieOptions);
+});
+
+$("<div id='tooltip'></div>").css({
+    position: "absolute",
+    display: "none",
+    border: "1px solid #fdd",
+    padding: "2px",
+    "background-color": "#fee",
+    opacity: 0.80
+}).appendTo("body");
+
+$("bar-graph-container").bind("plothover", function (event, pos, item) {
+
+    if (!pos.x || !pos.y) {
+        return;
+    }
+
+    if ($("#enablePosition:checked").length > 0) {
+        var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+        $("#hoverdata").text(str);
+    }
+
+    if ($("#enableTooltip:checked").length > 0) {
+        if (item) {
+            var x = item.datapoint[0].toFixed(2),
+                y = item.datapoint[1].toFixed(2);
+
+            $("#tooltip").html(item.series.label + " of " + x + " = " + y)
+                .css({top: item.pageY+5, left: item.pageX+5})
+                .fadeIn(200);
+        } else {
+            $("#tooltip").hide();
+        }
+    }
+});
+
+$("#bar-graph-container").bind("plothovercleanup", function (event, pos, item) {
+        $("#tooltip").hide();
+});
+
+$("#bar-graph-container").bind("plotclick", function (event, pos, item) {
+    if (item) {
+        $("#clickdata").text(" - click point " + item.dataIndex + " in " + item.series.label);
+        plot.highlight(item.series, item.datapoint);
+    }
+});
