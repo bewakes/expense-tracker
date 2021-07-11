@@ -3,7 +3,10 @@
         <div .row>
             <div .col-lg-12.col-md-12>
                 <h3 .text-center>
-                    #{groupName group_} Expenses
+                    <select #group-select>
+                        $forall (Entity k grp) <- userGroups
+                                <option value=#{show k} #{isSelected k}>#{groupName grp}
+                    Expenses
                 <div .table-header>
                     <div #month-selector>
                         <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}> &lt;

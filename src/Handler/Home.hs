@@ -29,15 +29,15 @@ parseParams maybeMonthraw maybeYearraw maybeGrpraw = do
         nextMonth = addDays 32 currMonth
     return (prevMonth, currMonth, nextMonth, E.toSqlKey <$> grpMaybe)
 
-getGroup :: UserId -> Maybe GroupId -> Handler (Entity Group)
+getGroup :: UserId -> Maybe GroupId -> Handler (Entity Group, [Entity Group])
 getGroup uid gidMaybe = do
-    usrGrps <- runDB $ getUserGroups uid
-    let l = length usrGrps
-        grp_ = if l > 0 then P.head usrGrps else error "Something went wrong"
+    userGroups <- runDB $ getUserGroups uid
+    let l = length userGroups
+        grp_ = if l > 0 then P.head userGroups else error "Something went wrong"
         grp = case gidMaybe of
                 Nothing -> grp_
-                Just g -> P.head $ P.filter ((== g) . entityKey) usrGrps ++ [grp_] -- last addition is for failsafe case
-    return grp
+                Just g -> P.head $ P.filter ((== g) . entityKey) userGroups ++ [grp_] -- last addition is for failsafe case
+    return (grp, userGroups)
 
 getHomeR :: Handler Html
 getHomeR = do
@@ -53,15 +53,14 @@ getHomeR = do
         setTitle "Welcome To Expense Tracker!"
         $(widgetFile "welcome")
       Just uid -> do
-        grp <- getGroup uid gidMaybe
+        (grp, userGroups) <- getGroup uid gidMaybe
         expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
 
         let total = P.sum <$> mapM fst3 expenses
-            group_ = entityVal grp
+            isSelected k = if k == entityKey grp then ("selected" :: Text) else ("" :: Text)
         defaultLayout $ do
           setTitle "Expenses Home"
           $(widgetFile "homepage")
-
 
 getExpenseSummaryR :: Handler Value
 getExpenseSummaryR = do
@@ -73,7 +72,7 @@ getExpenseSummaryR = do
     case uidMaybe of
       Nothing -> returnJson $ object []
       Just uid -> do
-        grp <- getGroup uid gidMaybe
+        (grp, _) <- getGroup uid gidMaybe
         month_summary <- runDB $ getMonthAggregated (entityKey grp) curr
         category_summary <- runDB $ getCategoryAggregated (entityKey grp) curr
         let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary

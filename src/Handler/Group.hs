@@ -33,10 +33,20 @@ postGroupNewR = do
       Nothing -> permissionDenied "You are not authorized for this page"
       Just usrid -> do
         ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ groupForm usrid
+        time <- liftIO getCurrentTime
         case res of
           FormSuccess grp -> do
                     groupId <- runDB $ insert grp
-                    redirect $ GroupDetailR groupId
+                    let usrgrp = UsersGroups {
+                              usersGroupsUserId     = usrid
+                            , usersGroupsGroupId    = groupId
+                            , usersGroupsIsDefault  = True
+                            , usersGroupsJoinedAt   = time
+                            , usersGroupsRole       = SuperAdmin
+                            }
+                    _ <- runDB $ insert usrgrp
+                    addMessageI "success" ("Group added" :: Text)
+                    redirect HomeR
           _ -> defaultLayout $(widgetFile "groups/new")
 
 getGroupDetailR :: GroupId -> Handler Html
