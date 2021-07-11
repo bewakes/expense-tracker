@@ -79,7 +79,12 @@ $.getJSON("/expenses/summary"+location.search, function(respJSON) {
             color: "#5482FF"
         }
     ];
-    $.plot($("#bar-graph-container"), dataset, newBarOptions());
+    const dailyBarOptions = newBarOptions();
+    dailyBarOptions.xaxis = {
+        ...dailyBarOptions.xaxis,
+        axisLabel: month,
+    };
+    $.plot($("#bar-graph-container"), dataset, dailyBarOptions);
     const catOptions = newBarOptions();
     catOptions.xaxis = {
         ...catOptions.xaxis,

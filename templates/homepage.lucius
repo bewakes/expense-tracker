@@ -1,5 +1,5 @@
 .table-header {
-    margin-top: 1rem;
+    margin: 1rem 0px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

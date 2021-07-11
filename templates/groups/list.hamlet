@@ -18,16 +18,19 @@
             <tbody>
             $forall (Entity id group, mems) <- grpMems
                 <tr>
+                    <td  style="vertical-align: middle;">
+                        <b>
+                            <a .text-decoration-none href=@{GroupDetailR id}>
+                                #{groupName group}
+                    <td  style="vertical-align: middle;">
+                        <button .btn.btn-danger.btn-sm onClick="alert('This is not implemented for the moment.')">
+                            X
                     <td>
-                        <a .text-decoration-none href=@{GroupDetailR id}>
-                            #{groupName group}
-                    <td>
-                        <button .btn.btn-danger.btn-sm onClick="alert('This is not implemented for the moment.')">X
-                    <td>
-                        <table>
+                        <table .table.table-striped>
+                            <tbody>
                             $forall (Entity _ mem) <- mems
                                 <tr>
-                                    <td>
+                                    <td style="display: flex; flex-direction: row; justify-content: space-between;">
                                         #{fromMaybe " " (userFirstName mem)}
                                         #{fromMaybe " " (userLastName mem)}
                                     <td>
