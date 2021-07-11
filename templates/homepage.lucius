@@ -23,6 +23,7 @@ h3 {
     .month {
         display: inline-block;
         width: 110px;
+        font-weight: 700;
         border: solid 1px gray;
         text-align: center;
     }
@@ -39,9 +40,30 @@ h3 {
 .graph {
     margin-top: 5px;
     background: #f1f1f5;
+    width: 100%;
+    height: 250px;
+    border-radius: 3px;
 }
 
-.graph {
-    margin-top: 5px;
-    background: #f1f1f5;
+#total-container {
+    display: flex;
+    height: 250px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+    #total-container {
+        height: 120px;
+    }
+}
+
+#total-header {
+    margin-top: 0px;
+    font-weight: 600;
+}
+
+#total-amount {
 }

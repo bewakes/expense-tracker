@@ -30,13 +30,11 @@ const newBarOptions = () => ({
         barWidth: 0.2
     },
     xaxis: {
-        // ticks: ticks,
         axisLabelFontSizePixels: 3,
-        axisLabel: "Days",
         axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
+        axisLabelFontSizePixels: 8,
         axisLabelFontFamily: 'Verdana, Arial',
-        axisLabelPadding: 10
+        axisLabelPadding: 0,
     },
     yaxis: {
         axisLabelFontSizePixels: 2,
@@ -85,7 +83,6 @@ $.getJSON("/expenses/summary"+location.search, function(respJSON) {
     catOptions.xaxis = {
         ...catOptions.xaxis,
         show: true,
-        axisLabel: "Categories",
         ticks: categories.map((x, i) => ([i, x])),
     };
     $.plot($("#cat-bar-graph-container"), [categoryBar], catOptions);
@@ -101,7 +98,7 @@ $.getJSON("/expenses/summary"+location.search, function(respJSON) {
         var y = item.datapoint[1];
         return categories[x] + "<br />" + "<strong>NRs. " + y + "</strong>";
     }
-    $("#cat-bar-graph-container").UseTooltip();
+    $("#cat-bar-graph-container").UseTooltip(catBarTTFn);
 });
 
 var previousPoint = null;

@@ -13,15 +13,19 @@
                         <button .btn.btn-success.btn-sm>
                             <b style="font-size: 1.6rem">Add an Expense
         <div .row>
-            <div .col-md-6.col-sm-12>
-                <div .graph #bar-graph-container style="width:100%;height:300px">
             <div .col-md-6>
-                <div .graph #pie-chart-container style="width:100%;height:300px">
+                <div #total-container .graph>
+                    <h1 #total-header>Total Expense
+                    <h2 #total-amount>NRs. 12121
+
+            <div .col-md-6.col-sm-12>
+                <div .graph #bar-graph-container>
 
         <div .row>
             <div .col-md-6>
-                <div .graph #cat-bar-graph-container style="width:100%;height:300px">
+                <div .graph #cat-bar-graph-container>
             <div .col-md-6>
+                <div .graph #pie-chart-container>
 
         <h2> Daily details
         <div .row>
