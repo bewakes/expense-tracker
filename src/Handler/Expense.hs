@@ -14,7 +14,7 @@ newExpenseForm cats grps usrid = Expense
     <*> areq (selectFieldList cats) (bfs ("Category" :: Text)) Nothing
     <*> areq dayField (bfs ("Date" :: Text)) Nothing
     <*> pure []
-    <*> areq textField (bfs ("Description" :: Text)) Nothing
+    <*> areq textField (bfs ("Description" :: Text)) (Just " ")
     <*> areq (selectFieldList grps) (bfs ("Group" :: Text)) Nothing
     <*> pure usrid
     <*> lift (liftIO getCurrentTime)

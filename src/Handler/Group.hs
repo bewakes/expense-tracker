@@ -1,7 +1,9 @@
+{-# LANGUAGE TypeApplications #-}
 module Handler.Group where
 
 import           Import
 import Yesod.Form.Bootstrap3
+import qualified Database.Esqueleto.Experimental as E
 
 groupForm :: UserId -> AForm Handler Group
 groupForm uid = Group
@@ -10,11 +12,16 @@ groupForm uid = Group
          <*> lift (liftIO getCurrentTime)
          <*> pure uid
 
-
 getGroupR :: Handler Html
 getGroupR = do
-    groups <- runDB getAllGroups
-    defaultLayout $(widgetFile "groups/list")
+    uidMaybe <- maybeAuthId
+    case uidMaybe of
+      Nothing -> error "Not authorized"
+      Just uid -> do
+        groups <- runDB $ getAllGroups uid
+        groupsMems <- mapM (runDB . getGroupMembers) groups
+        let grpMems = zip groups groupsMems
+        defaultLayout $(widgetFile "groups/list")
 
 getGroupNewR :: Handler Html
 getGroupNewR = do
@@ -57,5 +64,20 @@ getGroupDetailR groupId = do
 postGroupR :: Handler Html
 postGroupR = error "Hi there"
 
-getAllGroups :: DB [Entity Group]
-getAllGroups = selectList [] []
+getAllGroups :: UserId -> DB [Entity Group]
+getAllGroups uid = E.select $ do
+    (usrgrp E.:& grp) <-
+        E.from $  E.table @UsersGroups
+        `E.InnerJoin` E.table @Group
+        `E.on` (\(usrgrp E.:& grp) -> usrgrp E.^. UsersGroupsGroupId E.==. grp E.^. GroupId)
+    E.where_ (usrgrp E.^. UsersGroupsUserId E.==. E.val uid)
+    return grp
+
+getGroupMembers :: Entity Group -> DB [Entity User]
+getGroupMembers (Entity gk _) = E.select $ do
+    (usrgrp E.:& usr) <-
+        E.from $  E.table @UsersGroups
+        `E.InnerJoin` E.table @User
+        `E.on` (\(usrgrp E.:& usr) -> usrgrp E.^. UsersGroupsUserId E.==. usr E.^. UserId)
+    E.where_ (usrgrp E.^. UsersGroupsGroupId E.==. E.val gk)
+    return usr

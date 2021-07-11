@@ -9,18 +9,31 @@
         <div .alert.alert-info>
             Groups help you track expenses in different groups, for example one
             for your personal, other for your family, other for your office, etc.
-        <table .table.table-striped>
+        <table .table.table-striped.table-responsive>
             <thead .thead-light>
                 <tr>
                     <th>Group Name
-                    <th>Default?
-
+                    <th>Actions
+                    <th>Members
             <tbody>
-            $forall (Entity id group) <- groups
+            $forall (Entity id group, mems) <- grpMems
                 <tr>
                     <td>
                         <a .text-decoration-none href=@{GroupDetailR id}>
                             #{groupName group}
                     <td>
-                        Yes
+                        <button .btn.btn-danger.btn-sm onClick="alert('This is not implemented for the moment.')">X
+                    <td>
+                        <table>
+                            $forall (Entity _ mem) <- mems
+                                <tr>
+                                    <td>
+                                        #{fromMaybe " " (userFirstName mem)}
+                                        #{fromMaybe " " (userLastName mem)}
+                                    <td>
+                                        <button .btn.btn-danger.btn-sm style="padding:0px 2px; margin-bottom: 2px;">X
+                            <tr>
+                                <td>
+                                    <button .btn.btn-success.btn-sm>Add member
+        <div>
     <div .col.col-md-2>
