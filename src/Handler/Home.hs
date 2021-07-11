@@ -57,7 +57,8 @@ getHomeR = do
         expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
 
         let total = P.sum <$> mapM fst3 expenses
-            isSelected k = if k == entityKey grp then ("selected" :: Text) else ("" :: Text)
+            grpId = E.fromSqlKey $ entityKey grp
+            isSelected k = k == entityKey grp
         defaultLayout $ do
           setTitle "Expenses Home"
           $(widgetFile "homepage")

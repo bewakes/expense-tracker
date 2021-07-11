@@ -137,3 +137,14 @@ function showTooltip(x, y, contents) {
         opacity: 0.80
     }).appendTo("body").fadeIn(200);
 }
+
+function onChangeGroupSelect(elem) {
+    let params = (new URL(document.location)).searchParams;
+    let newParams = {
+        month: params.get('month'),
+        year: params.get('year'),
+        group: elem.value
+    };
+    var query = $.param(newParams);
+    window.location = location.pathname + "?" +query;
+}

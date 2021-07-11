@@ -3,15 +3,16 @@
         <div .row>
             <div .col-lg-12.col-md-12>
                 <h3 .text-center>
-                    <select #group-select>
+                    <select #group-select onChange="onChangeGroupSelect(this)">
                         $forall (Entity k grp) <- userGroups
-                                <option value=#{show k} #{isSelected k}>#{groupName grp}
+                            $with isSel <- isSelected k
+                                <option value=#{E.fromSqlKey k} :isSel:selected>#{groupName grp}
                     Expenses
                 <div .table-header>
                     <div #month-selector>
-                        <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}> &lt;
+                        <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}&group=#{grpId}> &lt;
                         <span .month>#{formatTime defaultTimeLocale "%B %Y" curr}
-                        <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}> &gt;
+                        <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}&group=#{grpId}> &gt;
 
                     <form method=get action=@{ExpenseNewR}>
                         <button .btn.btn-success.btn-sm>
@@ -50,3 +51,4 @@
                             <th>Total
                             <td>
                             <th>#{E.unValue total}
+
