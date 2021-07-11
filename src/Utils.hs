@@ -1,11 +1,12 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric    #-}
+{-# LANGUAGE TypeApplications #-}
 module Utils where
 
 import           Data.Fixed
 import           Data.Maybe
 import           Data.Time
 import           Database.Esqueleto.Experimental as E
-import           Prelude
+import           Import
 
 coerceMaybe :: Maybe (Maybe a) -> Maybe a
 coerceMaybe Nothing        = Nothing
@@ -31,3 +32,12 @@ extractValFromTuple (a, b) = (E.unValue a, E.unValue b)
 
 extractValFromTuple_ :: (a -> a') -> (b -> b') -> (E.Value a, E.Value b) -> (a', b')
 extractValFromTuple_ fa fb (a, b) = (fa $ E.unValue a, fb $ E.unValue b)
+
+getUserGroups :: UserId -> DB [Entity Group]
+getUserGroups u = E.select $ do
+    (ug E.:& grp) <-
+        E.from $ E.table @UsersGroups `E.InnerJoin` E.table @Group
+        `E.on` (\(ug E.:& grp) -> ug E.^. UsersGroupsGroupId E.==. grp E.^. GroupId)
+    E.where_ (ug E.^. UsersGroupsUserId E.==. E.val u)
+    E.orderBy [E.asc $ ug E.^. UsersGroupsIsDefault]
+    return grp

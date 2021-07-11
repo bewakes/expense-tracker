@@ -31,10 +31,11 @@ const newBarOptions = () => ({
     },
     xaxis: {
         axisLabelFontSizePixels: 3,
+        axisLabel: "Days",
         axisLabelUseCanvas: true,
         axisLabelFontSizePixels: 8,
         axisLabelFontFamily: 'Verdana, Arial',
-        axisLabelPadding: 0,
+        axisLabelPadding: 12,
     },
     yaxis: {
         axisLabelFontSizePixels: 2,
@@ -82,6 +83,7 @@ $.getJSON("/expenses/summary"+location.search, function(respJSON) {
     const catOptions = newBarOptions();
     catOptions.xaxis = {
         ...catOptions.xaxis,
+        axisLabel: "Categories",
         show: true,
         ticks: categories.map((x, i) => ([i, x])),
     };

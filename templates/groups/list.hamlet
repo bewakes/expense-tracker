@@ -1,15 +1,26 @@
-<h1> My Groups
-<table .table.table-striped>
-    <thead .thead-light>
-        <tr>
-            <th>Group Name
-            <th>Default?
+<div .row>
+    <div .col.col-md-2>
+    <div .col.col-md-8>
+        <div style="display:flex; flex-direction: row; justify-content: space-between">
+            <h3 style="margin-top: 0px; margin-bottom: 3px;"> My Groups
+            <form method=get action=@{GroupNewR}>
+                <button .btn.btn-success.btn-sm style="margin-bottom: 3px">
+                    <b style="font-size: 1.6rem">Add a Group
+        <div .alert.alert-info>
+            Groups help you track expenses in different groups, for example one
+            for your personal, other for your family, other for your office, etc.
+        <table .table.table-striped>
+            <thead .thead-light>
+                <tr>
+                    <th>Group Name
+                    <th>Default?
 
-    <tbody>
-    $forall (Entity id group) <- groups
-        <tr>
-            <td>
-                <a .text-decoration-none href=@{GroupDetailR id}>
-                    #{groupName group}
-            <td>
-                Yes
+            <tbody>
+            $forall (Entity id group) <- groups
+                <tr>
+                    <td>
+                        <a .text-decoration-none href=@{GroupDetailR id}>
+                            #{groupName group}
+                    <td>
+                        Yes
+    <div .col.col-md-2>

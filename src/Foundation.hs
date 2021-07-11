@@ -256,20 +256,23 @@ instance YesodAuth App where
         let maybedata = getFromCredsExtra "userResponse" creds
             maybeExtraCreds = mergeMaybe $ (decode . encodeUtf8 . LT.fromStrict) <$> maybedata
         x <- getBy $ UniqueUser $ credsIdent creds
+        now <- liftIO getCurrentTime
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
             Nothing -> do
-                -- Create a group for the user
-                grpid <- insert Group
-                    { groupName = "Personal"
-                    , groupDescription = "This is your personal account"
-                    }
                 usrid <- insert User
                     { userIdent = credsIdent creds
                     , userPassword = Nothing
                     , userFirstName = extraCredsFirstName <$> maybeExtraCreds
                     , userLastName = extraCredsLastName <$> maybeExtraCreds
                     , userEmail = extraCredsEmail <$> maybeExtraCreds
+                    }
+                -- Create a group for the user
+                grpid <- insert Group
+                    { groupName = "Personal"
+                    , groupCreatedAt = now
+                    , groupCreatedBy = usrid
+                    , groupDescription = "This is your personal account"
                     }
                 time <- liftIO getCurrentTime
                 _ <- insert UsersGroups

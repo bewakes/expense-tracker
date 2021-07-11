@@ -12,6 +12,8 @@ User json
 Group json
     name Text
     description Text
+    createdAt UTCTime default=now()
+    createdBy UserId
 UsersGroups json
     userId UserId
     groupId GroupId
@@ -35,7 +37,8 @@ Expense json
     date Day
     items [Text]
     description Text
-    userId UserId
+    groupId GroupId
+    createdBy UserId
     createdAt UTCTime default=now()
     deriving Show
 Saving json

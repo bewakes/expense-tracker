@@ -2,7 +2,8 @@
     <div .bs-docs-section>
         <div .row>
             <div .col-lg-12.col-md-12>
-                <h3 .text-center>My Expenses
+                <h3 .text-center>
+                    #{groupName group_} Expenses
                 <div .table-header>
                     <div #month-selector>
                         <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}> &lt;
@@ -16,7 +17,7 @@
             <div .col-md-6>
                 <div #total-container .graph>
                     <h1 #total-header>Total Expense
-                    <h2 #total-amount>NRs. 12121
+                    <h3 #total-amount>NRs. #{E.unValue total}
 
             <div .col-md-6.col-sm-12>
                 <div .graph #bar-graph-container>

@@ -3,6 +3,7 @@
 {-# LANGUAGE TypeApplications #-}
 module Handler.Home where
 
+import           Data.Maybe
 import qualified Data.Text                            as T
 import           Data.Time.Calendar
 import           Data.Time.Clock
@@ -14,66 +15,84 @@ import           Text.Read
 import           Utils
 
 
-getPrevCurrNextMonths :: Maybe Text -> Maybe Text -> IO (Day, Day, Day)
-getPrevCurrNextMonths maybeMonthraw maybeYearraw = do
+parseParams :: Maybe Text -> Maybe Text -> Maybe Text -> IO (Day, Day, Day, Maybe GroupId)
+parseParams maybeMonthraw maybeYearraw maybeGrpraw = do
     currTime <- getCurrentTime
     let monthMaybe = coerceMaybe $ readMaybe . T.unpack <$> maybeMonthraw
         yearMaybe = coerceMaybe $ readMaybe . T.unpack <$> maybeYearraw
+        grpMaybe = coerceMaybe $ readMaybe . T.unpack <$> maybeGrpraw
         curr_ = mkDay <$> yearMaybe <*> monthMaybe <*> Just 1
         currMonth = case curr_ of
                 Nothing -> utctDay currTime
                 Just x  -> x
         prevMonth = addDays (-32) currMonth
         nextMonth = addDays 32 currMonth
-    return (prevMonth, currMonth, nextMonth)
+    return (prevMonth, currMonth, nextMonth, E.toSqlKey <$> grpMaybe)
 
+getGroup :: UserId -> Maybe GroupId -> Handler (Entity Group)
+getGroup uid gidMaybe = do
+    usrGrps <- runDB $ getUserGroups uid
+    let l = length usrGrps
+        grp_ = if l > 0 then P.head usrGrps else error "Something went wrong"
+        grp = case gidMaybe of
+                Nothing -> grp_
+                Just g -> P.head $ P.filter ((== g) . entityKey) usrGrps ++ [grp_] -- last addition is for failsafe case
+    return grp
 
 getHomeR :: Handler Html
 getHomeR = do
-    uid <- maybeAuthId
+    uidMaybe <- maybeAuthId
     mraw <- lookupGetParam "month"
+    graw <- lookupGetParam "group"
     yraw <- lookupGetParam "year"
-    (prev, curr, next) <- liftIO $ getPrevCurrNextMonths mraw yraw
+    (prev, curr, next, gidMaybe) <- liftIO $ parseParams mraw yraw graw
     let (prevYear, prevMonth, _) = toGregorian prev
         (nextYear, nextMonth, _) = toGregorian next
-    expenses <- runDB $ getAllUserExpenses uid curr
-    let total = fmap P.sum $ sequence $ P.map fst3 expenses
-    defaultLayout $ do
-        case uid of
-          Nothing -> do
-            setTitle "Welcome To Expense Tracker!"
-            $(widgetFile "welcome")
-          Just _ -> do
-              setTitle "Expenses Home"
-              $(widgetFile "homepage")
+    case uidMaybe of
+      Nothing -> defaultLayout $ do
+        setTitle "Welcome To Expense Tracker!"
+        $(widgetFile "welcome")
+      Just uid -> do
+        grp <- getGroup uid gidMaybe
+        expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
+
+        let total = P.sum <$> mapM fst3 expenses
+            group_ = entityVal grp
+        defaultLayout $ do
+          setTitle "Expenses Home"
+          $(widgetFile "homepage")
+
 
 getExpenseSummaryR :: Handler Value
 getExpenseSummaryR = do
-    uid <- maybeAuthId
+    uidMaybe <- maybeAuthId
     mraw <- lookupGetParam "month"
     yraw <- lookupGetParam "year"
-    (_, curr, _) <- liftIO $ getPrevCurrNextMonths mraw yraw
-    month_summary <- runDB $ getMonthAggregated uid curr
-    category_summary <- runDB $ getCategoryAggregated uid curr
-    let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary
-        cat_processed = map (extractValFromTuple_ id (fromMaybe 0)) category_summary
-        total = P.sum $ P.map snd cat_processed
-    returnJson $ object
-        [ "category_data" .= toJSON cat_processed
-        , "month_data" .= toJSON month_processed
-        , "month" .= formatTime defaultTimeLocale "%B" curr
-        , "total" .= total
-        ]
+    graw <- lookupGetParam "group"
+    (_, curr, _, gidMaybe) <- liftIO $ parseParams mraw yraw graw
+    case uidMaybe of
+      Nothing -> returnJson $ object []
+      Just uid -> do
+        grp <- getGroup uid gidMaybe
+        month_summary <- runDB $ getMonthAggregated (entityKey grp) curr
+        category_summary <- runDB $ getCategoryAggregated (entityKey grp) curr
+        let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary
+            cat_processed = map (extractValFromTuple_ id (fromMaybe 0)) category_summary
+            total = P.sum $ P.map snd cat_processed
+        returnJson $ object
+            [ "category_data" .= toJSON cat_processed
+            , "month_data" .= toJSON month_processed
+            , "month" .= formatTime defaultTimeLocale "%B" curr
+            , "total" .= total
+            ]
 
-
-getAllUserExpenses :: Maybe UserId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text)]
-getAllUserExpenses Nothing _       = return []
-getAllUserExpenses (Just uid) utday =  E.select $ do
+getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text)]
+getAllGroupExpenses gid utday =  E.select $ do
     (expense E.:& category) <-
         E.from $ E.table @Expense
         `E.InnerJoin` E.table @Category
         `E.on` (\(expense E.:& category) -> expense E.^. ExpenseCategoryId E.==. category E.^. CategoryId)
-    E.where_ (expense E.^. ExpenseUserId E.==. E.val uid)
+    E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
     E.where_ (year (expense E.^. ExpenseDate) E.==. E.val (fromIntegral y))
     return
@@ -90,12 +109,11 @@ getAllUserExpenses (Just uid) utday =  E.select $ do
 
 type MonthDay = Int
 
-getMonthAggregated :: Maybe UserId -> Day -> DB [(E.Value MonthDay, E.Value (Maybe Double))]
-getMonthAggregated Nothing _ = return []
-getMonthAggregated (Just uid) utday = E.select $ do
+getMonthAggregated :: GroupId -> Day -> DB [(E.Value MonthDay, E.Value (Maybe Double))]
+getMonthAggregated gid utday = E.select $ do
     expense <- E.from $ E.table @Expense
     let date' = unsafeSqlExtractSubField "day" (expense E.^. ExpenseDate)
-    E.where_ (expense E.^. ExpenseUserId E.==. E.val uid)
+    E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
     E.where_ (year (expense E.^. ExpenseDate) E.==. E.val (fromIntegral y))
     E.groupBy date'
@@ -110,14 +128,13 @@ getMonthAggregated (Just uid) utday = E.select $ do
           year ts = unsafeSqlExtractSubField "year" ts
           (y, m, _) = toGregorian utday
 
-getCategoryAggregated :: Maybe UserId -> Day -> DB[(E.Value Text, E.Value (Maybe Double))]
-getCategoryAggregated Nothing _ = return []
-getCategoryAggregated (Just uid) utday = E.select $ do
+getCategoryAggregated :: GroupId -> Day -> DB [(E.Value Text, E.Value (Maybe Double))]
+getCategoryAggregated gid utday = E.select $ do
     (expense E.:& category) <-
         E.from $ E.table @Expense
         `E.InnerJoin` E.table @Category
         `E.on` (\(expense E.:& category) -> expense E.^. ExpenseCategoryId E.==. category E.^. CategoryId)
-    E.where_ (expense E.^. ExpenseUserId E.==. E.val uid)
+    E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
     E.where_ (year (expense E.^. ExpenseDate) E.==. E.val (fromIntegral y))
     E.groupBy (category E.^. CategoryName)
