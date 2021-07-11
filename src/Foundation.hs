@@ -261,8 +261,8 @@ instance YesodAuth App where
             Nothing -> do
                 -- Create a group for the user
                 grpid <- insert Group
-                    { groupName = fromMaybe "Personal" (extraCredsFirstName <$> maybeExtraCreds)
-                    , groupDescription = " "
+                    { groupName = "Personal"
+                    , groupDescription = "This is your personal account"
                     }
                 usrid <- insert User
                     { userIdent = credsIdent creds

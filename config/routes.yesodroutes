@@ -10,7 +10,7 @@
 / HomeR GET
 /categories CategoryR GET POST
 
-/users UserR GET POST
+/users UserR GET
 
 /expenses/new ExpenseNewR GET POST
 /expenses/summary ExpenseSummaryR GET

@@ -66,7 +66,7 @@ getExpenseSummaryR = do
         ]
 
 
-getAllUserExpenses :: Maybe UserId -> Day -> DB [(E.Value Double, E.Value UTCTime, E.Value Text)]
+getAllUserExpenses :: Maybe UserId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text)]
 getAllUserExpenses Nothing _       = return []
 getAllUserExpenses (Just uid) utday =  E.select $ do
     (expense E.:& category) <-
@@ -81,9 +81,9 @@ getAllUserExpenses (Just uid) utday =  E.select $ do
         , expense   E.^. ExpenseDate
         , category  E.^. CategoryName
         )
-    where month :: E.SqlExpr (E.Value UTCTime) -> E.SqlExpr (E.Value Int)
+    where month :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           month ts = unsafeSqlExtractSubField "month" ts
-          year :: E.SqlExpr (E.Value UTCTime) -> E.SqlExpr (E.Value Int)
+          year :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           year ts = unsafeSqlExtractSubField "year" ts
           (y, m, _) = toGregorian utday
 
@@ -104,9 +104,9 @@ getMonthAggregated (Just uid) utday = E.select $ do
         ( date'
         , sum'
         )
-    where month :: E.SqlExpr (E.Value UTCTime) -> E.SqlExpr (E.Value Int)
+    where month :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           month ts = unsafeSqlExtractSubField "month" ts
-          year :: E.SqlExpr (E.Value UTCTime) -> E.SqlExpr (E.Value Int)
+          year :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           year ts = unsafeSqlExtractSubField "year" ts
           (y, m, _) = toGregorian utday
 
@@ -125,8 +125,8 @@ getCategoryAggregated (Just uid) utday = E.select $ do
         ( category  E.^. CategoryName
         , E.sum_ (expense E.^. ExpenseAmount)
         )
-    where month :: E.SqlExpr (E.Value UTCTime) -> E.SqlExpr (E.Value Int)
+    where month :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           month ts = unsafeSqlExtractSubField "month" ts
-          year :: E.SqlExpr (E.Value UTCTime) -> E.SqlExpr (E.Value Int)
+          year :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           year ts = unsafeSqlExtractSubField "year" ts
           (y, m, _) = toGregorian utday

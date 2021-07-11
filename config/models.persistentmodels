@@ -32,10 +32,11 @@ SavCategory json
 Expense json
     amount Double
     categoryId CategoryId
-    date UTCTime
+    date Day
     items [Text]
     description Text
     userId UserId
+    createdAt UTCTime default=now()
     deriving Show
 Saving json
     amount Double
@@ -43,6 +44,7 @@ Saving json
     description Text
     savCategoryId SavCategoryId
     userId UserId
+    createdAt UTCTime default=now()
     deriving Show
 Email
     email Text

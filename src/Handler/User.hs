@@ -15,9 +15,5 @@ getUserR = do
                         #{fromMaybe "--" (userLastName user)}
         |]
 
-
-postUserR :: Handler Html
-postUserR = undefined
-
 getAllUsers :: DB [Entity User]
 getAllUsers = selectList [] []

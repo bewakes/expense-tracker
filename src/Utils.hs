@@ -1,13 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Utils where
 
-import           Data.Aeson
 import           Data.Fixed
 import           Data.Maybe
 import           Data.Time
-import           Data.Time.Calendar
-import           Database.Esqueleto as E
-import           GHC.Generics
+import           Database.Esqueleto.Experimental as E
 import           Prelude
 
 coerceMaybe :: Maybe (Maybe a) -> Maybe a
@@ -15,27 +12,14 @@ coerceMaybe Nothing        = Nothing
 coerceMaybe (Just Nothing) = Nothing
 coerceMaybe (Just a)       = a
 
-data DayExpense = DayExpense
-    { day     :: Int
-    , expense :: Double
-    } deriving (Show, Generic)
-
-instance ToJSON DayExpense
-
-
-aggregatedToObj :: (E.Value Int, E.Value (Maybe Double)) -> DayExpense
-aggregatedToObj (tt, aa) = DayExpense t (fromMaybe 0 a)
-    where (t, a) = (E.unValue tt, E.unValue aa)
-
-
 fst3 :: (a, b, c) -> a
 fst3 (a, _, _) = a
 
 mkUTCTime :: (Integer, Int, Int)
           -> (Int, Int, Pico)
           -> UTCTime
-mkUTCTime (year, mon, day) (hour, mn, sec) =
-    UTCTime (fromGregorian year mon day)
+mkUTCTime (year, mon, day_) (hour, mn, sec) =
+    UTCTime (fromGregorian year mon day_)
        (timeOfDayToTime (TimeOfDay hour mn sec))
 
 

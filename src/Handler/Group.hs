@@ -17,7 +17,6 @@ getGroupR = do
 getGroupNewR :: Handler Html
 getGroupNewR = do
     (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm groupForm
-    groups <- runDB getAllGroups
     defaultLayout $ do
         $(widgetFile "groups/new")
 
@@ -25,18 +24,18 @@ postGroupNewR :: Handler Html
 postGroupNewR = do
     ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm groupForm
     case res of
-      FormSuccess group -> do
-                groupId <- runDB $ insert group
+      FormSuccess grp -> do
+                groupId <- runDB $ insert grp
                 redirect $ GroupDetailR groupId
       _ -> defaultLayout $(widgetFile "groups/new")
 
 getGroupDetailR :: GroupId -> Handler Html
 getGroupDetailR groupId = do
-    group <- runDB $ get404 groupId
+    grp <- runDB $ get404 groupId
     defaultLayout $(widgetFile "groups/detail")
 
 postGroupR :: Handler Html
-postGroupR = undefined
+postGroupR = error "Hi there"
 
 getAllGroups :: DB [Entity Group]
 getAllGroups = selectList [] []

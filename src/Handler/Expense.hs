@@ -9,10 +9,11 @@ newExpenseForm :: [(Text, CategoryId)] -> UserId ->  AForm Handler Expense
 newExpenseForm cats usrid = Expense
     <$> areq doubleField (bfs ("Amount" :: Text)) Nothing
     <*> areq (selectFieldList cats) (bfs ("Category" :: Text)) Nothing
-    <*> lift (liftIO getCurrentTime)
+    <*> areq dayField (bfs ("Date" :: Text)) Nothing
     <*> pure []
     <*> areq textField (bfs ("Description" :: Text)) Nothing
     <*> pure usrid
+    <*> lift (liftIO getCurrentTime)
 
 getExpenseNewR :: Handler Html
 getExpenseNewR = do
