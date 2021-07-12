@@ -61,8 +61,19 @@ getGroupDetailR groupId = do
     grp <- runDB $ get404 groupId
     defaultLayout $(widgetFile "groups/detail")
 
-postGroupR :: Handler Html
-postGroupR = error "Hi there"
+getGroupNewMemberR :: GroupId -> Handler Html
+getGroupNewMemberR gid = do
+    uidMaybe <- maybeAuthId
+    case uidMaybe of
+      Nothing -> redirect $ AuthR LoginR
+      Just uid -> do
+          -- Check if user and group exist
+          _ <- runDB $ getBy404 (UniqueUserGroup uid gid)
+          grp <- runDB $ get404 gid
+          defaultLayout $(widgetFile "groups/new-member")
+
+postGroupNewMemberR :: GroupId -> Handler Html
+postGroupNewMemberR _ = error "Not implemented"
 
 getAllGroups :: UserId -> DB [Entity Group]
 getAllGroups uid = E.select $ do

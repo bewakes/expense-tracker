@@ -147,3 +147,12 @@ getCategoryAggregated gid utday = E.select $ do
           year :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           year ts = unsafeSqlExtractSubField "year" ts
           (y, m, _) = toGregorian utday
+
+getUserGroups :: UserId -> DB [Entity Group]
+getUserGroups u = E.select $ do
+    (ug E.:& grp) <-
+        E.from $ E.table @UsersGroups `E.InnerJoin` E.table @Group
+        `E.on` (\(ug E.:& grp) -> ug E.^. UsersGroupsGroupId E.==. grp E.^. GroupId)
+    E.where_ (ug E.^. UsersGroupsUserId E.==. E.val u)
+    E.orderBy [E.asc $ ug E.^. UsersGroupsIsDefault]
+    return grp

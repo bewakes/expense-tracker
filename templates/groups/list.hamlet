@@ -16,11 +16,11 @@
                     <th>Actions
                     <th>Members
             <tbody>
-            $forall (Entity id group, mems) <- grpMems
+            $forall (Entity gid group, mems) <- grpMems
                 <tr>
                     <td  style="vertical-align: middle;">
                         <b>
-                            <a .text-decoration-none href=@{GroupDetailR id}>
+                            <a .text-decoration-none href=@{GroupDetailR gid}>
                                 #{groupName group}
                     <td  style="vertical-align: middle;">
                         <button .btn.btn-danger.btn-sm onClick="alert('This is not implemented for the moment.')">
@@ -31,12 +31,13 @@
                             $forall (Entity _ mem) <- mems
                                 <tr>
                                     <td style="display: flex; flex-direction: row; justify-content: space-between;">
-                                        #{fromMaybe " " (userFirstName mem)}
-                                        #{fromMaybe " " (userLastName mem)}
+                                        #{userFirstName mem}
+                                        #{userLastName mem}
                                     <td>
                                         <button .btn.btn-danger.btn-sm style="padding:0px 2px; margin-bottom: 2px;">X
                             <tr>
                                 <td>
-                                    <button .btn.btn-success.btn-sm>Add member
+                                    <form method=get action=@{GroupNewMemberR gid}>
+                                        <button type="submit" .btn.btn-success.btn-sm>Add member
         <div>
     <div .col.col-md-2>

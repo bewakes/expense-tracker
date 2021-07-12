@@ -12,6 +12,7 @@ module Foundation where
 import           Control.Monad.Logger     (LogSource)
 import           Credentials
 import           Data.Aeson
+import           Data.Maybe
 import qualified Data.Text.Lazy           as LT
 import           Database.Persist.Sql     (ConnectionPool, runSqlPool)
 import           ExpenseItems
@@ -27,6 +28,8 @@ import           Yesod.Auth.OAuth2.Google
 import           Yesod.Core.Types         (Logger)
 import qualified Yesod.Core.Unsafe        as Unsafe
 import           Yesod.Default.Util       (addStaticContentExternal)
+
+import           Utils
 
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -161,20 +164,22 @@ instance Yesod App where
         -> Bool       -- ^ Whether or not this is a "write" request.
         -> Handler AuthResult
     -- Routes not requiring authentication.
-    isAuthorized (AuthR _) _        = return Authorized
-    isAuthorized HomeR _            = return Authorized
-    isAuthorized FaviconR _         = return Authorized
-    isAuthorized RobotsR _          = return Authorized
-    isAuthorized (StaticR _) _      = return Authorized
+    isAuthorized (AuthR _) _           = return Authorized
+    isAuthorized HomeR _               = return Authorized
+    isAuthorized FaviconR _            = return Authorized
+    isAuthorized RobotsR _             = return Authorized
+    isAuthorized (StaticR _) _         = return Authorized
     -- the profile route requires that the user is authenticated, so we
     -- delegate to that function
-    isAuthorized CategoryR _        = isAuthenticated
-    isAuthorized UserR _            = isAuthenticated
-    isAuthorized GroupR _           = isAuthenticated
-    isAuthorized GroupNewR _        = isAuthenticated
-    isAuthorized (GroupDetailR _) _ = isAuthenticated
-    isAuthorized ExpenseNewR _      = isAuthenticated
-    isAuthorized ExpenseSummaryR _  = isAuthenticated
+    isAuthorized CategoryR _           = isAuthenticated
+    isAuthorized UserR _               = isAuthenticated
+    isAuthorized GroupR _              = isAuthenticated
+    isAuthorized GroupNewR _           = isAuthenticated
+    isAuthorized (GroupDetailR _) _    = isAuthenticated
+    isAuthorized ExpenseNewR _         = isAuthenticated
+    isAuthorized ExpenseSummaryR _     = isAuthenticated
+    isAuthorized (GroupNewMemberR _) _ = isAuthenticated
+    isAuthorized (UserQueryR _) _      = isAuthenticated
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
@@ -237,11 +242,6 @@ instance YesodPersistRunner App where
     getDBRunner :: Handler (DBRunner App, Handler ())
     getDBRunner = defaultGetDBRunner appConnPool
 
-mergeMaybe :: Maybe (Maybe a) -> Maybe a
-mergeMaybe (Just Nothing)  = Nothing
-mergeMaybe Nothing         = Nothing
-mergeMaybe (Just (Just x)) = Just x
-
 instance YesodAuth App where
     type AuthId App = UserId
 
@@ -259,7 +259,7 @@ instance YesodAuth App where
                  => Creds App -> m (AuthenticationResult App)
     authenticate creds = liftHandler $ runDB $ do
         let maybedata = getFromCredsExtra "userResponse" creds
-            maybeExtraCreds = mergeMaybe $ (decode . encodeUtf8 . LT.fromStrict) <$> maybedata
+            maybeExtraCreds = coerceMaybe $ (decode . encodeUtf8 . LT.fromStrict) <$> maybedata
         x <- getBy $ UniqueUser $ credsIdent creds
         now <- liftIO getCurrentTime
         case x of
@@ -268,9 +268,9 @@ instance YesodAuth App where
                 usrid <- insert User
                     { userIdent = credsIdent creds
                     , userPassword = Nothing
-                    , userFirstName = extraCredsFirstName <$> maybeExtraCreds
-                    , userLastName = extraCredsLastName <$> maybeExtraCreds
-                    , userEmail = extraCredsEmail <$> maybeExtraCreds
+                    , userFirstName = fromMaybe "" $ extraCredsFirstName <$> maybeExtraCreds
+                    , userLastName = fromMaybe "" $ extraCredsLastName <$> maybeExtraCreds
+                    , userEmail = fromJust $ extraCredsEmail <$> maybeExtraCreds
                     }
                 -- Create a group for the user
                 grpid <- insert Group

@@ -3,10 +3,10 @@
 
 User json
     ident Text
-    firstName Text Maybe
-    lastName Text Maybe
+    firstName Text
+    lastName Text
     password Text Maybe
-    email Text Maybe
+    email Text
     UniqueUser ident
     deriving Typeable
 Group json

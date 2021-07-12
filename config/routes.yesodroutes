@@ -12,9 +12,12 @@
 
 /users UserR GET
 
+/users/query/!#Text UserQueryR GET
+
 /expenses/new ExpenseNewR GET POST
 /expenses/summary ExpenseSummaryR GET
 
+/groups/!#GroupId/new-member GroupNewMemberR GET POST
 /groups/new GroupNewR GET POST
-/groups GroupR GET POST
+/groups GroupR GET
 /groups/!#GroupId GroupDetailR GET
