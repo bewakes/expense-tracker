@@ -20,6 +20,7 @@ UsersGroups json
     role Role
     joinedAt UTCTime default=now()
     isDefault Bool default=False
+    addedBy UserId Maybe
     UniqueUserGroup userId groupId
     deriving Show
 Category json

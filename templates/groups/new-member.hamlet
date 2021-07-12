@@ -1,0 +1,24 @@
+<div .row>
+    <div .col-md-3>
+    <div .col-md-6>
+        <h3>Add member for your #{groupName grp}
+        <div .alert.alert-info>
+            When you add member to your group, they will be able to see/add expenses
+            in the group depending upon the role.
+        <form method=post action=@{GroupNewMemberR gid}>
+            <div .form-group>
+                <label #search-selected-label>Search
+                <input .form-control #member-search-input type="text" placeholder="Search member's name/email">
+            <div .form-group>
+                <ul  #search-results .list-group style="height:120px; overflow-y:scroll">
+            <input type=hidden name="userid" #selected-member-id>
+            <div .form-group>
+                <ul  #selected-user-container .list-group>
+            <div .form-group>
+                <label>Role
+                <select .form-control name="role">
+                    <option value=Reader>View only
+                    <option value=Writer>View and Add/Edit
+                    <option value=Manager>Also add other members
+            <button #add-member-button .btn.form-control.btn-success disabled>Add member
+    <div .col-md-3>

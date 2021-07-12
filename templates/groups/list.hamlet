@@ -23,7 +23,7 @@
                             <a .text-decoration-none href=@{GroupDetailR gid}>
                                 #{groupName group}
                     <td  style="vertical-align: middle;">
-                        <button .btn.btn-danger.btn-sm onClick="alert('This is not implemented for the moment.')">
+                        <button style="display: none" .btn.btn-danger.btn-sm onClick="alert('This is not implemented for the moment.')">
                             X
                     <td>
                         <table .table.table-striped>
@@ -34,7 +34,7 @@
                                         #{userFirstName mem}
                                         #{userLastName mem}
                                     <td>
-                                        <button .btn.btn-danger.btn-sm style="padding:0px 2px; margin-bottom: 2px;">X
+                                        <button style="display: none" .btn.btn-danger.btn-sm style="padding:0px 2px; margin-bottom: 2px;">X
                             <tr>
                                 <td>
                                     <form method=get action=@{GroupNewMemberR gid}>

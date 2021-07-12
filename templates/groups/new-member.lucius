@@ -1,0 +1,6 @@
+#remove-selected-user {
+    margin-left: 0.3rem;
+}
+#add-member-button:disabled {
+    color: gray;
+}

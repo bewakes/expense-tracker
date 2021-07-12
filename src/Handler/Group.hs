@@ -1,9 +1,12 @@
 {-# LANGUAGE TypeApplications #-}
 module Handler.Group where
 
-import           Import
-import Yesod.Form.Bootstrap3
+import           Data.Maybe
+import qualified Data.Text                       as T
 import qualified Database.Esqueleto.Experimental as E
+import           Import
+import qualified Text.Read                       as TR
+import           Yesod.Form.Bootstrap3
 
 groupForm :: UserId -> AForm Handler Group
 groupForm uid = Group
@@ -30,8 +33,7 @@ getGroupNewR = do
       Nothing -> permissionDenied "You are not authorized for this page"
       Just usrid -> do
         (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ groupForm usrid
-        defaultLayout $ do
-            $(widgetFile "groups/new")
+        defaultLayout $(widgetFile "groups/new")
 
 postGroupNewR :: Handler Html
 postGroupNewR = do
@@ -49,6 +51,7 @@ postGroupNewR = do
                             , usersGroupsGroupId    = groupId
                             , usersGroupsIsDefault  = True
                             , usersGroupsJoinedAt   = time
+                            , usersGroupsAddedBy    = Just usrid
                             , usersGroupsRole       = SuperAdmin
                             }
                     _ <- runDB $ insert usrgrp
@@ -72,8 +75,49 @@ getGroupNewMemberR gid = do
           grp <- runDB $ get404 gid
           defaultLayout $(widgetFile "groups/new-member")
 
+maybeToEither :: Text -> Maybe a -> Either Text a
+maybeToEither msg Nothing = Left msg
+maybeToEither _ (Just a)  = Right a
+
+data PostMember = PostMember UserId Role
+
+parseEither :: (Read a) => Text -> Text -> Either Text a
+parseEither fname val = maybeToEither ("Invalid " <> fname) $ TR.readMaybe . T.unpack $ val
+
+parseMemberPostParams :: Either Text Text ->  Either Text Text -> Either Text PostMember
+parseMemberPostParams euid erole =
+    PostMember
+    <$> (E.toSqlKey <$> (euid >>= parseEither "user" ))
+    <*> (erole >>= parseEither "role" )
+
 postGroupNewMemberR :: GroupId -> Handler Html
-postGroupNewMemberR _ = error "Not implemented"
+postGroupNewMemberR gid = do
+    uidMaybe <- maybeAuthId
+    euid <- maybeToEither "No user provided" <$> lookupPostParam "userid"
+    erole <- maybeToEither "No/Invalid role provided" <$> lookupPostParam "role"
+    let parsed = parseMemberPostParams euid erole
+        uid = fromJust uidMaybe -- TODO: This can throw errors but probably won't because this controller is only called if logged in
+                                -- Omitted check to avoid nested case matches
+    time <- liftIO getCurrentTime
+    case parsed of
+      Left err -> do
+          addMessageI "error" err
+          redirect GroupR
+      Right (PostMember mid role) -> do
+          -- Check if user can add member in group
+          -- TODO: check role
+          _ <- runDB $ getBy404 (UniqueUserGroup uid gid)
+          let usg = UsersGroups
+                  { usersGroupsUserId = mid
+                  , usersGroupsGroupId = gid
+                  , usersGroupsRole = role
+                  , usersGroupsJoinedAt = time
+                  , usersGroupsAddedBy = Just uid
+                  , usersGroupsIsDefault = False
+                  }
+          _ <- runDB $ insert usg
+          addMessageI "success" ("Successfully added group member" :: Text)
+          redirect GroupR
 
 getAllGroups :: UserId -> DB [Entity Group]
 getAllGroups uid = E.select $ do

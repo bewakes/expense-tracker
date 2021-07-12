@@ -1,0 +1,70 @@
+var query_cache = {};
+
+var exp__user_search_result = [];
+
+function callSearchUsers(query) {
+    if(!query || query.length < 2) return;
+    $("#search-results").show();
+    $.getJSON(
+        "/users/query/"+query,
+        function(usersArray) {
+            // TODO: add to cache
+            exp__user_search_result = usersArray;
+
+            $('#search-results').empty();
+
+            $.each(usersArray, function(i, e) {
+                // Add to ul
+                $('#search-results').append(
+                    '<li class="list-group-item user-selectable" data-id="'+e.id+'">'+e.email+'</li>'
+                );
+
+                // Add event
+                $(".user-selectable").on("mousedown", function(e) {
+                    if($('#selected-member-id').attr('value')) {
+                        return;
+                    }
+                    $("#member-search-input").hide();
+                    $("#search-results").hide();
+                    const id = $(e.target).attr('data-id');
+                    $('#selected-member-id').attr('value', id);
+                    $('#add-member-button').attr('disabled', false);
+
+                    const user = exp__user_search_result.filter(x => x.id == id)[0];
+                    if(!user) return;
+
+                    $('#search-selected-label').html('Selected Member');
+
+                    $('#selected-user-container').append(
+                        '<li class="list-group-item" id="selected-user">'
+                        + user.email
+                        + '<button id="remove-selected-user" class="btn btn-sm btn-danger"> Remove </button>'
+                        + '</li>'
+                    );
+                    $('#search-results').empty();
+                    $('#member-search-input').attr('value', '');
+                    // add event listener
+                    $('#remove-selected-user').on("click", function(e) {
+                        $('#selected-user-container').empty();
+                        // remove selected user id value
+                        $("#member-search-input").show();
+                        $('#selected-member-id').attr('value', '');
+                        $('#add-member-button').attr('disabled', true);
+                        $('#search-selected-label').html('Search');
+                    });
+                });
+            });
+        });
+}
+
+$(document).ready(function() {
+    $("#search-results").hide();
+    $("#member-search-input").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        callSearchUsers(value);
+        // $("#myList li").filter(function() {
+        //     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        // });
+    });
+
+});

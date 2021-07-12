@@ -18,9 +18,9 @@ import           Utils
 parseParams :: Maybe Text -> Maybe Text -> Maybe Text -> IO (Day, Day, Day, Maybe GroupId)
 parseParams maybeMonthraw maybeYearraw maybeGrpraw = do
     currTime <- getCurrentTime
-    let monthMaybe = coerceMaybe $ readMaybe . T.unpack <$> maybeMonthraw
-        yearMaybe = coerceMaybe $ readMaybe . T.unpack <$> maybeYearraw
-        grpMaybe = coerceMaybe $ readMaybe . T.unpack <$> maybeGrpraw
+    let monthMaybe = maybeMonthraw >>= readMaybe . T.unpack
+        yearMaybe = maybeYearraw >>= readMaybe . T.unpack
+        grpMaybe = maybeGrpraw >>= readMaybe . T.unpack
         curr_ = mkDay <$> yearMaybe <*> monthMaybe <*> Just 1
         currMonth = case curr_ of
                 Nothing -> utctDay currTime

@@ -268,8 +268,8 @@ instance YesodAuth App where
                 usrid <- insert User
                     { userIdent = credsIdent creds
                     , userPassword = Nothing
-                    , userFirstName = fromMaybe "" $ extraCredsFirstName <$> maybeExtraCreds
-                    , userLastName = fromMaybe "" $ extraCredsLastName <$> maybeExtraCreds
+                    , userFirstName = maybe "" extraCredsFirstName maybeExtraCreds
+                    , userLastName = maybe "" extraCredsLastName maybeExtraCreds
                     , userEmail = fromJust $ extraCredsEmail <$> maybeExtraCreds
                     }
                 -- Create a group for the user
@@ -285,6 +285,7 @@ instance YesodAuth App where
                     , usersGroupsGroupId    = grpid
                     , usersGroupsIsDefault  = True
                     , usersGroupsJoinedAt   = time
+                    , usersGroupsAddedBy = Nothing
                     , usersGroupsRole       = SuperAdmin
                     }
                 -- Add default categories
