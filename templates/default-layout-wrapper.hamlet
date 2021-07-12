@@ -64,7 +64,9 @@ $newline never
   <body>
     ^{pageBody pc}
     <footer .large-screen>
-      this is footer large screen
+      <span>
+          Copyright 2021, &nbsp;
+          <a href="https://bewakes.com">Bibek
     <footer .small-screen>
         <div .footer-menu>
             <small>

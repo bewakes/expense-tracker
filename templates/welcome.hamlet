@@ -7,28 +7,30 @@
         <button .btn.btn-info>
             Login/Register
 
-<div .container>
+<div .container-fluid>
     <div .row>
-        <div .col-md-3>
-        <div .col-md-6>
+        <div .col-md-4>
+        <div .col-md-4>
             <h3 .text-center>
                 <u>Features
             <h4 .text-left>Beautiful dashboard
-            <small>Showing daily and category wise bar charts along with a category based pie chart.
+            <p>Showing daily and category wise bar charts along with a category based pie chart.
             <hr>
 
             <h4 .text-right>Multiple groups
-            <small>For example: you can track expenses for Personal(default), Home, Mt.Everest Hike group, Office... you name them.
+            <p>For example: you can track expenses for Personal(default), Home, Mt.Everest Hike group, Office... you name them.
             <hr>
 
             <h4 .text-left>Default Personal Group
-            <small>Upon signup, you'll have your "Personal" group which includes just you.
+            <p>Upon signup, you'll have your "Personal" group which includes just you.
             <hr>
 
             <h4 .text-right>Important categories
-            <small>You will have 6 different categories for expenses: Groccery, Utility, Medicine, Fruits, Stationary and Miscellaneous. See To-do below for coming features.
+            <p>You will have 6 different categories for expenses: Groccery, Utility, Medicine, Fruits, Stationary and Miscellaneous. See To-do below for coming features.
             <hr>
 
             <h4>Unlimited members
-            <small>You can add any number of members to your groups.
-        <div .col-md-3>
+            <p>You can add any number of members to your groups.
+            <br>
+            <br>
+        <div .col-md-4>
