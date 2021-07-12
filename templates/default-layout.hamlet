@@ -28,9 +28,10 @@
 
 
 $if (Just HomeR == mcurrentRoute)
-    ^{widget}
+    <div #main-content>
+        ^{widget}
 $else
-    <div .container>
+    <div #main-content .container>
         <div .row>
             <div .col-md-12>
                 ^{widget}

@@ -63,7 +63,25 @@ $newline never
       document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
   <body>
     ^{pageBody pc}
-
+    <footer .large-screen>
+      this is footer large screen
+    <footer .small-screen>
+        <div .footer-menu>
+            <small>
+                <b>E
+        <a href=@{HomeR} .footer-menu>
+            <span .glyphicon.glyphicon-home>
+            <small>Home
+        $maybe _ <- muser
+            <a href=@{GroupR} .footer-menu>
+                <span .glyphicon.glyphicon-list>
+                <small>My Groups
+            <a href="#" .footer-menu>
+                <span .glyphicon.glyphicon-info-sign>
+                <small>About App
+            <a href=@{AuthR LogoutR} .footer-menu>
+                <span .glyphicon.glyphicon-log-out>
+                <small>Log Out
     $maybe analytics <- appAnalytics $ appSettings master
       <script>
         if(!window.location.href.match(/localhost/)){
