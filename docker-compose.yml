@@ -3,6 +3,7 @@ version: "3.2"
 services:
     db:
         image: postgres:9.6
+        env_file: ./env
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
@@ -11,3 +12,9 @@ services:
             - "5432:5432"
         volumes:
             - ./postgres-data:/var/lib/postgresql/data
+
+    app:
+        image: bewakes/expense-tracker
+        env_file: ./env
+        ports:
+            - "3000:3333"
