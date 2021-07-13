@@ -1,16 +1,26 @@
+{-# LANGUAGE DeriveGeneric    #-}
+{-# LANGUAGE TemplateHaskell  #-}
 {-# LANGUAGE TypeApplications #-}
+
 module Utils where
 
+import           ClassyPrelude.Yesod
 import           Data.Fixed
-import           Data.Maybe
 import           Data.Time
 import           Database.Esqueleto.Experimental as E
-import           Prelude
 
 coerceMaybe :: Maybe (Maybe a) -> Maybe a
 coerceMaybe Nothing        = Nothing
 coerceMaybe (Just Nothing) = Nothing
 coerceMaybe (Just a)       = a
+
+data Role = SuperAdmin | Reader | Writer | Manager
+    deriving (Show, Read, Eq, Generic)
+derivePersistField "Role"
+
+instance ToJSON Role
+instance FromJSON Role
+
 
 fst3 :: (a, b, c) -> a
 fst3 (a, _, _) = a

@@ -89,8 +89,8 @@ getExpenseSummaryR = do
 getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text)]
 getAllGroupExpenses gid utday =  E.select $ do
     (expense E.:& category) <-
-        E.from $ E.table @Expense
-        `E.InnerJoin` E.table @Category
+        E.from $ E.Table @Expense
+        `E.InnerJoin` E.Table @Category
         `E.on` (\(expense E.:& category) -> expense E.^. ExpenseCategoryId E.==. category E.^. CategoryId)
     E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
@@ -111,7 +111,7 @@ type MonthDay = Int
 
 getMonthAggregated :: GroupId -> Day -> DB [(E.Value MonthDay, E.Value (Maybe Double))]
 getMonthAggregated gid utday = E.select $ do
-    expense <- E.from $ E.table @Expense
+    expense <- E.from $ E.Table @Expense
     let date' = unsafeSqlExtractSubField "day" (expense E.^. ExpenseDate)
     E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
@@ -131,8 +131,8 @@ getMonthAggregated gid utday = E.select $ do
 getCategoryAggregated :: GroupId -> Day -> DB [(E.Value Text, E.Value (Maybe Double))]
 getCategoryAggregated gid utday = E.select $ do
     (expense E.:& category) <-
-        E.from $ E.table @Expense
-        `E.InnerJoin` E.table @Category
+        E.from $ E.Table @Expense
+        `E.InnerJoin` E.Table @Category
         `E.on` (\(expense E.:& category) -> expense E.^. ExpenseCategoryId E.==. category E.^. CategoryId)
     E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
@@ -151,7 +151,7 @@ getCategoryAggregated gid utday = E.select $ do
 getUserGroups :: UserId -> DB [Entity Group]
 getUserGroups u = E.select $ do
     (ug E.:& grp) <-
-        E.from $ E.table @UsersGroups `E.InnerJoin` E.table @Group
+        E.from $ E.Table @UsersGroups `E.InnerJoin` E.Table @Group
         `E.on` (\(ug E.:& grp) -> ug E.^. UsersGroupsGroupId E.==. grp E.^. GroupId)
     E.where_ (ug E.^. UsersGroupsUserId E.==. E.val u)
     E.orderBy [E.asc $ ug E.^. UsersGroupsIsDefault]

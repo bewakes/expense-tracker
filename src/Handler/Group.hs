@@ -6,6 +6,7 @@ import qualified Data.Text                       as T
 import qualified Database.Esqueleto.Experimental as E
 import           Import
 import qualified Text.Read                       as TR
+import           Utils                           (Role (..))
 import           Yesod.Form.Bootstrap3
 
 groupForm :: UserId -> AForm Handler Group
@@ -122,8 +123,8 @@ postGroupNewMemberR gid = do
 getAllGroups :: UserId -> DB [Entity Group]
 getAllGroups uid = E.select $ do
     (usrgrp E.:& grp) <-
-        E.from $  E.table @UsersGroups
-        `E.InnerJoin` E.table @Group
+        E.from $  E.Table @UsersGroups
+        `E.InnerJoin` E.Table @Group
         `E.on` (\(usrgrp E.:& grp) -> usrgrp E.^. UsersGroupsGroupId E.==. grp E.^. GroupId)
     E.where_ (usrgrp E.^. UsersGroupsUserId E.==. E.val uid)
     return grp
@@ -131,8 +132,8 @@ getAllGroups uid = E.select $ do
 getGroupMembers :: Entity Group -> DB [Entity User]
 getGroupMembers (Entity gk _) = E.select $ do
     (usrgrp E.:& usr) <-
-        E.from $  E.table @UsersGroups
-        `E.InnerJoin` E.table @User
+        E.from $  E.Table @UsersGroups
+        `E.InnerJoin` E.Table @User
         `E.on` (\(usrgrp E.:& usr) -> usrgrp E.^. UsersGroupsUserId E.==. usr E.^. UserId)
     E.where_ (usrgrp E.^. UsersGroupsGroupId E.==. E.val gk)
     return usr

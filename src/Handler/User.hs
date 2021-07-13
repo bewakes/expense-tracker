@@ -26,7 +26,7 @@ toJsonUser (Entity k u) = object
 
 queryUser :: Text -> DB [Entity User]
 queryUser qry = E.select $ do
-    usr <- E.from $ E.table @User
+    usr <- E.from $ E.Table @User
     let likefname = usr E.^. UserFirstName `E.ilike` E.val concated
         likelname = usr E.^. UserLastName `E.ilike` E.val concated
         likeemail = usr E.^. UserEmail `E.ilike` E.val concated
