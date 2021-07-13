@@ -1,3 +1,5 @@
+# Help from: https://medium.com/permutive/optimized-docker-builds-for-haskell-76a9808eb10b
+
 docker pull bewakes/expense-dependencies:latest || true
 
 docker build --target dependencies --cache-from bewakes/expense-dependencies:latest -t bewakes/expense-dependencies .

@@ -11,10 +11,12 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - ./postgres-data:/var/lib/postgresql/data
+            - ./db_volumes/postgres-data:/var/lib/postgresql/data
 
     app:
         image: bewakes/expense-tracker
         env_file: ./env
         ports:
             - "3000:3333"
+        depends_on:
+            - db
