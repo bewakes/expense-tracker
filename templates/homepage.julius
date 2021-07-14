@@ -33,13 +33,11 @@ const newBarOptions = () => ({
         axisLabelFontSizePixels: 3,
         axisLabel: "Days",
         axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 8,
+        axisLabelFontSizePixels: 5,
         axisLabelFontFamily: 'Verdana, Arial',
-        axisLabelPadding: 12,
+        axisLabelPadding: 0,
     },
     yaxis: {
-        axisLabelFontSizePixels: 2,
-        axisLabel: "Amount (NRs.)",
     },
     grid: {
         hoverable: true,
