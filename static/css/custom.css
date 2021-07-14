@@ -22,6 +22,20 @@ footer {
     height: 7vh;
 }
 
+#loading-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 2rem;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    background-color: #fffe;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
 .large-screen {
     display: flex;
 }
@@ -32,11 +46,13 @@ footer {
 
 @media only screen and (max-width: 600px) {
     .small-screen {
-        display: flex;
+        display: flex !important;
     }
 
-    body {
-        overflow-y: hidden;
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
     }
 
     #main-content {

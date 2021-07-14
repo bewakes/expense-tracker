@@ -61,7 +61,19 @@ $newline never
 
     <script>
       document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+      jQuery(document).ready(function() {
+          jQuery('a').click(function (e) {
+              jQuery('#loading-mask').css('display', 'flex');
+          });
+          jQuery('form').on('submit', function() {
+              jQuery('#loading-mask').css('display', 'flex');
+          });
+      });
+
   <body>
+    <div #loading-mask>
+        <div>
+            <h3> Please wait ...
     ^{pageBody pc}
     <footer .large-screen>
       <span>
