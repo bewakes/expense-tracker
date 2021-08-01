@@ -10,7 +10,7 @@ import           Yesod.Form.Bootstrap3
 
 newExpenseForm :: [(Text, CategoryId)] -> [(Text, GroupId)] -> UserId ->  AForm Handler Expense
 newExpenseForm cats grps usrid = Expense
-    <$> areq doubleField (bfs ("Amount" :: Text)) Nothing
+    <$> areq (check validateAmount doubleField) (bfs ("Amount" :: Text)) Nothing
     <*> areq (selectFieldList cats) (bfs ("Category" :: Text)) Nothing
     <*> areq dayField (bfs ("Date" :: Text)) Nothing
     <*> pure []
@@ -18,6 +18,9 @@ newExpenseForm cats grps usrid = Expense
     <*> areq (selectFieldList grps) (bfs ("Group" :: Text)) Nothing
     <*> pure usrid
     <*> lift (liftIO getCurrentTime)
+        where validateAmount amt
+                | amt < 0 = Left ("Amount cannot be negative" :: Text)
+                | otherwise = Right amt
 
 getExpenseNewR :: Handler Html
 getExpenseNewR = do
