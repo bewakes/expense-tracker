@@ -40,12 +40,14 @@
                             <th>Date
                             <th>Category
                             <th>Amount(NRs.)
+                            <th>Description
                     <tbody>
-                        $forall (E.Value amount, E.Value date, E.Value categoryName) <- expenses
+                        $forall (E.Value amount, E.Value date, E.Value categoryName, E.Value description) <- expenses
                             <tr>
                                 <td>#{formatTime defaultTimeLocale "%B %d, %Y" date}
                                 <td>#{categoryName}
                                 <td>#{amount}
+                                <td>#{description}
                         <tr>
                             <th>Total
                             <td>

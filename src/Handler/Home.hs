@@ -56,7 +56,7 @@ getHomeR = do
         (grp, userGroups) <- getGroup uid gidMaybe
         expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
 
-        let total = P.sum <$> mapM fst3 expenses
+        let total = P.sum <$> mapM fst4 expenses
             grpId = E.fromSqlKey $ entityKey grp
             isSelected k = k == entityKey grp
         defaultLayout $ do
@@ -86,7 +86,7 @@ getExpenseSummaryR = do
             , "total" .= total
             ]
 
-getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text)]
+getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text, E.Value Text)]
 getAllGroupExpenses gid utday =  E.select $ do
     (expense E.:& category) <-
         E.from $ E.Table @Expense
@@ -100,6 +100,7 @@ getAllGroupExpenses gid utday =  E.select $ do
         ( expense   E.^. ExpenseAmount
         , expense   E.^. ExpenseDate
         , category  E.^. CategoryName
+        , expense E.^. ExpenseDescription
         )
     where month :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           month ts = unsafeSqlExtractSubField "month" ts
