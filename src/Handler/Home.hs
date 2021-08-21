@@ -95,6 +95,7 @@ getAllGroupExpenses gid utday =  E.select $ do
     E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
     E.where_ (year (expense E.^. ExpenseDate) E.==. E.val (fromIntegral y))
+    E.orderBy [E.asc (expense E.^. ExpenseDate)]
     return
         ( expense   E.^. ExpenseAmount
         , expense   E.^. ExpenseDate
