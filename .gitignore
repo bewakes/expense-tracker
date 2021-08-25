@@ -8,3 +8,4 @@ dist/
 static/tmp/
 yesod-devel/
 env
+dist-newstyle/
