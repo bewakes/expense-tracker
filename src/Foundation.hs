@@ -29,7 +29,7 @@ import           Yesod.Core.Types         (Logger)
 import qualified Yesod.Core.Unsafe        as Unsafe
 import           Yesod.Default.Util       (addStaticContentExternal)
 
-import           Utils
+import           Utils.Data
 
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -124,6 +124,11 @@ instance Yesod App where
                     , menuItemRoute = GroupR
                     , menuItemAccessCallback = True
                     }
+                , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Categories"
+                    , menuItemRoute = CategoryR
+                    , menuItemAccessCallback = True
+                    }
                 , NavbarRight $ MenuItem
                     { menuItemLabel = "Login"
                     , menuItemRoute = AuthR LoginR
@@ -181,6 +186,7 @@ instance Yesod App where
     isAuthorized ExpenseSummaryR _     = isAuthenticated
     isAuthorized (GroupNewMemberR _) _ = isAuthenticated
     isAuthorized (UserQueryR _) _      = isAuthenticated
+    isAuthorized CategoryNewR _        = isAuthenticated
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of

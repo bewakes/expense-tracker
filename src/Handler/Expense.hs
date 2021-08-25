@@ -3,8 +3,8 @@
 module Handler.Expense
 where
 
-import           Handler.Home          (getUserGroups)
 import           Import
+import           Utils.Db              (getUserGroups)
 import           Yesod.Form.Bootstrap3
 
 

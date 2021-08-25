@@ -8,7 +8,6 @@
 /robots.txt RobotsR GET
 
 / HomeR GET
-/categories CategoryR GET POST
 
 /users UserR GET
 
@@ -20,4 +19,8 @@
 /groups/!#GroupId/new-member GroupNewMemberR GET POST
 /groups/new GroupNewR GET POST
 /groups GroupR GET
+
+/categories CategoryR GET
+/categories/new CategoryNewR GET POST
+
 /groups/!#GroupId GroupDetailR GET

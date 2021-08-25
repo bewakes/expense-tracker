@@ -2,12 +2,15 @@
 {-# LANGUAGE TemplateHaskell  #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Utils where
+module Utils.Data where
 
 import           ClassyPrelude.Yesod
 import           Data.Fixed
+import qualified Data.Text                       as T
 import           Data.Time
 import           Database.Esqueleto.Experimental as E
+import qualified Prelude                         as P
+import           Text.Read
 
 coerceMaybe :: Maybe (Maybe a) -> Maybe a
 coerceMaybe Nothing        = Nothing
@@ -45,3 +48,6 @@ extractValFromTuple (a, b) = (E.unValue a, E.unValue b)
 
 extractValFromTuple_ :: (a -> a') -> (b -> b') -> (E.Value a, E.Value b) -> (a', b')
 extractValFromTuple_ fa fb (a, b) = (fa $ E.unValue a, fb $ E.unValue b)
+
+parseIntegerFromParam :: Maybe Text -> Maybe Integer
+parseIntegerFromParam mt = mt >>= readMaybe P.. T.unpack

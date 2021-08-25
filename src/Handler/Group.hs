@@ -6,7 +6,7 @@ import qualified Data.Text                       as T
 import qualified Database.Esqueleto.Experimental as E
 import           Import
 import qualified Text.Read                       as TR
-import           Utils                           (Role (..))
+import           Utils.Data                      (Role (..))
 import           Yesod.Form.Bootstrap3
 
 groupForm :: UserId -> AForm Handler Group

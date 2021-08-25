@@ -1,0 +1,21 @@
+<div .row>
+    <div .col.col-md-2>
+    <div .col.col-md-8>
+        <div style="display:flex; flex-direction: row; justify-content: space-between">
+            <h3 style="margin-top: 0px; margin-bottom: 3px;"> My Categories
+            <form method=get action=@{CategoryNewR}>
+                <button .btn.btn-success.btn-sm style="margin-bottom: 3px">
+                    <b style="font-size: 1.6rem">Add a Category
+        <div .alert.alert-info>
+            Categories are logical groupings of your expenses. For example:
+            Rental, Groccery, College, Trekking Group, etc.
+        <table .table.table-striped.table-responsive>
+            <thead .thead-light>
+                <tr>
+                    <th>Category Name
+                    <th>Actions
+            $forall (Entity _ cat) <- categories
+                <tr>
+                    <td>#{categoryName cat}
+                    <td> --
+    <div .col.col-md-2>

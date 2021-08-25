@@ -36,7 +36,8 @@ library
       Model
       Settings
       Settings.StaticFiles
-      Utils
+      Utils.Data
+      Utils.Db
   other-modules:
       Paths_expense_tracker
   hs-source-dirs:
