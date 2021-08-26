@@ -9,27 +9,29 @@
 
 module Foundation where
 
-import           Control.Monad.Logger     (LogSource)
+import           Control.Monad.Logger            (LogSource)
 import           Credentials
 import           Data.Aeson
 import           Data.Maybe
-import qualified Data.Text.Lazy           as LT
-import           Database.Persist.Sql     (ConnectionPool, runSqlPool)
+import qualified Data.Text.Lazy                  as LT
+import qualified Database.Esqueleto.Experimental as E
+import           Database.Persist.Sql            (ConnectionPool, runSqlPool)
 import           ExpenseItems
 import           Import.NoFoundation
-import           Text.Hamlet              (hamletFile)
-import           Text.Jasmine             (minifym)
+import           Text.Hamlet                     (hamletFile)
+import           Text.Jasmine                    (minifym)
 
 -- Used only when in "auth-dummy-login" setting is enabled.
 
-import qualified Data.CaseInsensitive     as CI
-import qualified Data.Text.Encoding       as TE
+import qualified Data.CaseInsensitive            as CI
+import qualified Data.Text.Encoding              as TE
 import           Yesod.Auth.OAuth2.Google
-import           Yesod.Core.Types         (Logger)
-import qualified Yesod.Core.Unsafe        as Unsafe
-import           Yesod.Default.Util       (addStaticContentExternal)
+import           Yesod.Core.Types                (Logger)
+import qualified Yesod.Core.Unsafe               as Unsafe
+import           Yesod.Default.Util              (addStaticContentExternal)
 
 import           Utils.Data
+import           Utils.Db
 
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -111,6 +113,10 @@ instance Yesod App where
 
         muser <- maybeAuthPair
         mcurrentRoute <- getCurrentRoute
+        (selectedGroup, userGroups) <- getUserCurrentGroupFromParam
+        let selectedGroupId = case selectedGroup of
+                                Nothing           -> -1
+                                Just (Entity k _) -> E.fromSqlKey k
 
         -- Define the menu items of the header.
         let menuItems =
@@ -342,3 +348,19 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/Sending-email
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
+
+getUserCurrentGroupFromParam :: Handler (Maybe (Entity Group), [Entity Group])
+getUserCurrentGroupFromParam = do
+    uidMaybe <- maybeAuthId
+    gidMaybe <- parseIntegerFromParam <$> lookupGetParam "groupId"
+    userGroups <- case uidMaybe of
+                    Nothing  -> return []
+                    Just uid -> runDB $ getUserGroups uid
+    let selectedGroup = case userGroups of
+                        [] -> Nothing
+                        xs@(x:_) -> case gidMaybe of
+                                  Nothing -> Just x
+                                  Just gid -> case filter (\(Entity k _) -> k == E.toSqlKey (fromInteger gid)) xs of
+                                                []   -> Nothing
+                                                g: _ -> Just g
+    pure (selectedGroup, userGroups)

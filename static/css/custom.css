@@ -3,6 +3,12 @@ nav {
     margin-bottom: 0px !important;
 }
 
+#nav-group-select {
+    background: transparent;
+    color: white;
+    height: 4rem;
+}
+
 h4 {
     font-weight: 700;
 }
