@@ -8,6 +8,6 @@ docker build --target app --cache-from bewakes/expense-tracker:latest -t bewakes
 
 docker push bewakes/expense-dependencies:latest
 docker push bewakes/expense-tracker:latest
-echo "Pruning docker unused images.."
-yes | docker system prune
+# echo "Pruning docker unused images.."
+# yes | docker system prune
 echo "DONE!!"
