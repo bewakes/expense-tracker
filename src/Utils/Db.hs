@@ -86,9 +86,23 @@ getCategoryAggregated gid utday = E.select $ do
           year ts = unsafeSqlExtractSubField "year" ts
           (y, m, _) = toGregorian utday
 
-
 getAllGroupCategories :: GroupId -> DB [Entity Category]
 getAllGroupCategories gid = E.select $ do
     category <- E.from $ E.Table @Category
     E.where_ (category E.^. CategoryGroupId E.==. E.val gid)
     return category
+
+getCategoryForUser :: CategoryId -> UserId -> DB (Maybe (Entity Category))
+getCategoryForUser catid uid = do
+    cats <- E.select $ do
+        (ug E.:& category) <-
+            E.from $ E.Table @UsersGroups
+            `E.InnerJoin` E.Table @Category
+            `E.on` (\(ug E.:& c) -> ug E.^. UsersGroupsGroupId E.==. c E.^. CategoryGroupId)
+        E.where_ (category E.^. CategoryId E.==. E.val catid)
+        E.where_ (ug E.^. UsersGroupsUserId E.==. E.val uid)
+        return category
+    case cats of
+      []   -> pure Nothing
+      x: _ -> pure $ Just x
+

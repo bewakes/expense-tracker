@@ -3,7 +3,7 @@
     <div .col.col-md-8>
         <div style="display:flex; flex-direction: row; justify-content: space-between">
             <h3 style="margin-top: 0px; margin-bottom: 3px;"> My Categories
-            <form method=get action=@{CategoryNewR}>
+            <a href="@{CategoryNewR}?groupId=#{E.fromSqlKey $ E.entityKey grp}">
                 <button .btn.btn-success.btn-sm style="margin-bottom: 3px">
                     <b style="font-size: 1.6rem">Add a Category
         <div .alert.alert-info>

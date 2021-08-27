@@ -23,38 +23,29 @@ newExpenseForm cats grps usrid = Expense
                 | otherwise = Right amt
 
 getExpenseNewR :: Handler Html
-getExpenseNewR = do
-    uid <- maybeAuthId
-    case uid of
-      Nothing -> redirect $ AuthR LoginR
-      Just u -> do
-        cats <- runDB $ getCategories u
-        groups <- runDB $ getUserGroups u
-        let catList = map (\(Entity k v) -> (categoryName v, k)) cats
-            grpList = map (\(Entity k v) -> (groupName v, k)) groups
-        (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList grpList u
-        defaultLayout $ do
-            setTitle "Add an Expense"
-            $(widgetFile "expenses/new")
-
+getExpenseNewR = loginRedirectOr $ \(UserInfo uid _ _) -> do
+    cats <- runDB $ getCategories uid
+    groups <- runDB $ getUserGroups uid
+    let catList = map (\(Entity k v) -> (categoryName v, k)) cats
+        grpList = map (\(Entity k v) -> (groupName v, k)) groups
+    (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList grpList uid
+    defaultLayout $ do
+        setTitle "Add an Expense"
+        $(widgetFile "expenses/new")
 
 postExpenseNewR :: Handler Html
-postExpenseNewR = do
-    uid <- maybeAuthId
-    case uid of
-      Nothing -> redirect $ AuthR LoginR
-      Just u -> do
-        cats <- runDB $ getCategories u
-        groups <- runDB $ getUserGroups u
-        let catList = map (\(Entity k v) -> (categoryName v, k)) cats
-            grpList = map (\(Entity k v) -> (groupName v, k)) groups
-        ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList grpList u
-        case res of
-          FormSuccess expense -> do
-              _ <- runDB $ insert expense
-              addMessageI "success" ("Expense added" :: Text)
-              redirect HomeR
-          _ -> defaultLayout $(widgetFile "expenses/new")
+postExpenseNewR = loginRedirectOr $ \(UserInfo uid _ _) -> do
+    cats <- runDB $ getCategories uid
+    groups <- runDB $ getUserGroups uid
+    let catList = map (\(Entity k v) -> (categoryName v, k)) cats
+        grpList = map (\(Entity k v) -> (groupName v, k)) groups
+    ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList grpList uid
+    case res of
+      FormSuccess expense -> do
+          _ <- runDB $ insert expense
+          addMessageI "success" ("Expense added" :: Text)
+          redirect HomeR
+      _ -> defaultLayout $(widgetFile "expenses/new")
 
 
 getCategories :: UserId -> DB [Entity Category]

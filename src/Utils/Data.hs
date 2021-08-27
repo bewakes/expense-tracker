@@ -24,10 +24,8 @@ derivePersistField "Role"
 instance ToJSON Role
 instance FromJSON Role
 
-
 fst3 :: (a, b, c) -> a
 fst3 (a, _, _) = a
-
 
 fst4 :: (a, b, c, d) -> a
 fst4 (a, _, _, _) = a

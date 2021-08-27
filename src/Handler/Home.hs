@@ -28,16 +28,6 @@ parseParams maybeMonthraw maybeYearraw = do
         nextMonth = addDays 32 currMonth
     return (prevMonth, currMonth, nextMonth)
 
-getGroup :: UserId -> Maybe GroupId -> Handler (Entity Group, [Entity Group])
-getGroup uid gidMaybe = do
-    userGroups <- runDB $ getUserGroups uid
-    let l = length userGroups
-        grp_ = if l > 0 then P.head userGroups else error "Something went wrong"
-        grp = case gidMaybe of
-                Nothing -> grp_
-                Just g -> P.head $ P.filter ((== g) . entityKey) userGroups ++ [grp_] -- last addition is for failsafe case
-    return (grp, userGroups)
-
 getHomeR :: Handler Html
 getHomeR = do
     uidMaybe <- maybeAuthId
@@ -51,13 +41,9 @@ getHomeR = do
         setTitle "Welcome To Expense Tracker!"
         $(widgetFile "welcome")
       _ -> do
-        (selGrpMaybe, _) <- getUserCurrentGroupFromParam
-        expenses <- case selGrpMaybe of
-          Nothing               -> pure []
-          Just (Entity grpid _) -> runDB $ getAllGroupExpenses grpid curr
-        let grpId = case selGrpMaybe of
-                    Nothing -> -1
-                    Just e  -> E.fromSqlKey $ entityKey e
+        (Entity grpid _, _) <- getUserCurrentGroupFromParam
+        expenses <- runDB $ getAllGroupExpenses grpid curr
+        let grpId = E.fromSqlKey grpid
 
         let total = P.sum <$> mapM fst4 expenses
         defaultLayout $ do
@@ -73,18 +59,15 @@ getExpenseSummaryR = do
     case uidMaybe of
       Nothing -> returnJson $ object []
       _ -> do
-        (selGrpMaybe, _) <- getUserCurrentGroupFromParam
-        case selGrpMaybe of
-          Nothing -> sendResponseStatus status400 $ object []
-          Just grp -> do
-            month_summary <- runDB $ getMonthAggregated (entityKey grp) curr
-            category_summary <- runDB $ getCategoryAggregated (entityKey grp) curr
-            let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary
-                cat_processed = map (extractValFromTuple_ id (fromMaybe 0)) category_summary
-                total = P.sum $ P.map snd cat_processed
-            returnJson $ object
-                [ "category_data" .= toJSON cat_processed
-                , "month_data" .= toJSON month_processed
-                , "month" .= formatTime defaultTimeLocale "%B" curr
-                , "total" .= total
-                ]
+        (grp, _) <- getUserCurrentGroupFromParam
+        month_summary <- runDB $ getMonthAggregated (entityKey grp) curr
+        category_summary <- runDB $ getCategoryAggregated (entityKey grp) curr
+        let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary
+            cat_processed = map (extractValFromTuple_ id (fromMaybe 0)) category_summary
+            total = P.sum $ P.map snd cat_processed
+        returnJson $ object
+            [ "category_data" .= toJSON cat_processed
+            , "month_data" .= toJSON month_processed
+            , "month" .= formatTime defaultTimeLocale "%B" curr
+            , "total" .= total
+            ]

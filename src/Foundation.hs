@@ -113,10 +113,8 @@ instance Yesod App where
 
         muser <- maybeAuthPair
         mcurrentRoute <- getCurrentRoute
-        (selectedGroup, userGroups) <- getUserCurrentGroupFromParam
-        let selectedGroupId = case selectedGroup of
-                                Nothing           -> -1
-                                Just (Entity k _) -> E.fromSqlKey k
+        (selectedGroup, navUserGroups) <- getUserCurrentGroupFromParam
+        let selectedGroupId = E.fromSqlKey $ E.entityKey selectedGroup
 
         -- Define the menu items of the header.
         let menuItems =
@@ -193,6 +191,7 @@ instance Yesod App where
     isAuthorized (GroupNewMemberR _) _ = isAuthenticated
     isAuthorized (UserQueryR _) _      = isAuthenticated
     isAuthorized CategoryNewR _        = isAuthenticated
+    isAuthorized (CategoryEditR _) _   = isAuthenticated
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
     -- expiration dates to be set far in the future without worry of
@@ -349,18 +348,35 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
 
-getUserCurrentGroupFromParam :: Handler (Maybe (Entity Group), [Entity Group])
+getUserCurrentGroupFromParam :: Handler (Entity Group, [Entity Group])
 getUserCurrentGroupFromParam = do
     uidMaybe <- maybeAuthId
     gidMaybe <- parseIntegerFromParam <$> lookupGetParam "groupId"
-    userGroups <- case uidMaybe of
+    usrGroups <- case uidMaybe of
                     Nothing  -> return []
                     Just uid -> runDB $ getUserGroups uid
-    let selectedGroup = case userGroups of
+    let selectedGroup = case usrGroups of
                         [] -> Nothing
                         xs@(x:_) -> case gidMaybe of
                                   Nothing -> Just x
                                   Just gid -> case filter (\(Entity k _) -> k == E.toSqlKey (fromInteger gid)) xs of
                                                 []   -> Nothing
                                                 g: _ -> Just g
-    pure (selectedGroup, userGroups)
+    case selectedGroup of
+      Nothing -> sendResponseStatus status404 (TypedContent typeHtml "<h3>No groups found for user</h3>")
+      Just g -> pure (g, usrGroups)
+
+data UserInfo = UserInfo
+    { userId     :: UserId
+    , currGroup  :: Entity Group
+    , userGroups :: [Entity Group]
+    }
+
+loginRedirectOr :: (UserInfo -> Handler Html) -> Handler Html
+loginRedirectOr handler = do
+    uidMaybe <- maybeAuthId
+    case uidMaybe of
+      Nothing  -> redirect $ AuthR LoginR
+      Just uid -> do
+          (grp, grps) <- getUserCurrentGroupFromParam
+          handler $ UserInfo uid grp grps

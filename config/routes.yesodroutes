@@ -23,4 +23,6 @@
 /categories CategoryR GET
 /categories/new CategoryNewR GET POST
 
+/categories/edit/!#CategoryId CategoryEditR GET POST
+
 /groups/!#GroupId GroupDetailR GET

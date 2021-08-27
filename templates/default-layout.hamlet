@@ -20,12 +20,12 @@
                     <li :Just route == mcurrentRoute:.active>
                         <a href="@{route}">#{label}
 
-            $if (length userGroups > 0)
+            $if (length navUserGroups > 0)
                 <ul .nav.navbar-nav.navbar-right>
                     <li>
-                        <form method="get" action=@{HomeR} style="margin-top: 1rem">
+                        <form method="get" action="" style="margin-top: 1rem">
                             <select .form-control name="groupId" #nav-group-select onchange="this.form.submit()">
-                                $forall (Entity gid grp) <- userGroups
+                                $forall (Entity gid grp) <- navUserGroups
                                     <option value="#{E.fromSqlKey gid}" :selectedGroupId == (E.fromSqlKey gid):selected>#{groupName grp}
 
 <!-- Page Contents -->
