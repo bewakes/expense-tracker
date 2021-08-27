@@ -30,6 +30,9 @@ fst3 (a, _, _) = a
 fst4 :: (a, b, c, d) -> a
 fst4 (a, _, _, _) = a
 
+fst5 :: (a, b, c, d, e) -> a
+fst5 (a, _, _, _, _) = a
+
 mkUTCTime :: (Integer, Int, Int)
           -> (Int, Int, Pico)
           -> UTCTime

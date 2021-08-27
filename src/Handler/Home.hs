@@ -45,7 +45,7 @@ getHomeR = do
         expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
         let grpId = E.fromSqlKey (entityKey grp)
 
-        let total = P.sum <$> mapM fst4 expenses
+        let total = P.sum <$> mapM fst5 expenses
         defaultLayout $ do
           setTitle "Expenses Home"
           $(widgetFile "homepage")

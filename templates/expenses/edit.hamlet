@@ -1,0 +1,9 @@
+<div .row>
+    <div .col.col-md-3>
+    <div .col.col-md-6>
+        <h3> Update expense(#{groupName $ entityVal grp})
+        <form method=post action="@{ExpenseEditR expid}?groupId=#{E.fromSqlKey $ E.entityKey grp}" enctype=#{enctype}>
+            ^{widget}
+            <div .form-group>
+                <button .btn.btn-success.form-control><b>Update
+    <div .col.col-md-3>

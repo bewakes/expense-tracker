@@ -37,9 +37,11 @@
                             <th>Amount(NRs.)
                             <th>Description
                     <tbody>
-                        $forall (E.Value amount, E.Value date, E.Value categoryName, E.Value description) <- expenses
+                        $forall (E.Value amount, E.Value date, E.Value categoryName, E.Value description, E.Value k) <- expenses
                             <tr>
-                                <td>#{formatTime defaultTimeLocale "%B %d, %Y" date}
+                                <td>
+                                    <a href="@{ExpenseEditR k}?groupId=#{E.fromSqlKey $ E.entityKey grp}">
+                                        #{formatTime defaultTimeLocale "%B %d, %Y" date}
                                 <td>#{categoryName}
                                 <td>#{amount}
                                 <td>#{description}

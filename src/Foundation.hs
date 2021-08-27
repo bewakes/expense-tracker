@@ -187,6 +187,7 @@ instance Yesod App where
     isAuthorized GroupNewR _           = isAuthenticated
     isAuthorized (GroupDetailR _) _    = isAuthenticated
     isAuthorized ExpenseNewR _         = isAuthenticated
+    isAuthorized (ExpenseEditR _) _    = isAuthenticated
     isAuthorized ExpenseSummaryR _     = isAuthenticated
     isAuthorized (GroupNewMemberR _) _ = isAuthenticated
     isAuthorized (UserQueryR _) _      = isAuthenticated

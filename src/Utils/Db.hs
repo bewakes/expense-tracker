@@ -22,7 +22,7 @@ getUserGroups u = E.select $ do
     E.orderBy [E.asc $ ug E.^. UsersGroupsIsDefault]
     return grp
 
-getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text, E.Value Text)]
+getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text, E.Value Text, E.Value (E.Key Expense))]
 getAllGroupExpenses gid utday =  E.select $ do
     (expense E.:& category) <-
         E.from $ E.Table @Expense
@@ -37,6 +37,7 @@ getAllGroupExpenses gid utday =  E.select $ do
         , expense   E.^. ExpenseDate
         , category  E.^. CategoryName
         , expense E.^. ExpenseDescription
+        , expense E.^. ExpenseId
         )
     where month :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           month ts = unsafeSqlExtractSubField "month" ts
@@ -107,3 +108,17 @@ getCategoryForUser catid uid gid = do
       []   -> pure Nothing
       x: _ -> pure $ Just x
 
+getExpenseForUser :: ExpenseId -> UserId -> GroupId -> DB (Maybe (Entity Expense))
+getExpenseForUser eid uid gid = do
+    exps <- E.select $ do
+        (ug E.:& expense) <-
+            E.from $ E.Table @UsersGroups
+            `E.InnerJoin` E.Table @Expense
+            `E.on` (\(ug E.:& e) -> ug E.^. UsersGroupsGroupId E.==. e E.^. ExpenseGroupId)
+        E.where_ (expense E.^. ExpenseId E.==. E.val eid)
+        E.where_ (ug E.^. UsersGroupsUserId E.==. E.val uid)
+        E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
+        return expense
+    case exps of
+      []   -> pure Nothing
+      x: _ -> pure $ Just x
