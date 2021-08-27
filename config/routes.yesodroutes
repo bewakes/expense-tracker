@@ -16,6 +16,7 @@
 /expenses/new ExpenseNewR GET POST
 /expenses/summary ExpenseSummaryR GET
 /expenses/edit/!#ExpenseId ExpenseEditR GET POST
+/expenses/delete/!#ExpenseId ExpenseDeleteR POST
 
 /groups/!#GroupId/new-member GroupNewMemberR GET POST
 /groups/new GroupNewR GET POST

@@ -6,4 +6,8 @@
             ^{widget}
             <div .form-group>
                 <button .btn.btn-success.form-control><b>Update
+
+        <form method=post action="@{ExpenseDeleteR expid}?groupId=#{E.fromSqlKey $ E.entityKey grp}" enctype=#{enctype}>
+            <div .form-group>
+                <button .btn.btn-danger.form-control><b>Delete
     <div .col.col-md-3>

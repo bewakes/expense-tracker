@@ -89,5 +89,16 @@ postExpenseEditR expId = loginRedirectOr $ \(UserInfo uid grp _) -> do
               redirect (HomeR, [("groupId", T.pack $ show $ E.fromSqlKey $ E.entityKey grp)])
           _ -> defaultLayout $(widgetFile "expenses/edit")
 
+-- TODO: soft delete
+postExpenseDeleteR :: ExpenseId -> Handler Html
+postExpenseDeleteR expId = loginRedirectOr $ \(UserInfo uid grp _) -> do
+    maybeexp <- runDB $ getExpenseForUser expId uid (E.entityKey grp)
+    case maybeexp of
+      Nothing -> sendResponseStatus status404 (TypedContent typeHtml "<h3> Expense not found </h3>")
+      Just (Entity expid _) -> do
+          _ <- runDB $ delete expid
+          addMessageI "Success" ("Expense Deleted" :: Text)
+          redirect (HomeR, [("groupId", T.pack $ show $ E.fromSqlKey $ E.entityKey grp)])
+
 getCategories :: UserId -> DB [Entity Category]
 getCategories u = selectList [CategoryUserId ==. u] []
