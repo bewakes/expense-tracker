@@ -92,8 +92,8 @@ getAllGroupCategories gid = E.select $ do
     E.where_ (category E.^. CategoryGroupId E.==. E.val gid)
     return category
 
-getCategoryForUser :: CategoryId -> UserId -> DB (Maybe (Entity Category))
-getCategoryForUser catid uid = do
+getCategoryForUser :: CategoryId -> UserId -> GroupId -> DB (Maybe (Entity Category))
+getCategoryForUser catid uid gid = do
     cats <- E.select $ do
         (ug E.:& category) <-
             E.from $ E.Table @UsersGroups
@@ -101,6 +101,7 @@ getCategoryForUser catid uid = do
             `E.on` (\(ug E.:& c) -> ug E.^. UsersGroupsGroupId E.==. c E.^. CategoryGroupId)
         E.where_ (category E.^. CategoryId E.==. E.val catid)
         E.where_ (ug E.^. UsersGroupsUserId E.==. E.val uid)
+        E.where_ (category E.^. CategoryGroupId E.==. E.val gid)
         return category
     case cats of
       []   -> pure Nothing

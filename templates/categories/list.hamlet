@@ -14,8 +14,9 @@
                 <tr>
                     <th>Category Name
                     <th>Actions
-            $forall (Entity _ cat) <- categories
+            $forall (Entity catid cat) <- categories
                 <tr>
-                    <td>#{categoryName cat}
+                    <td>
+                        <a href="@{CategoryEditR catid}?groupId=#{E.fromSqlKey $ E.entityKey grp}">#{categoryName cat}
                     <td> --
     <div .col.col-md-2>

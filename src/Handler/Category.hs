@@ -16,11 +16,11 @@ newCategoryForm uid gid = Category
     <*> pure gid
 
 
-editCategoryForm :: Category -> [(Text, GroupId)] -> UserId -> AForm Handler Category
-editCategoryForm cat grps uid = Category
+editCategoryForm :: Category -> GroupId -> UserId -> AForm Handler Category
+editCategoryForm cat gid uid = Category
     <$> areq textField (bfs ("Category Name" :: Text)) (pure $ categoryName cat)
     <*> pure uid
-    <*> areq (selectFieldList grps) (bfs ("Group" :: Text)) (pure $ categoryGroupId cat)
+    <*> pure gid
 
 getCategoryR :: Handler Html
 getCategoryR = loginRedirectOr $ \(UserInfo _ grp _) -> do
@@ -37,7 +37,7 @@ getCategoryNewR = loginRedirectOr $ \(UserInfo uid grp _) -> do
         $(widgetFile "categories/new")
 
 postCategoryNewR :: Handler Html
-postCategoryNewR = loginRedirectOr $ \(UserInfo uid grp _)-> do
+postCategoryNewR = loginRedirectOr $ \(UserInfo uid grp _) -> do
     ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ newCategoryForm uid (E.entityKey grp)
     case res of
       FormSuccess category -> do
@@ -46,17 +46,25 @@ postCategoryNewR = loginRedirectOr $ \(UserInfo uid grp _)-> do
           redirect (CategoryR, [("groupId", T.pack $ show $ E.fromSqlKey $ E.entityKey grp)])
       _ -> defaultLayout $(widgetFile "categories/new")
 
-
 getCategoryEditR :: CategoryId -> Handler Html
-getCategoryEditR catid = loginRedirectOr $ \(UserInfo uid _ _) -> do
-    maybecategory <- runDB $ getCategoryForUser catid uid
+getCategoryEditR catid = loginRedirectOr $ \(UserInfo uid grp _) -> do
+    maybecategory <- runDB $ getCategoryForUser catid uid (E.entityKey grp)
     case maybecategory of
       Nothing -> sendResponseStatus status404 (TypedContent typeHtml "<h3> Category not found </h3>")
       Just (Entity _ cat) -> do
-        groups <- runDB $ getUserGroups uid
-        let grpList = map (\(Entity k v) -> (groupName v, k)) groups
-        (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ editCategoryForm cat grpList uid
+        (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ editCategoryForm cat (E.entityKey grp) uid
         defaultLayout $(widgetFile "categories/edit")
 
 postCategoryEditR :: CategoryId -> Handler Html
-postCategoryEditR = undefined
+postCategoryEditR catId = loginRedirectOr $ \(UserInfo uid grp _ ) -> do
+    maybecategory <- runDB $ getCategoryForUser catId uid (E.entityKey grp)
+    case maybecategory of
+      Nothing -> sendResponseStatus status404 (TypedContent typeHtml "<h3> Category not found </h3>")
+      Just (Entity catid cat) -> do
+        ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ editCategoryForm cat (E.entityKey grp) uid
+        case res of
+          FormSuccess category -> do
+              _ <- runDB $ replace catId category
+              addMessageI "Success" ("Category Updated" :: Text)
+              redirect (CategoryR, [("groupId", T.pack $ show $ E.fromSqlKey $ E.entityKey grp)])
+          _ -> defaultLayout $(widgetFile "categories/edit")
