@@ -2,6 +2,7 @@
 {-# LANGUAGE QuasiQuotes       #-}
 module Handler.Category where
 
+import qualified Data.Text                       as T
 import qualified Database.Esqueleto.Experimental as E
 import           Import
 import           Utils.Db
@@ -42,7 +43,7 @@ postCategoryNewR = loginRedirectOr $ \(UserInfo uid grp _)-> do
       FormSuccess category -> do
           _ <- runDB $ insert category
           addMessageI "Success" ("Category Added" :: Text)
-          redirect HomeR
+          redirect (CategoryR, [("groupId", T.pack $ show $ E.fromSqlKey $ E.entityKey grp)])
       _ -> defaultLayout $(widgetFile "categories/new")
 
 

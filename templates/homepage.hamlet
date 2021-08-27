@@ -8,7 +8,7 @@
                         <span .month>#{formatTime defaultTimeLocale "%B %Y" curr}
                         <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}&group=#{grpId}> &gt;
 
-                    <form method=get action=@{ExpenseNewR}>
+                    <a href="@{ExpenseNewR}?groupId=#{E.fromSqlKey $ E.entityKey grp}">
                         <button .btn.btn-success.btn-sm>
                             <span style="font-size: 1.6rem">Add an expense
         <div .row>

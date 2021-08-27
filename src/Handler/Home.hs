@@ -41,9 +41,9 @@ getHomeR = do
         setTitle "Welcome To Expense Tracker!"
         $(widgetFile "welcome")
       _ -> do
-        (Entity grpid _, _) <- getUserCurrentGroupFromParam
-        expenses <- runDB $ getAllGroupExpenses grpid curr
-        let grpId = E.fromSqlKey grpid
+        (grp, _) <- getUserCurrentGroupFromParam
+        expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
+        let grpId = E.fromSqlKey (entityKey grp)
 
         let total = P.sum <$> mapM fst4 expenses
         defaultLayout $ do
