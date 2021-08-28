@@ -11,7 +11,7 @@ import           Utils.Db                        (getExpenseForUser)
 import           Yesod.Form.Bootstrap3
 
 
-newExpenseForm :: [(Text, CategoryId)] -> GroupId -> UserId ->  AForm Handler Expense
+newExpenseForm :: [(Text, CategoryId)] -> GroupId -> UserId -> AForm Handler Expense
 newExpenseForm cats grpid usrid = Expense
     <$> areq (check validateAmount doubleField) (bfs ("Amount" :: Text)) Nothing
     <*> areq (selectFieldList cats) (bfs ("Category" :: Text)) Nothing

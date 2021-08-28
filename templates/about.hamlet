@@ -1,0 +1,22 @@
+<div .row>
+    <h3 .text-center>About this app
+    <p .text-center>
+        Expenses app has been developed with a hope to make our lifes a bit easier by tracking on which things are we spending our earnings.
+    <p .text-center>
+        This app has just started and has yet to grow much. We appreciate your valuable feedback.
+
+$maybe _ <- maybeuid
+    <div .row>
+        <div .col.col-md-3>
+        <div .col.col-md-6>
+            <h3> Your Feedback
+            <form method=post action=@{AboutR} enctype=#{enctype}>
+                ^{widget}
+                <div .form-group>
+                    <button .btn.btn-success.form-control><b>Send Feedback
+        <div .col.col-md-3>
+$nothing
+    <p .text-center>
+        Please
+        <a href=@{AuthR LoginR}>Login
+        to submit feedback.

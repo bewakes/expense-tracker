@@ -13,7 +13,10 @@
             <ul .nav.navbar-nav>
                 $forall MenuItem label route _ <- navbarLeftFilteredMenuItems
                     <li :Just route == mcurrentRoute:.active>
-                        <a href="@{route}?groupId=#{selectedGroupId}">#{label}
+                        $maybe _ <- mgrp
+                            <a href="@{route}?groupId=#{selectedGroupId}">#{label}
+                        $nothing
+                            <a href="@{route}">#{label}
 
             <ul .nav.navbar-nav.navbar-right>
                 $forall MenuItem label route _ <- navbarRightFilteredMenuItems

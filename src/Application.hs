@@ -46,6 +46,7 @@ import           System.Log.FastLogger                (defaultBufSize,
 import           System.Environment
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
+import           Handler.About
 import           Handler.Category
 import           Handler.Common
 import           Handler.Expense

@@ -24,6 +24,7 @@ library
       Credentials
       ExpenseItems
       Foundation
+      Handler.About
       Handler.Category
       Handler.Common
       Handler.Expense

@@ -55,3 +55,7 @@ Email
     userId UserId Maybe
     verkey Text Maybe
     UniqueEmail email
+Feedback
+    firstName Text
+    lastName Text
+    feedback Text

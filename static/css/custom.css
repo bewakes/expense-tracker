@@ -80,6 +80,10 @@ footer {
         display: flex !important;
     }
 
+    .dropdown-menu {
+        left: -50px;
+    }
+
     footer {
         position: fixed;
         bottom: 0;

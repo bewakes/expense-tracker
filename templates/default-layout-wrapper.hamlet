@@ -89,6 +89,9 @@ $newline never
             <a href="@{HomeR}" .footer-menu>
                 <span .glyphicon.glyphicon-home>
                 <small>Home
+        <a href=@{AboutR} .footer-menu>
+            <span .glyphicon.glyphicon-info-sign>
+            <small>About
         $maybe _ <- muser
             <a href="@{CategoryR}?groupId=#{selectedGroupId}" .footer-menu>
                 <span .glyphicon.glyphicon-list>
@@ -107,9 +110,6 @@ $newline never
                             <b>Logout
                 <small .footer-menu-title>
                     <b>#{selectedGroupName}
-            <a href=@{HomeR} .footer-menu>
-                <span .glyphicon.glyphicon-info>
-                <small>About
     $maybe analytics <- appAnalytics $ appSettings master
       <script>
         if(!window.location.href.match(/localhost/)){

@@ -27,3 +27,5 @@
 /categories/edit/!#CategoryId CategoryEditR GET POST
 
 /groups/!#GroupId GroupDetailR GET
+
+/about AboutR GET POST
