@@ -41,7 +41,7 @@
                             <tr>
                                 <td>
                                     <a href="@{ExpenseEditR k}?groupId=#{E.fromSqlKey $ E.entityKey grp}">
-                                        #{formatTime defaultTimeLocale "%B %d, %Y" date}
+                                        #{formatTime defaultTimeLocale "%b %d, %Y" date}
                                 <td>#{categoryName}
                                 <td>#{amount}
                                 <td>#{description}

@@ -20,6 +20,7 @@ $newline never
     \<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     \<![endif]-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.0.3/js.cookie.min.js">
 
     <script language="javascript" type="text/javascript" src="https://www.flotcharts.org/flot/source/jquery.canvaswrapper.js"></script>
@@ -80,22 +81,35 @@ $newline never
           Copyright 2021, &nbsp;
           <a href="https://bewakes.com">Bibek
     <footer .small-screen>
-        <div .footer-menu>
-            <small>
-                <b>E
-        <a href=@{HomeR} .footer-menu>
-            <span .glyphicon.glyphicon-home>
-            <small>Home
+        $maybe _ <- mgrp
+            <a href="@{HomeR}?groupId=#{selectedGroupId}" .footer-menu>
+                <span .glyphicon.glyphicon-home>
+                <small>Home
+        $nothing
+            <a href="@{HomeR}" .footer-menu>
+                <span .glyphicon.glyphicon-home>
+                <small>Home
         $maybe _ <- muser
-            <a href=@{GroupR} .footer-menu>
+            <a href="@{CategoryR}?groupId=#{selectedGroupId}" .footer-menu>
                 <span .glyphicon.glyphicon-list>
-                <small>My Groups
-            <a href="#" .footer-menu>
-                <span .glyphicon.glyphicon-info-sign>
-                <small>About App
-            <a href=@{AuthR LogoutR} .footer-menu>
-                <span .glyphicon.glyphicon-log-out>
-                <small>Log Out
+                <small>Categories
+            <a href=@{GroupR} .footer-menu>
+                <span .glyphicon.glyphicon-th-large>
+                <small>Groups
+            <div .dropup.footer-menu>
+                <button type="button" #group-select-menu data-toggle="dropdown" .dropdown-toggle.glyphicon.glyphicon-user style="border: solid 1px white; border-radius: 50%; padding: 2px; background: transparent" aria-haspopup="true" aria-expanded="false">
+                <div #dropdown-groups .dropdown-menu aria-labelledby="group-select-menu">
+                    $forall (Entity gid grp) <- navUserGroups
+                        <div .dropdown-item><a href="?groupId=#{E.fromSqlKey gid}">#{groupName grp}
+                    <hr style="margin: 0px">
+                    <div .dropdown-item>
+                        <a href=@{AuthR LogoutR}  style="color: #ef2c15">
+                            <b>Logout
+                <small .footer-menu-title>
+                    <b>#{selectedGroupName}
+            <a href=@{HomeR} .footer-menu>
+                <span .glyphicon.glyphicon-info>
+                <small>About
     $maybe analytics <- appAnalytics $ appSettings master
       <script>
         if(!window.location.href.match(/localhost/)){

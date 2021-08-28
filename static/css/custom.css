@@ -18,6 +18,25 @@ h4 {
     min-height: 86vh;
 }
 
+#dropdown-groups {
+    padding-left: 0.1rem;
+}
+
+#dropdown-groups a {
+    text-decoration: none;
+    color: #777;
+}
+
+#dropdown-groups > .dropdown-item {
+    padding: 0.6rem;
+    padding-top: 0px;
+    border-top: solid 1px #eee;
+}
+
+#dropdown-groups .dropdown-item:hover {
+    background: #eee !important;
+}
+
 footer {
     display: flex;
     flex-direction: row;
@@ -46,6 +65,12 @@ footer {
     display: flex;
 }
 
+.footer-menu-title {
+    max-width: 6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .small-screen {
     display: none;
 }
@@ -64,6 +89,8 @@ footer {
     #main-content {
         height: 93vh;
         overflow-y: scroll;
+        overflow-x: hidden;
+        padding-top: 1rem;
     }
 
     nav {
@@ -87,9 +114,5 @@ footer {
     .footer-active {
         background: white;
         color: black;
-    }
-
-    #main-content {
-        padding-top: 0px;
     }
 }

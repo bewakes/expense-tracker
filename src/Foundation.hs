@@ -156,6 +156,10 @@ instance Yesod App where
         -- you to use normal widget features in default-layout.
 
         (mgrp, navUserGroups) <- getUserCurrentGroupFromParam
+        let selectedGroupName = case mgrp of
+                              Nothing  -> ""
+                              Just grp -> groupName $ E.entityVal grp
+
         let selectedGroupId = case mgrp of
                                 Nothing  -> -1
                                 Just grp -> E.fromSqlKey $ E.entityKey grp
