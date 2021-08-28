@@ -40,8 +40,7 @@ getHomeR = do
       Nothing -> defaultLayout $ do
         setTitle "Welcome To Expense Tracker!"
         $(widgetFile "welcome")
-      _ -> do
-        (grp, _) <- getUserCurrentGroupFromParam
+      _ -> loginRedirectOr $ \(UserInfo _ grp _) -> do
         expenses <- runDB $ getAllGroupExpenses (entityKey grp) curr
         let grpId = E.fromSqlKey (entityKey grp)
 
@@ -52,14 +51,13 @@ getHomeR = do
 
 getExpenseSummaryR :: Handler Value
 getExpenseSummaryR = do
-    uidMaybe <- maybeAuthId
     mraw <- lookupGetParam "month"
     yraw <- lookupGetParam "year"
     (_, curr, _) <- liftIO $ parseParams mraw yraw
-    case uidMaybe of
+    (mgrp, _) <- getUserCurrentGroupFromParam
+    case mgrp of
       Nothing -> returnJson $ object []
-      _ -> do
-        (grp, _) <- getUserCurrentGroupFromParam
+      Just grp -> do
         month_summary <- runDB $ getMonthAggregated (entityKey grp) curr
         category_summary <- runDB $ getCategoryAggregated (entityKey grp) curr
         let month_processed = map (extractValFromTuple_ id (fromMaybe 0)) month_summary

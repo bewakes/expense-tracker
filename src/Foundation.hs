@@ -113,8 +113,6 @@ instance Yesod App where
 
         muser <- maybeAuthPair
         mcurrentRoute <- getCurrentRoute
-        (selectedGroup, navUserGroups) <- getUserCurrentGroupFromParam
-        let selectedGroupId = E.fromSqlKey $ E.entityKey selectedGroup
 
         -- Define the menu items of the header.
         let menuItems =
@@ -156,6 +154,11 @@ instance Yesod App where
         -- default-layout-wrapper is the entire page. Since the final
         -- value passed to hamletToRepHtml cannot be a widget, this allows
         -- you to use normal widget features in default-layout.
+
+        (mgrp, navUserGroups) <- getUserCurrentGroupFromParam
+        let selectedGroupId = case mgrp of
+                                Nothing  -> -1
+                                Just grp -> E.fromSqlKey $ E.entityKey grp
 
         pc <- widgetToPageContent $ do
             addStylesheet $ StaticR css_bootstrap_css
@@ -350,7 +353,7 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
 
-getUserCurrentGroupFromParam :: Handler (Entity Group, [Entity Group])
+getUserCurrentGroupFromParam :: Handler (Maybe (Entity Group), [Entity Group])
 getUserCurrentGroupFromParam = do
     uidMaybe <- maybeAuthId
     gidMaybe <- parseIntegerFromParam <$> lookupGetParam "groupId"
@@ -364,9 +367,7 @@ getUserCurrentGroupFromParam = do
                                   Just gid -> case filter (\(Entity k _) -> k == E.toSqlKey (fromInteger gid)) xs of
                                                 []   -> Nothing
                                                 g: _ -> Just g
-    case selectedGroup of
-      Nothing -> sendResponseStatus status404 (TypedContent typeHtml "<h3>No groups found for user</h3>")
-      Just g -> pure (g, usrGroups)
+    pure (selectedGroup, usrGroups)
 
 data UserInfo = UserInfo
     { userId     :: UserId
@@ -380,5 +381,7 @@ loginRedirectOr handler = do
     case uidMaybe of
       Nothing  -> redirect $ AuthR LoginR
       Just uid -> do
-          (grp, grps) <- getUserCurrentGroupFromParam
-          handler $ UserInfo uid grp grps
+          (mgrp, grps) <- getUserCurrentGroupFromParam
+          case mgrp of
+            Nothing -> sendResponseStatus status404 (TypedContent typeHtml "<h3>No groups found for user</h3>")
+            Just grp -> handler $ UserInfo uid grp grps
