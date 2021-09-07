@@ -28,7 +28,7 @@
 
         <h2> Daily details
         <div .row>
-            <div .col-lg-12>
+            <div .col-lg-12 style="overflow-x: scroll">
                 <table .table.table-striped.table-bordered>
                     <thead>
                         <tr>
@@ -36,8 +36,9 @@
                             <th>Category
                             <th>Amount(NRs.)
                             <th>Description
+                            <th>Added By
                     <tbody>
-                        $forall (E.Value amount, E.Value date, E.Value categoryName, E.Value description, E.Value k) <- expenses
+                        $forall (E.Value amount, E.Value date, E.Value categoryName, E.Value description, E.Value k, E.Value usr) <- expenses
                             <tr>
                                 <td>
                                     <a href="@{ExpenseEditR k}?groupId=#{E.fromSqlKey $ E.entityKey grp}">
@@ -45,6 +46,7 @@
                                 <td>#{categoryName}
                                 <td>#{amount}
                                 <td>#{description}
+                                <td>#{usr}
                         <tr>
                             <th>Total
                             <td>

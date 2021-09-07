@@ -11,11 +11,11 @@ import           Utils.Db                        (getExpenseForUser)
 import           Yesod.Form.Bootstrap3
 
 
-newExpenseForm :: [(Text, CategoryId)] -> GroupId -> UserId -> AForm Handler Expense
-newExpenseForm cats grpid usrid = Expense
+newExpenseForm :: [(Text, CategoryId)] -> GroupId -> UserId -> UTCTime ->  AForm Handler Expense
+newExpenseForm cats grpid usrid currDate = Expense
     <$> areq (check validateAmount doubleField) (bfs ("Amount" :: Text)) Nothing
     <*> areq (selectFieldList cats) (bfs ("Category" :: Text)) Nothing
-    <*> areq dayField (bfs ("Date" :: Text)) Nothing
+    <*> areq dayField (bfs ("Date" :: Text)) (Just (utctDay currDate))
     <*> pure []
     <*> areq textField (bfs ("Description" :: Text)) (Just " ")
     <*> pure grpid
@@ -43,17 +43,19 @@ editExpenseForm mexp cats grpid usrid = Expense
 getExpenseNewR :: Handler Html
 getExpenseNewR = loginRedirectOr $ \(UserInfo uid grp _) -> do
     cats <- runDB $ getCategories uid
+    currDate <- liftIO getCurrentTime
     let catList = map (\(Entity k v) -> (categoryName v, k)) cats
-    (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList (E.entityKey grp) uid
+    (widget, enctype) <- generateFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList (E.entityKey grp) uid currDate
     defaultLayout $ do
         setTitle "Add an Expense"
         $(widgetFile "expenses/new")
 
 postExpenseNewR :: Handler Html
 postExpenseNewR = loginRedirectOr $ \(UserInfo uid grp _) -> do
+    currDate <- liftIO getCurrentTime
     cats <- runDB $ getCategories uid
     let catList = map (\(Entity k v) -> (categoryName v, k)) cats
-    ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList (E.entityKey grp) uid
+    ((res, widget), enctype) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ newExpenseForm catList (E.entityKey grp) uid currDate
     case res of
       FormSuccess expense -> do
           _ <- runDB $ insert expense

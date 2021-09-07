@@ -22,12 +22,14 @@ getUserGroups u = E.select $ do
     E.orderBy [E.asc $ ug E.^. UsersGroupsIsDefault]
     return grp
 
-getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text, E.Value Text, E.Value (E.Key Expense))]
+getAllGroupExpenses :: GroupId -> Day -> DB [(E.Value Double, E.Value Day, E.Value Text, E.Value Text, E.Value (E.Key Expense), E.Value Text)]
 getAllGroupExpenses gid utday =  E.select $ do
-    (expense E.:& category) <-
+    (expense E.:& category E.:& user) <-
         E.from $ E.Table @Expense
         `E.InnerJoin` E.Table @Category
         `E.on` (\(expense E.:& category) -> expense E.^. ExpenseCategoryId E.==. category E.^. CategoryId)
+        `E.InnerJoin` E.Table @User
+        `E.on` (\(e E.:& _ E.:& u) -> e E.^. ExpenseCreatedBy E.==. u E.^. UserId)
     E.where_ (expense E.^. ExpenseGroupId E.==. E.val gid)
     E.where_ (month (expense E.^. ExpenseDate) E.==. E.val m)
     E.where_ (year (expense E.^. ExpenseDate) E.==. E.val (fromIntegral y))
@@ -38,6 +40,7 @@ getAllGroupExpenses gid utday =  E.select $ do
         , category  E.^. CategoryName
         , expense E.^. ExpenseDescription
         , expense E.^. ExpenseId
+        , user E.^. UserFirstName
         )
     where month :: E.SqlExpr (E.Value Day) -> E.SqlExpr (E.Value Int)
           month ts = unsafeSqlExtractSubField "month" ts
