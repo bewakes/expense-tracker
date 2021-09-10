@@ -3,9 +3,9 @@
         Ready for the best expenses management?
     <p>
         Join now to streamline your finance.
-    <form method=get action=@{AuthR LoginR}>
+    <form method=get action=/auth/page/google/forward>
         <button .btn.btn-info>
-            Login/Register
+            Login/Register with Google
 
 <div .container-fluid>
     <div .row>

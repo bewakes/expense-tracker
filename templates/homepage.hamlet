@@ -4,9 +4,9 @@
             <div .col-lg-12.col-md-12>
                 <div .table-header>
                     <div #month-selector>
-                        <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}&group=#{grpId}> &lt;
+                        <a .previous href=@{HomeR}?year=#{show prevYear}&month=#{show prevMonth}&groupId=#{grpId}> &lt;
                         <span .month>#{formatTime defaultTimeLocale "%B %Y" curr}
-                        <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}&group=#{grpId}> &gt;
+                        <a .next href=@{HomeR}?year=#{show nextYear}&month=#{show nextMonth}&groupId=#{grpId}> &gt;
 
                     <a href="@{ExpenseNewR}?groupId=#{E.fromSqlKey $ E.entityKey grp}">
                         <button .btn.btn-success.btn-sm>
